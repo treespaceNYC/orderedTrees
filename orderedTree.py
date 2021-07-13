@@ -5,13 +5,6 @@ from collections import defaultdict
 
 
 class orderedTree:
-"""
-First Draft:  Cut and paste all the different versions.  Need to merge into a single class, and fix typos and indentation
-"""
-from collections import defaultdict
-
-
-class orderedTree:
     def __init__(self, n: int):
         " " "Takes an Int and creates a dictionary with intervals[1, 2]...[1, n]" " "
         self.intervals = defaultdict(list)
