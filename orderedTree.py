@@ -1,8 +1,5 @@
-"""
-First Draft:  Cut and paste all the different versions.  Need to merge into a single class, and fix typos and indentation
-"""
 from collections import defaultdict
-
+#Need to include a way for python to know which constructor to use.
 
 class orderedTree:
     def __init__(self, n: int):
@@ -12,12 +9,12 @@ class orderedTree:
         for i in range(2,n+1):
             self.intervals[1].append(i)
 
-    def __init__(self, n: list):
-        " " " Creates a tree based on a list entered in intervals (List of lists) " " "
-        self.intervals = defaultdict(list)
-        for k, v in n:
-            self.intervals[k].append(v)
-        self.leaves = len(self.intervals.keys()) + len(self.intervals.values())
+    # def __init__(self, n: list):
+    #     " " " Creates a tree based on a list entered in intervals (List of lists) " " "
+    #     self.intervals = defaultdict(list)
+    #     for k, v in n:
+    #         self.intervals[k].append(v)
+    #     self.leaves = len(self.intervals.keys()) + len(self.intervals.values())
 
 
 
@@ -33,8 +30,3 @@ class orderedTree:
             return True
         return False
 
-
-# test = orderedTree(3)
-# test1 = orderedTree([[1,3], [1,4], [2,3]])
-# print(test)
-# print(test1)
