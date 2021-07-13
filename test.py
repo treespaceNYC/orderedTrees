@@ -36,7 +36,7 @@ newick3 = "(((1,(2,3),(4,5),6)))"
 newick4 = "(((1,2),(3,4),5),6)"
 
 
-#Question 3: What if input is a string of lists in interval form or a list of lists?
+#Question 3: What if the input is a string of lists in interval form or a list of lists?
 
     #Interval Form Test cases
 interval_list1  = [ [1,2],[1,3],[1,4][1,5][1,6] ]
