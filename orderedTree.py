@@ -3,7 +3,7 @@ from collections import defaultdict
 
 class orderedTree:
     def __init__(self, n: int):
-        " " "Takes an Int and creates a dictionary with intervals[1, 2]...[1, n]" " "
+        """ Takes an Int and creates a dictionary with intervals[1, 2]...[1, n] """
         self.intervals = defaultdict(list)
         self.leaves = n
         for i in range(2,n+1):
@@ -19,13 +19,13 @@ class orderedTree:
 
 
     def __str__(self):
-        " " "Allows for printing of dictionary and # of leaves " " "
+        """ Allows for printing of dictionary and # of leaves """
         lst = list(zip(self.intervals.keys(), self.intervals.values()))
         return(f"(Dictionary: {lst}\n# of leaves = {self.leaves}")
 
 
     def __eq__(self, tree):
-        " " "Allows for == override " " "
+        """ Allows for == override """
         if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
