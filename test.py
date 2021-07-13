@@ -29,11 +29,11 @@ notorderedI1 = "[1,3],[1,2],[1,4][1,5][1,6]"
     #Newick Form Test cases
 newick1 = "(((((1,2),3),4),5),6)"
 
-newick2 = "(((1,(2,3),4),5),6)"
+newick2 = "((((1,(2,3)),4),5),6)"
 
-newick3 = "(((1,(2,3),(4,5),6)))"
+newick3 = "((1,(2,3)),((4,5),6))"
 
-newick4 = "(((1,2),(3,4),5),6)"
+newick4 = "((1,2),(((3,4),5),6))"
 
 
 #Question 3: What if the input is a string of lists in interval form or a list of lists?
