@@ -29,7 +29,7 @@ class orderedTree:
 
     def __eq__(self, tree):
         " " "Allows for == override " " "
-        if(list(self.tree.items()) == (list(tree.tree.items()))):
+        if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
 
