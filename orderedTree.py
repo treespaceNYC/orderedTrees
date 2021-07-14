@@ -2,21 +2,30 @@ from collections import defaultdict
 #Need to include a way for python to know which constructor to use.
 
 class orderedTree:
-    def __init__(self, n: int):
-        """ Takes an Int and creates a dictionary with intervals[1, 2]...[1, n] """
-        self.intervals = defaultdict(list)
-        self.leaves = n
-        for i in range(2,n+1):
-            self.intervals[1].append(i)
+    def __init__(self, *n):
+        if(len(n) == 0):
+            """ Default constructor that creates an empty tree """
+            self.leaves = 0
+            self.tree = defaultdict(list)
 
-    # def __init__(self, n: list):
-    #     " " " Creates a tree based on a list entered in intervals (List of lists) " " "
-    #     self.intervals = defaultdict(list)
-    #     for k, v in n:
-    #         self.intervals[k].append(v)
-    #     self.leaves = len(self.intervals.keys()) + len(self.intervals.values())
+        elif(isinstance(n, int)):
+            """ Takes an Int and creates a dictionary with intervals[1, 2]...[1, n] """
+            self.intervals = defaultdict(list)
+            self.leaves = n
+            for i in range(2,n+1):
+                self.intervals[1].append(i)
 
-
+        elif(isinstance(n, list)):
+            """ Creates a tree based on a list entered in intervals (List of lists) """
+            self.intervals = defaultdict(list)
+            max = 0
+            for k, v in n:
+                self.intervals[k].append(v)
+                if(v > max):
+                    max = v
+                if(k > max):
+                    max = k
+            self.leaves = max
 
     def __str__(self):
         """ Allows for printing of dictionary and # of leaves """
