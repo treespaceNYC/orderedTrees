@@ -8,6 +8,8 @@ class orderedTree:
         self.leaves = n
         for i in range(2,n+1):
             self.intervals[1].append(i)
+        self.min=1
+        self.max=n
 
     # def __init__(self, n: list):
     #     " " " Creates a tree based on a list entered in intervals (List of lists) " " "
@@ -29,4 +31,3 @@ class orderedTree:
         if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
-
