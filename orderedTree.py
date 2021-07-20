@@ -2,6 +2,7 @@ from collections import defaultdict
 #Need to include a way for python to know which constructor to use.
 
 class orderedTree:
+
     def __init__(self, *n):
         if(len(n) == 0):
             """ Default constructor that creates an empty tree """
@@ -27,6 +28,7 @@ class orderedTree:
                     max = k
             self.leaves = max
 
+
     def __str__(self):
         """ Allows for printing of dictionary and # of leaves """
         lst = list(zip(self.intervals.keys(), self.intervals.values()))
@@ -38,4 +40,3 @@ class orderedTree:
         if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
-
