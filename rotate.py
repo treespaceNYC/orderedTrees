@@ -17,8 +17,8 @@ intervalT3 = [3,4]
 tree4 = {1:[2,6,7,8],3:[4,6],5:[6]}
 intervalT4 = [5,6]
 #Encompassing Interval Method:
-def encompassingInterval(orderedTree, interval):
-  tree = orderedTree.tree
+def encompassingInterval(ordTree, interval):
+  tree = ordTree.tree
   print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
   inVal = interval[1]
