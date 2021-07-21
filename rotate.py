@@ -1,4 +1,4 @@
-from orderedTree import OrderedTree
+from orderedTree import orderedTree
 #Encompassing Interval method with test cases. Will be updated to work with orderedTree objects.
 
 #Test Cases:
