@@ -5,20 +5,24 @@ from orderedTree import orderedTree
 interval = [1, 2]
 interval2 = [3, 4]
 
-tree = {1:[2,4,5,6], 3:[4]}
+tree = orderedTree()
+tree.intervals = {1:[2,4,5,6], 3:[4]}
 
 #Tree with nested subtrees case:
-tree2 = {1:[2,5,6,7],3:[5], 4:[5]}
+tree2 = orderedTree()
+tree2.intervals = {1:[2,5,6,7],3:[5], 4:[5]}
 intervalT2 = [3,5]
 
-tree3 = {1:[2,5,6,7],3:[4,5]}
+tree3 = orderedTree()
+tree3.intervals = {1:[2,5,6,7],3:[4,5]}
 intervalT3 = [3,4]
 
-tree4 = {1:[2,6,7,8],3:[4,6],5:[6]}
+tree4 = orderedTree()
+tree4.intervals = {1:[2,6,7,8],3:[4,6],5:[6]}
 intervalT4 = [5,6]
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  tree = ordTree.tree
+  tree = ordTree.intervals
   print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
   inVal = interval[1]
@@ -53,21 +57,21 @@ def rotateRight(tree, interval):
 
   nextVal = encVal  #max of nearest 'right' subtree to encompassing interval; initiated at encomp interval max for now
   #this for loop will set nextVal to max of nearest 'right' subtree to encompassing interval
-  for i in tree[encKey]:  
+  for i in tree.intervals[encKey]:  
     if i > encVal:
       nextVal = i
       break
   
-  tree[encKey].remove(interval[1])  #encompassing interval won't exist after a rotation; deleted here
+  tree.intervals[encKey].remove(interval[1])  #encompassing interval won't exist after a rotation; deleted here
   #this if statement assures we are creating a new encompassing interval for our new tree after a right rotation
-  if interval[0] in tree.keys():
-    tree[interval[0]].append(nextVal)
+  if interval[0] in tree.intervals.keys():
+    tree.intervals[interval[0]].append(nextVal)
   else:
-    tree[interval[0]] = [nextVal]
+    tree.intervals[interval[0]] = [nextVal]
   #While I don't think we'll have problems appending to lists in our dicts, I could be wrong; I use sort() just in case.
-  tree[interval[0]].sort()
+  tree.intervals[interval[0]].sort()
   #Print tree after rotation
-  print("", "New Ordered Tree:", tree)
+  print("", "New Ordered Tree:", tree.intervals)
   print("-----")
 
 #Test encompassingInterval
