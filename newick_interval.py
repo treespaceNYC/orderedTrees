@@ -1,7 +1,12 @@
 import re
 from collections import OrderedDict, defaultdict
 
-def stuff(newick):
+
+# s = "(((1,2),3),(4,(5,6)))"
+# s = "(((((1,2),3),4),5),6)"
+
+s = "(((((1,(2,3)),4),5),6),(7,(8,9)))"
+def newick2interval(newick):
     intervals = []
     commaCount = newick.count(",")
     while commaCount!=1:
@@ -21,7 +26,7 @@ def stuff(newick):
             # Add to interval then shrink string
             intervals.append([left,right])
             newick = newick[:groupPos[0]+1] + newick[commaPos+1:groupPos[1]-1] + newick[groupPos[1]:]
-        
+
         # Left sibling pair
         else:
             # Find position of "," to split string
@@ -48,8 +53,9 @@ def stuff(newick):
 
     # Add to interval then turn into dictionary
     intervals.append([left,right])
-    return intervals
-    # d = defaultdict(list)
-    # for k, v in intervals:
-    #     d[k].append(v)
-    # return OrderedDict(sorted(d.items()))#sort and return
+    d = defaultdict(list)
+    for k, v in intervals:
+        d[k].append(v)
+    return OrderedDict(sorted(d.items()))#sort and return
+
+print(newick2interval(s))
