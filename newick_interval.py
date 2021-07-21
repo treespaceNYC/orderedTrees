@@ -48,7 +48,8 @@ def stuff(newick):
 
     # Add to interval then turn into dictionary
     intervals.append([left,right])
-    d = defaultdict(list)
-    for k, v in intervals:
-        d[k].append(v)
-    return OrderedDict(sorted(d.items()))#sort and return
+    return intervals
+    # d = defaultdict(list)
+    # for k, v in intervals:
+    #     d[k].append(v)
+    # return OrderedDict(sorted(d.items()))#sort and return
