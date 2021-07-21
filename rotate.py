@@ -1,3 +1,4 @@
+from orderedTree import OrderedTree
 #Encompassing Interval method with test cases. Will be updated to work with orderedTree objects.
 
 #Test Cases:
@@ -16,7 +17,8 @@ intervalT3 = [3,4]
 tree4 = {1:[2,6,7,8],3:[4,6],5:[6]}
 intervalT4 = [5,6]
 #Encompassing Interval Method:
-def encompassingInterval(tree, interval):
+def encompassingInterval(orderedTree, interval):
+  tree = orderedTree.tree
   print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
   inVal = interval[1]
