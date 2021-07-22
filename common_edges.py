@@ -1,4 +1,5 @@
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
+
 #Need to include a way for python to know which constructor to use.
 
 class orderedTree:
@@ -21,7 +22,7 @@ class orderedTree:
                     self.intervals[k].append(v)
                     if(v > max):
                         max = v
-                    if(k > max):#will a key ever be a max?
+                    if(k > max):
                         max = k
                 self.leaves = max
 
@@ -37,3 +38,14 @@ class orderedTree:
         if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
+
+    def commonEdges(self, tree1):
+        lst = []
+        for key in tree1.intervals.keys():
+            if(key in self.intervals.keys()):
+                for i in tree1.intervals.get(key):
+                    for j in self.intervals.get(key):
+                        if(i == j):
+                            lst.append([key, i])
+                            break
+        return lst
