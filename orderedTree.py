@@ -31,11 +31,17 @@ class orderedTree:
                     max = v
             self.leaves = max
             self.max = max
+        elif(isinstance(n[0], str)):
+            self.intervals = newick2interval(n[0])
+            self.min = 1
+            lst = list(self.intervals.values())
+            self.max = lst[-1][0]
+            self.leaves = self.max
 
     def __str__(self):
         """ Allows for printing of dictionary and # of leaves """
         lst = list(zip(self.intervals.keys(), self.intervals.values()))
-        return(f"(Dictionary: {lst}\n# of leaves = {self.leaves}")
+        return(f"(Dictionary: {lst}\n# of leaves = {self.leaves}\n min = {self.min} \n max = {self.max}")
 
 
     def __eq__(self, tree):
@@ -43,6 +49,17 @@ class orderedTree:
         if(list(self.intervals.items()) == (list(tree.intervals.items()))):
             return True
         return False
+
+    def commonEdges(self, tree1):
+        lst = []
+        for key in tree1.intervals.keys():
+            if(key in self.intervals.keys()):
+                for i in tree1.intervals.get(key):
+                    for j in self.intervals.get(key):
+                        if(i == j):
+                            lst.append([key, i])
+                            break
+        return lst
 
 def interval2newick(interval):
     intervals = defaultdict(list)
@@ -83,7 +100,7 @@ def newick2interval(newick):
 
         # Right sibling pair
         if m.group()[0] == ",":
-            # Find position of "," to split string
+                # Find position of "," to split string
             commaPos = groupPos[0]+m.group().rindex(",")
 
             # Left number
