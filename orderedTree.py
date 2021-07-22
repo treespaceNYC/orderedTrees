@@ -4,6 +4,8 @@ import re
 
 class orderedTree:
     def __init__(self, *n):
+        if(len(n) == 0):
+            """ Default constructor that creates an empty tree """
             self.leaves = 0
             self.tree = defaultdict(list)
             self.min=0
@@ -29,7 +31,7 @@ class orderedTree:
                     max = v
             self.leaves = max
             self.max = max
-            
+
     def __str__(self):
         """ Allows for printing of dictionary and # of leaves """
         lst = list(zip(self.intervals.keys(), self.intervals.values()))
