@@ -7,7 +7,7 @@ class orderedTree:
         if(len(n) == 0):
             """ Default constructor that creates an empty tree """
             self.leaves = 0
-            self.tree = defaultdict(list)
+            self.intervals = defaultdict(list)
             self.min=0
             self.max=0
 
@@ -70,7 +70,6 @@ def interval2newick(interval):
     # Using number of values of each key
     # to find how nested it is
     for key, val in intervals.items():
-        intervals[key] = sorted(intervals[key])
         for i in val:
             minMax.setdefault(key,["(",0])
             #set key to all the min leaves, and then the values to the open paren since we use those b4 mins and then the counter for how many
@@ -146,7 +145,6 @@ def newick2interval(newick):
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
   tree = ordTree.intervals
-  print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
   inVal = interval[1]
 
@@ -154,15 +152,13 @@ def encompassingInterval(ordTree, interval):
 
   for value in tree[inKey]: #tree1.Intervals[inKey]: HERE
       if value > inVal:
-        return f"[{inKey}, {value}]"
+        return [inKey, value]
 
   for i in tree.keys():
     if i == inKey:
       break
     else:
       prevKey = i
-
-  print("",f"Encompassing Interval: [{prevKey}, {inVal}]")
   return [prevKey, inVal]
 
 
