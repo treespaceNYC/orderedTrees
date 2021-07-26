@@ -196,19 +196,31 @@ def rotateRight(tree, interval):
 
 
 def getTreeValences(tree):
+    """ Gets the valences of an orderedTree object and returns it as a list """
+    
+    # Create list to hold valences
     valences = [0]*(tree.max+1)
     for key,val in tree.intervals.items():
         for i in val:
+            # add left interval to valence[interval-1]
             valences[key-1]+=1
+            # add right interval to valence[interval]
             valences[i]+=1
+    
+    # remove interval [min,max]
     valences[0]-=1
     valences[tree.max]-=1
     return valences
 
 
 def getSummedValences(tree, tree1):
+    # Trees arent the same amount of leaves
     if tree.leaves != tree1.leaves:
         return None
+    
+    # get the valences of the two trees
     left = getTreeValences(tree)
     right = getTreeValences(tree1)
+    
+    # add the two lists
     return [ left[i]+right[i] for i in range(len(left)) ]
