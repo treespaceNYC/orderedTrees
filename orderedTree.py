@@ -32,6 +32,7 @@ class orderedTree:
             self.leaves = max
             self.max = max
         elif(isinstance(n[0], str)):
+            """ Creates a tree from newick string input """
             self.intervals = newick2interval(n[0])
             self.min = 1
             lst = list(self.intervals.values())
@@ -51,6 +52,7 @@ class orderedTree:
         return False
 
     def commonEdges(self, tree1):
+        """ finds common edges between two trees. ex: tree1.commonEdges(tree2) """
         lst = []
         for key in tree1.intervals.keys():
             if(key in self.intervals.keys()):
@@ -62,6 +64,7 @@ class orderedTree:
         return lst
 
 def interval2newick(interval):
+    """ Interval notation to newick notation """
     intervals = defaultdict(list)
     for k, v in interval:
         intervals[k].append(v)
@@ -91,6 +94,7 @@ def interval2newick(interval):
     return result[:-1]
 
 def newick2interval(newick):
+    """ Newick format to interval format converter """
     intervals = []
     commaCount = newick.count(",")
     while commaCount!=1:
