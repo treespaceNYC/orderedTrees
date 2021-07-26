@@ -192,3 +192,23 @@ def rotateRight(tree, interval):
   #Print tree after rotation
   print("", "New Ordered Tree:", tree.intervals)
   print("-----")
+
+
+
+def getTreeValences(tree):
+    valences = [0]*(tree.max+1)
+    for key,val in tree.intervals.items():
+        for i in val:
+            valences[key-1]+=1
+            valences[i]+=1
+    valences[0]-=1
+    valences[tree.max]-=1
+    return valences
+
+
+def getSummedValences(tree, tree1):
+    if tree.leaves != tree1.leaves:
+        return None
+    left = getTreeValences(tree)
+    right = getTreeValences(tree1)
+    return [ left[i]+right[i] for i in range(len(left)) ]
