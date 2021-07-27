@@ -2,7 +2,7 @@ import random
 import orderedTree
 
 def randomInterval(min, max=None):
-    '''Takes a min and max, returns intervals after splitting on random midpoint'''
+    """Takes a min and max, returns intervals after splitting on random midpoint"""
   Interval = []
   if max != None:
     Interval = [min, max]
@@ -25,7 +25,7 @@ def randomInterval(min, max=None):
       return Interval,interval2
 
 def randOrdered(n):
-    '''Given n leaves, returns a randomly generated orderedTree object'''
+    """Given n leaves, returns a randomly generated orderedTree object"""
   lst = [[1,n]]
   i = 0
   returnCondition = False
