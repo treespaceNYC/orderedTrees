@@ -54,7 +54,7 @@ tree_8.intervals = {1:[2,10],3:[4,10], 5:[6,7,8],9:[10]}
 tree_int8 = [3,4]
 
 tree_9 = orderedTree()
-tree_9.intervals = {1:[2,3,14], 4:[14], 5:[11,12,13,14], 6:[7], 8:[9], 10:[11]}
+tree_9.intervals = {1:[2,3,14], 4:[14], 5:[11,12,13,14], 6:[7], 8:[9,11], 10:[11]}
 tree_int9 = [5,14]
 
 
@@ -71,16 +71,17 @@ def encompassingInterval(ordTree, interval):
   
   for value in tree[inKey]: #tree1.Intervals[inKey]:
       if value > inVal:
-        print(f"Encompassing Interval: [{inKey}, {value}]")
-        return f"[{inKey}, {value}]"
+        return [inKey, value]
 
-  for i in tree.keys(): #
+  for i in tree.keys(): 
     if i == inKey:
       break
     else:
       for elem in tree[i]:
         if elem == inVal:
           prevKey = i
+  
+  return [prevKey, inVal]
 
 
 #Rotate Right Method: (IN PROGRESS i.e. the current method only works under 'ideal' scenarios; the method works when a rotation is possible)
@@ -116,20 +117,20 @@ def rotateRight(tree, interval):
   print("-----")
 
 #Test encompassingInterval
-encompassingInterval(tree, interval2)
-encompassingInterval(tree2, intervalT2)
-encompassingInterval(tree3, intervalT3)
-encompassingInterval(tree4, intervalT4)
+print(encompassingInterval(tree, interval2))
+print(encompassingInterval(tree2, intervalT2))
+print(encompassingInterval(tree3, intervalT3))
+print(encompassingInterval(tree4, intervalT4))
 
-encompassingInterval(tree_1, tree_int1)
-encompassingInterval(tree_2, tree_int2)
-encompassingInterval(tree_3, tree_int3)
-encompassingInterval(tree_4, tree_int4)
-encompassingInterval(tree_5, tree_int5)
-encompassingInterval(tree_6,tree_int6)
-encompassingInterval(tree_7,tree_int7)
-encompassingInterval(tree_8,tree_int8)
-encompassingInterval(tree_9, tree_int9)
+print(encompassingInterval(tree_1, tree_int1))
+print(encompassingInterval(tree_2, tree_int2))
+print(encompassingInterval(tree_3, tree_int3))
+print(encompassingInterval(tree_4, tree_int4))
+print(encompassingInterval(tree_5, tree_int5))
+print(encompassingInterval(tree_6,tree_int6))
+print(encompassingInterval(tree_7,tree_int7))
+print(encompassingInterval(tree_8,tree_int8))
+print(encompassingInterval(tree_9, tree_int9))
 
 #Test rotatingRight
 rotateRight(tree, interval2)
