@@ -22,6 +22,7 @@ tree4.intervals = {1:[2,6,7,8],3:[4,6],5:[6]}
 intervalT4 = [5,6]
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
+  """ Given an orderedTree object and an interval, return the smallest interval encasing input interval. """
   tree = ordTree.intervals
   print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
@@ -43,8 +44,9 @@ def encompassingInterval(ordTree, interval):
   return [prevKey, inVal]
 
 
-#Rotate Right Method: (IN PROGRESS)
+#Rotate Right Method: (IN PROGRESS i.e. the current method only works under 'ideal' scenarios; the method works when a rotation is possible)
 def rotateRight(tree, interval):
+  """ Given a tree and interval, rotate interval to a right subtree if possible. """
   #Call encompassingInterval
   #Print tree dict, and interval list
   #Dict for TESTING purposes, CHANGE to orderedTree object BEFORE pr
