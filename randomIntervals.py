@@ -1,5 +1,5 @@
 import random
-import orderedTree
+import orderedTree import orderedTree
 
 def randomInterval(min, max=None):
     """Takes a min and max, returns intervals after splitting on random midpoint"""
