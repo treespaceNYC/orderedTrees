@@ -13,9 +13,12 @@ class orderedTree:
 
         elif(isinstance(n[0], int)):
             """ Takes an Int and creates a dictionary with intervals[1, 2]...[1, n] """
+
             self.intervals = defaultdict(list)
             self.leaves = n[0]
             self.min=1
+            if(n[0] <= 1):
+                self.min = n[0]
             self.max=n[0]
             for i in range(2,n[0]+1):
                 self.intervals[1].append(i)
