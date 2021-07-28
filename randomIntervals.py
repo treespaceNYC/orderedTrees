@@ -36,4 +36,7 @@ def randOrdered(n):
             lst.append(subIntervals[1])
         i+=1
     oTree = orderedTree(lst)
+    oTree
     return oTree
+
+print(randInterval([1,3]))
