@@ -1,5 +1,10 @@
 from collections import OrderedDict, defaultdict
 import re
+from shapely.geometry import Polygon
+from shapely.geometry import LineString
+import math
+import random
+import matplotlib.pyplot as plt
 #Need to include a way for python to know which constructor to use.
 
 class orderedTree:
@@ -92,6 +97,93 @@ class orderedTree:
 
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
+
+    def drawPolygon(tree, **kwargs):
+        """ Draws Triangulated Polygon from orderedTree object """
+        # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness
+        r = lambda: random.randint(0,255)
+        rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        #default values
+        innerColor=rand_color
+        outerColor=rand_color
+        innerStyle= '-'
+        outerStyle= '-'
+        innerThickness= 2
+        outerThickness= 2
+        placement=0
+        #kwargs
+        if 'placement' in kwargs:
+            placement=kwargs['placement']
+        plt.rcParams["figure.figsize"] = [placement*12+5,5] #the dimensions of plot
+        if 'color' in kwargs:
+            innerColor=kwargs['color']
+            outerColor=kwargs['color']
+        if 'thickness' in kwargs:
+            innerThickness=kwargs['thickness']
+            outerThickness=kwargs['thickness']
+        if 'style' in kwargs:
+            innerStyle=kwargs['style']
+            outerStyle=kwargs['style']
+        if 'innerColor' in kwargs:
+            innerColor=kwargs['innerColor']
+        if 'outerColor' in kwargs:
+            outerColor=kwargs['outerColor']
+        if 'innerStyle' in kwargs:
+            innerStyle=kwargs['innerStyle']
+        if 'outerStyle' in kwargs:
+            outerStyle=kwargs['outerStyle']
+        if 'innerThickness' in kwargs:
+            innerThickness=kwargs['innerThickness']
+        if 'outerThickness' in kwargs:
+            outerThickness=kwargs['outerThickness']
+        #if innerColor but no outerColor
+        if 'innerColor' in kwargs and 'outerColor' not in kwargs:
+            outerColor=kwargs['innerColor']
+        #if outerColor but no innerColor
+        if 'outerColor' in kwargs and 'innerColor' not in kwargs:
+            innerColor=kwargs['outerColor']
+        n=tree.leaves
+        sides=tree.leaves+1
+        r=3    #radius size of shape
+        angle=(2*math.pi)/(sides)
+        vertices=[]
+        start=math.ceil(sides/2)
+        offset=placement*7-7 #changes the X value of the points
+        # get points for vertices of polygon
+        for i in range(start,sides):
+            if sides%2==0:
+                x = r * math.sin(i * angle+math.pi/sides) +offset
+                y = -(r * math.cos(i * angle+math.pi/sides)) #negate y value to flip the polygon
+                vertices.append((x,y))
+            else:
+                x = r * math.sin(i * angle) +offset
+                y = -(r * math.cos(i * angle)) #negate y value to flip the polygon
+                vertices.append((x,y))
+        for i in range(0,start):
+            if sides%2==0:
+                x = r * math.sin(i * angle+math.pi/sides)+offset
+                y = -(r * math.cos(i * angle+math.pi/sides)) #negate y value to flip the polygon
+                vertices.append((x,y))
+            else:
+                x = r * math.sin(i * angle)+offset
+                y = -(r * math.cos(i * angle)) #negate y value to flip the polygon
+                vertices.append((x,y))
+        #draw the internal edges
+        intervals = tree.intervals
+        for key, val in intervals.items():
+            for i in val:
+                if (key==1 and i==n):
+                    #make the top edge (the min,max interval) thicker
+                    topEdge = LineString([vertices[0], vertices[-1]])
+                    plt.plot(*topEdge.xy,color=outerColor,linewidth=5)
+                else:
+                    line = LineString([vertices[key-1], vertices[i]])
+                    plt.plot(*line.xy,color=innerColor, linestyle=innerStyle, linewidth=innerThickness)
+        #create polygon using the vertices found above
+        polygon1 = Polygon(vertices)
+        #plot polygon
+        x, y = polygon1.exterior.xy
+        plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
 
 def interval2newick(interval):
     """ Interval notation to newick notation """
