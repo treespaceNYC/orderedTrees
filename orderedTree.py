@@ -87,6 +87,7 @@ class orderedTree:
         valences[self.max]-=1
         return valences
     def getSummedValences(self, tree):
+        """ Takes two trees and return the a list of the summedvalences """
         # Trees arent the same amount of leaves
         if tree.leaves != self.leaves:
             return None
