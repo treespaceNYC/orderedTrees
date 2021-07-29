@@ -1,42 +1,62 @@
 import random
 from orderedTree import orderedTree
 
+# Parameters can be either two ints or just one list
 def randInterval(min, max=None):
-    """Takes a min and max, returns intervals after splitting on random midpoint"""
+    """ Takes a min and max, returns intervals after splitting on random midpoint """
     interval = []
-    if max != None:
-        interval = [min, max]
-    else:
-        interval = min
-        min = interval[0]
-        max = interval[1]
-    if (min+1>=max):
+
+    # If input is (list,None)
+    if max == None:
+        max = min[1]
+        min = min[0]
+
+    # If impossible to make sub-interval ex: [1,2]
+    if (min + 1 >= max):
         return None
+
+    # Ex: [1,3] 2 is mid, choose [1,2] or [2,3]
     if(min +2 == max):
         return random.choice([[[min,min+1]],[[min+1,max]]])
-    mid = random.randrange(min+1, max-1)
+
+    # Choose random midpoint
+    mid = random.randrange(min+1, max)
+
+    # If mid is 1 away from max, choose one possibility 
+    if mid+1==max:
+        return random.choice( ([[min,mid]] , [[min,mid-1],[mid,max]]) )
+
+    # Return two split sub-intervals
     interval = [min,mid]
     interval2 = [mid+1,max]
     return [interval,interval2]
 
 def randOrdered(n):
-    """Given n leaves, returns a randomly generated orderedTree object"""
-    if(n<=1):
+    """ Given n leaves, returns a randomly generated orderedTree object """
+    # Edge cases with impossible intervals
+    if n<=1:
         return orderedTree()
+
     lst = [[1,n]]
     i = 0
+
+    # Loop until all intervals are made
     while i != n-1:
-        subIntervals = randInterval(lst[i])
+        subIntervals = randInterval(lst[i]) # Create random intervals
+        # Do nothing if interval is [x,x+1] ex: [1,2]
         if subIntervals == None:
             pass
+        # Append 1 random interval to lst
         elif len(subIntervals) == 1:
             lst.append(subIntervals[0])
+        # Append both random intervals to lst
         else:
             lst.append(subIntervals[0])
             lst.append(subIntervals[1])
+        
+        # Move lst iterator by 1
         i+=1
-    oTree = orderedTree(lst)
-    oTree
-    return oTree
 
-print(randInterval([1,3]))
+    # Create new tree from random list
+    oTree = orderedTree(sorted(lst))
+    return oTree
