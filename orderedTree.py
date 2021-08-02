@@ -337,6 +337,7 @@ def newick2interval(newick):
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
+  """ Given an orderedTree object and an interval, return the smallest interval encasing input interval. """
   tree = ordTree.intervals
   inKey = interval[0]
   inVal = interval[1]
@@ -356,6 +357,7 @@ def encompassingInterval(ordTree, interval):
 
 
 def rotateRight(tree, interval):
+    """ Given a tree and interval, rotate interval to a right subtree if possible. """
     #if interval max is not a value in key (it is a min so can't rotate right)
     if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
         return None
