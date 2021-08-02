@@ -199,7 +199,7 @@ def removeSiblings(tree, tree1):#non member
     """ Compares two trees and returns a list of two trees with their common sibling pairs removed """
     # ========= Get valences ========= #
     valences = tree.getSummedValences(tree1)
-    
+
     # Check if trees are not the same size
     if not valences:
         return None
@@ -212,7 +212,7 @@ def removeSiblings(tree, tree1):#non member
     for i in range(len(valences)-1):
         if valences[i] == 0:
             pos.append(i+1)
-    
+
     # ========= Cleanup ========= #
     if len(pos)==0:
         return None
@@ -229,7 +229,7 @@ def removeSiblings(tree, tree1):#non member
     for i in pos:
         selfIntervals.remove([i-1,i])
         treeIntervals.remove([i-1,i])
-    
+
     if pos[-1] == tree.max:
         pos = pos[:-1]
 
@@ -249,9 +249,9 @@ def removeSiblings(tree, tree1):#non member
                 treeIntervals[j][0]-=1
             if treeIntervals[j][1]>=pos[i-1]:
                 treeIntervals[j][1]-=1
-    
+
     return [orderedTree(selfIntervals), orderedTree(treeIntervals)]
-        
+
 def interval2newick(interval):
     """ Interval notation to newick notation """
     intervals = defaultdict(list)
@@ -355,33 +355,46 @@ def encompassingInterval(ordTree, interval):
   return [prevKey, inVal]
 
 
-#Rotate Right Method: (IN PROGRESS)
 def rotateRight(tree, interval):
-  #Call encompassingInterval
-  #Print tree dict, and interval list
-  #Dict for TESTING purposes, CHANGE to orderedTree object BEFORE pr
-  print("-----")
-  print("", "rotateRight method starts here: ")
-  encInterval = encompassingInterval(tree, interval)
-  encKey = encInterval[0] #min of encompassing interval
-  encVal = encInterval[1] #min of encompassing interval
-  #JOYCE CODE HERE
-
-  nextVal = encVal  #max of nearest 'right' subtree to encompassing interval; initiated at encomp interval max for now
-  #this for loop will set nextVal to max of nearest 'right' subtree to encompassing interval
-  for i in tree.intervals[encKey]:
-    if i > encVal:
-      nextVal = i
-      break
-
-  tree.intervals[encKey].remove(interval[1])  #encompassing interval won't exist after a rotation; deleted here
-  #this if statement assures we are creating a new encompassing interval for our new tree after a right rotation
-  if interval[0] in tree.intervals.keys():
-    tree.intervals[interval[0]].append(nextVal)
-  else:
-    tree.intervals[interval[0]] = [nextVal]
-  #While I don't think we'll have problems appending to lists in our dicts, I could be wrong; I use sort() just in case.
-  tree.intervals[interval[0]].sort()
-  #Print tree after rotation
-  print("", "New Ordered Tree:", tree.intervals)
-  print("-----")
+    #if interval max is not a value in key (it is a min so can't rotate right)
+    if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
+        return None
+    lonepair = True
+    #check if interval max is a lone pair or not
+    for key in tree.intervals.keys():##fix to break out of double forloop
+        for val in tree.intervals[key]:#check to see if pair is a lone pair, a pair that consists of the max being attached straight to 1, or the absolute min
+            if val == interval[1]:#loop through, find the value and check if it is in the key of 1 or the absolute min
+                if(key != interval[0]):
+                    lonepair = False##lonepair is false if value does not exist in key of absolute min
+                    break
+    encomp = encompassingInterval(tree, interval)#get encompassing interval
+    #if lonepair is TRUE
+    if(interval[0]+1 == interval[1] or lonepair):#if its a sibling pair, or lonepair
+        if(encomp[1] == interval[1]):#make sure if can't rotate
+            return None
+        #if interval is lone pair
+        if(encomp[0] == interval[0]):#if original interval and encompassing interval share a min
+            tree.intervals[interval[0]].remove(interval[1])#remove the max from the key
+            if(not tree.intervals[interval[0]]):#if the key is now empty not sure if this is necessary
+                del tree.intervals[intervals[0]]#delete the key
+            tree.intervals.setdefault(interval[1],[encomp[1]])#create a new key with the given interval max and set its value to the encompassing max
+            tree.intervals = OrderedDict(sorted(tree.intervals.items()))#sort
+        return tree
+    #if lonepair is FALSE
+    if(interval[0] == encomp[0]):#if min of given interval is the same as min of encompassing, you cannot rotate right
+        return None
+    elif(interval[1] == tree.max):#if the max of interval is the largest leaf
+        return None
+    elif(interval[0] == tree.min):#if the min of the interval is the smallest leaf
+        return None
+    elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
+        return None
+    tree.intervals[encomp[0]].remove(encomp[1])#remove the encompassing interval
+    if(not (tree.intervals[encomp[0]])):#if its empty, delete the key, not sure if needed
+        del tree.intervals[encomp[0]]
+    #loop through key of encompassing intervals
+    for val in tree.intervals[encomp[0]]:
+        if val > interval[1]:
+            tree.intervals[interval[0]].append(val)
+            return tree
+    return None
