@@ -186,6 +186,72 @@ class orderedTree:
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
 
+def dictToInt(my_dict):
+    """ Returns a list of intervals after converting from dictionary format """
+    lst = []
+    for key,item in my_dict.items():
+        for i in item:
+            lst.append([key,i])
+
+    return lst
+
+def removeSiblings(tree, tree1):#non member
+    """ Compares two trees and returns a list of two trees with their common sibling pairs removed """
+    # ========= Get valences ========= #
+    valences = tree.getSummedValences(tree1)
+    
+    # Check if trees are not the same size
+    if not valences:
+        return None
+    # Check if only sibling pairs in tree
+    if [0]*len(valences)==valences:
+        return [orderedTree(), orderedTree()]
+
+    # Get all pairs to remove
+    pos = []
+    for i in range(len(valences)-1):
+        if valences[i] == 0:
+            pos.append(i+1)
+    
+    # ========= Cleanup ========= #
+    if len(pos)==0:
+        return None
+
+    # Edge Case
+    if pos[-1] == tree.max+1:
+        pos[-1] = tree.max
+
+    # ========= Delete ========= #
+    selfIntervals = dictToInt(tree.intervals)
+    treeIntervals = dictToInt(tree1.intervals)
+
+    # Loop through pairs and remove them from intervals
+    for i in pos:
+        selfIntervals.remove([i-1,i])
+        treeIntervals.remove([i-1,i])
+    
+    if pos[-1] == tree.max:
+        pos = pos[:-1]
+
+    # ========= Shift ========= #
+
+    # Loop through each interval
+    # If greater than removed pair, shift num down 1
+    for j in range(len(selfIntervals)):
+        for i in range(len(pos),0,-1):
+            if selfIntervals[j][0]>=pos[i-1]:
+                selfIntervals[j][0]-=1
+            if selfIntervals[j][1]>=pos[i-1]:
+                selfIntervals[j][1]-=1
+
+
+            if treeIntervals[j][0]>=pos[i-1]:
+                treeIntervals[j][0]-=1
+            if treeIntervals[j][1]>=pos[i-1]:
+                treeIntervals[j][1]-=1
+    
+    return [orderedTree(selfIntervals), orderedTree(treeIntervals)]
+        
 def interval2newick(interval):
     """ Interval notation to newick notation """
     intervals = defaultdict(list)
