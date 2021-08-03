@@ -362,6 +362,7 @@ def rotateRight(tree, interval):
     if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
         return None
     lonepair = True
+
     #check if interval max is a lone pair or not
     for key in tree.intervals.keys():##fix to break out of double forloop
         for val in tree.intervals[key]:#check to see if pair is a lone pair, a pair that consists of the max being attached straight to 1, or the absolute min
@@ -369,9 +370,11 @@ def rotateRight(tree, interval):
                 if(key != interval[0]):
                     lonepair = False##lonepair is false if value does not exist in key of absolute min
                     break
+
     encomp = encompassingInterval(tree, interval)#get encompassing interval
+
     #if lonepair is TRUE
-    if(interval[0]+1 == interval[1] or lonepair):#if its a sibling pair, or lonepair
+    if(lonepair):#if its a sibling pair, or lonepair
         if(encomp[1] == interval[1]):#make sure if can't rotate
             return None
         #if interval is lone pair
@@ -382,6 +385,7 @@ def rotateRight(tree, interval):
             tree.intervals.setdefault(interval[1],[encomp[1]])#create a new key with the given interval max and set its value to the encompassing max
             tree.intervals = OrderedDict(sorted(tree.intervals.items()))#sort
         return tree
+
     #if lonepair is FALSE
     if(interval[0] == encomp[0]):#if min of given interval is the same as min of encompassing, you cannot rotate right
         return None
@@ -398,7 +402,9 @@ def rotateRight(tree, interval):
     for val in tree.intervals[encomp[0]]:
         if val > interval[1]:
             tree.intervals[interval[0]].append(val)
+            tree.intervals[interval[0]] = sorted(tree.intervals[interval[0]])
             return tree
+
     return None
 
 def rotateLeft(tree, interval):
