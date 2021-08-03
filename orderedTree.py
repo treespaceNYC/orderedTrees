@@ -400,3 +400,50 @@ def rotateRight(tree, interval):
             tree.intervals[interval[0]].append(val)
             return tree
     return None
+
+def rotateLeft(tree, interval):
+    """ Given a tree and interval, rotate interval to a left subtree if possible. """
+    #if interval max is not a value in key (it is a min so can't rotate right)
+    if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
+        return None
+
+    lonepair = False
+
+    #check if interval max is a lone pair or not
+    if len(tree.intervals[interval[0]]) == 1:
+        lonepair = True
+
+    encomp = encompassingInterval(tree, interval)#get encompassing interval
+
+    #if lonepair is TRUE
+    if(lonepair):
+        if(encomp[0] == interval[0]):#make sure if can't rotate
+            return None
+        #if interval is lone pair , rotate left
+        if(encomp[1] == interval[1]):#if original interval and encompassing interval share a min
+            del tree.intervals[interval[0]]#delete the key
+            tree.intervals[encomp[0]].append(interval[0])
+            tree.intervals[encomp[0]] = sorted(tree.intervals[encomp[0]])#sort
+        return tree
+
+    #if lonepair is FALSE
+    if(interval[1] == encomp[1]):#if min of given interval is the same as min of encompassing, you cannot rotate right
+        return None
+    elif(interval[1] == tree.max):#if the max of interval is the largest leaf
+        return None
+    elif(interval[0] == tree.min):#if the min of the interval is the smallest leaf
+        return None
+    elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
+        return None
+
+    tree.intervals[interval[0]].remove(encomp[1])#remove the encompassing interval
+    lst = list(tree.intervals.keys())
+
+    for i in range(len(lst)-1, -1, -1):
+        if lst[i] < interval[0]:
+            tree.intervals[lst[i]].append(interval[1])
+            tree.intervals[lst[i]] = sorted(tree.intervals[lst[i]])
+
+            return tree
+
+    return None
