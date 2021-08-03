@@ -186,6 +186,67 @@ class orderedTree:
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
 
+    def drawTree(tree, **kwargs):
+        """ Draws a tree from an orderedTree object """
+        # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
+        # create random default color for tree
+        r = lambda: random.randint(0,255)
+        rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        #default values
+        color=rand_color
+        style='-'
+        placement=0
+        vNums=0
+        scaled=0
+        scale=1
+        #kwargs
+        if 'vNums' in kwargs:
+            vNums=kwargs['vNums']
+        if 'placement' in kwargs:
+            placement=kwargs['placement']
+        plt.rcParams["figure.figsize"] = [placement*14+11,5]
+        if 'color' in kwargs:
+            color=kwargs['color']
+        if 'style' in kwargs:
+            style=kwargs['style']
+        if 'scaled' in kwargs:
+            scaled=kwargs['scaled']
+        n=tree.leaves
+        intervals = tree.intervals
+        # sets placement depending on scaled or not
+        if scaled==1:
+            scale=4/(n-1)
+            placement = placement* (n*scale)*1.5+0.5
+        else:
+            placement=placement*7
+        # get points for vertices of triangle
+        for key,val in intervals.items():
+            for i in val:
+                vertices=[]
+                #left coordinate
+                x0=(key*scale)+ placement
+                y0=0
+                vertices.append((x0,y0))
+                #right coordinate
+                x1=(i*scale)+ placement
+                y1=0
+                base=x1-x0
+                vertices.append((x1,y1))
+                #top coordinate
+                x2= (base/2)+ x0
+                dist = math.sqrt( (x1 - x0)**2 + (y1 - y0)**2 )
+                y2=math.sqrt((dist*dist)-((base*base)/4))
+                vertices.append((x2,y2))
+                #plot left & right side of triangle
+                leftLine = LineString([vertices[0], vertices[2]])
+                plt.plot(*leftLine.xy, color=color, linestyle=style)
+                rightLine = LineString([vertices[1], vertices[2]])
+                plt.plot(*rightLine.xy, color=color, linestyle=style)
+                #if visible numbers is requested
+                if vNums==1:
+                    plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
+                    plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
+
 def dictToInt(my_dict):
     """ Returns a list of intervals after converting from dictionary format """
     lst = []
