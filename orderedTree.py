@@ -445,11 +445,10 @@ def rotateLeft(tree, interval):
     tree.intervals[interval[0]].remove(encomp[1])#remove the encompassing interval
     lst = list(tree.intervals.keys())
 
-    for i in range(len(lst)-1, -1, -1):
+    for i in range(len(lst)-1, -1, -1):#find the next smallest key behind interval[0] to attach
         if lst[i] < interval[0]:
             tree.intervals[lst[i]].append(interval[1])
             tree.intervals[lst[i]] = sorted(tree.intervals[lst[i]])
-
             return tree
 
     return None
