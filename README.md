@@ -44,6 +44,12 @@ It's also possible to create both random intervals and random OrderedTree object
 <img src="https://i.imgur.com/lF7d3Hy.png">
 
 ### Rotating Trees
+In order to rotate intervals in a tree, the user has the option of `rotateRight(tree,interval)` and `rotateLeft(tree,interval)`
+- `rotateRight(tree,interval)` will try to rotate the interval right. If successful then it will return the new OrderedTree, otherwise it will return `None`.
+  ```
+  tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
+  newTree = rotateRight(tree, [3,6])
+  ```
 
 ### Drawing Trees
 
