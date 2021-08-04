@@ -7,7 +7,7 @@ import random
 import matplotlib.pyplot as plt
 #Need to include a way for python to know which constructor to use.
 
-class orderedTree:
+class OrderedTree:
     def __init__(self, *n):
         if(len(n) == 0):
             """ Default constructor that creates an empty tree """
@@ -71,7 +71,7 @@ class orderedTree:
         return lst
 
     def getValences(self):
-        """ Gets the valences of an orderedTree object and returns it as a list """
+        """ Gets the valences of an OrderedTree object and returns it as a list """
 
         # Create list to hold valences
         valences = [0]*(self.max+1)
@@ -100,7 +100,7 @@ class orderedTree:
         return [ left[i]+right[i] for i in range(len(left)) ]
 
     def drawPolygon(tree, **kwargs):
-        """ Draws Triangulated Polygon from orderedTree object """
+        """ Draws Triangulated Polygon from OrderedTree object """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
@@ -187,7 +187,7 @@ class orderedTree:
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
 
     def drawTree(tree, **kwargs):
-        """ Draws a tree from an orderedTree object """
+        """ Draws a tree from an OrderedTree object """
         # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
         # create random default color for tree
         r = lambda: random.randint(0,255)
@@ -300,7 +300,7 @@ class orderedTree:
         tree2[j][0]-=numShift
         tree2[j][1]-=numShift
 
-      return [ [orderedTree(selfIntervals),orderedTree(tree1)], [orderedTree(treeIntervals),orderedTree(tree2)] ]
+      return [ [OrderedTree(selfIntervals),OrderedTree(tree1)], [OrderedTree(treeIntervals),OrderedTree(tree2)] ]
 
                     
                     
@@ -373,7 +373,7 @@ def removeSiblings(tree, tree1):#non member
         return None
     # Check if only sibling pairs in tree
     if [0]*len(valences)==valences:
-        return [orderedTree(), orderedTree()]
+        return [OrderedTree(), OrderedTree()]
 
     # Get all pairs to remove
     pos = []
@@ -418,7 +418,7 @@ def removeSiblings(tree, tree1):#non member
             if treeIntervals[j][1]>=pos[i-1]:
                 treeIntervals[j][1]-=1
 
-    return [orderedTree(selfIntervals), orderedTree(treeIntervals)]
+    return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
 def interval2newick(interval):
     """ Interval notation to newick notation """
@@ -505,7 +505,7 @@ def newick2interval(newick):
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  """ Given an orderedTree object and an interval, return the smallest interval encasing input interval. """
+  """ Given an OrderedTree object and an interval, return the smallest interval encasing input interval. """
   tree = ordTree.intervals
   inKey = interval[0]
   inVal = interval[1]
