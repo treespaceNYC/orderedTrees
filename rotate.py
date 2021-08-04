@@ -1,66 +1,66 @@
-from orderedTree import orderedTree
-#Encompassing Interval method with test cases. Will be updated to work with orderedTree objects.
+from OrderedTree import OrderedTree
+#Encompassing Interval method with test cases. Will be updated to work with OrderedTree objects.
 
 #Test Cases:
 interval = [1, 2]
 interval2 = [3, 4]
 
-tree = orderedTree()
+tree = OrderedTree()
 tree.intervals = {1:[2,4,5,6], 3:[4]}
 
 #Tree with nested subtrees case:
-tree2 = orderedTree()
+tree2 = OrderedTree()
 tree2.intervals = {1:[2,5,6,7],3:[5], 4:[5]}
 intervalT2 = [3,5]
 
-tree3 = orderedTree()
+tree3 = OrderedTree()
 tree3.intervals = {1:[2,5,6,7],3:[4,5]}
 intervalT3 = [3,4]
 
-tree4 = orderedTree()
+tree4 = OrderedTree()
 tree4.intervals = {1:[2,6,7,8],3:[4,6],5:[6]}
 intervalT4 = [5,6]
 
-tree_1 = orderedTree()
+tree_1 = OrderedTree()
 tree_1.intervals = {1:[2,3,4,5]}
 tree_int1 = [1,2]
 
-tree_2 = orderedTree()
+tree_2 = OrderedTree()
 tree_2.intervals = {1:[2,4,5,6],3:[4]}
 tree_int2 = [3,4]
 
-tree_3 = orderedTree()
+tree_3 = OrderedTree()
 tree_3.intervals = {1:[2,5,6,7],3:[5], 4:[5]}
 tree_int3 = [4,5]
 
-tree_4 = orderedTree()
+tree_4 = OrderedTree()
 tree_4.intervals = {1:[2,5,6,7],3:[4,5]}
 tree_int4 = [3,4]
 
-tree_5 = orderedTree()
+tree_5 = OrderedTree()
 tree_5.intervals = {1:[2,5,7],3:[4,5],6:[7]}
 tree_int5 = [6,7]
 
-tree_6 = orderedTree()
+tree_6 = OrderedTree()
 tree_6.intervals = {1:[2,5,6],3:[4,5,6], 7:[8]}
 tree_int6 = [3,4]
 
-tree_7 = orderedTree()
+tree_7 = OrderedTree()
 tree_7.intervals = {1:[2,6,8],3:[4,6],5:[6], 7:[8]}
 tree_int7 = [3,4]
 
-tree_8 = orderedTree()
+tree_8 = OrderedTree()
 tree_8.intervals = {1:[2,10],3:[4,10], 5:[6,7,8],9:[10]}
 tree_int8 = [3,4]
 
-tree_9 = orderedTree()
+tree_9 = OrderedTree()
 tree_9.intervals = {1:[2,3,14], 4:[14], 5:[11,12,13,14], 6:[7], 8:[9,11], 10:[11]}
 tree_int9 = [5,14]
 
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  """ Given an orderedTree object and an interval, return the smallest interval encasing input interval. """
+  """ Given an OrderedTree object and an interval, return the smallest interval encasing input interval. """
   tree = ordTree.intervals
   print('\n Interval: ', interval, '\n Ordered Tree: ', tree)
   inKey = interval[0]
