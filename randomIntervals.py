@@ -1,5 +1,5 @@
 import random
-from orderedTree import orderedTree
+from OrderedTree import OrderedTree
 
 # Parameters can be either two ints or just one list
 def randInterval(min, max=None):
@@ -32,10 +32,10 @@ def randInterval(min, max=None):
     return [interval,interval2]
 
 def randOrdered(n):
-    """ Given n leaves, returns a randomly generated orderedTree object """
+    """ Given n leaves, returns a randomly generated OrderedTree object """
     # Edge cases with impossible intervals
     if n<=1:
-        return orderedTree()
+        return OrderedTree()
 
     lst = [[1,n]]
     i = 0
@@ -58,5 +58,5 @@ def randOrdered(n):
         i+=1
 
     # Create new tree from random list
-    oTree = orderedTree(sorted(lst))
+    oTree = OrderedTree(sorted(lst))
     return oTree

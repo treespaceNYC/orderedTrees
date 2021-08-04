@@ -7,7 +7,7 @@ import random
 import matplotlib.pyplot as plt
 #Need to include a way for python to know which constructor to use.
 
-class orderedTree:
+class OrderedTree:
     def __init__(self, *n):
         if(len(n) == 0):
             """ Default constructor that creates an empty tree """
@@ -71,7 +71,7 @@ class orderedTree:
         return lst
 
     def getValences(self):
-        """ Gets the valences of an orderedTree object and returns it as a list """
+        """ Gets the valences of an OrderedTree object and returns it as a list """
 
         # Create list to hold valences
         valences = [0]*(self.max+1)
@@ -100,7 +100,7 @@ class orderedTree:
         return [ left[i]+right[i] for i in range(len(left)) ]
 
     def drawPolygon(tree, **kwargs):
-        """ Draws Triangulated Polygon from orderedTree object """
+        """ Draws Triangulated Polygon from OrderedTree object """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
@@ -186,6 +186,174 @@ class orderedTree:
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
 
+    def drawTree(tree, **kwargs):
+        """ Draws a tree from an OrderedTree object """
+        # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
+        # create random default color for tree
+        r = lambda: random.randint(0,255)
+        rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        #default values
+        color=rand_color
+        style='-'
+        placement=0
+        vNums=0
+        scaled=0
+        scale=1
+        #kwargs
+        if 'vNums' in kwargs:
+            vNums=kwargs['vNums']
+        if 'placement' in kwargs:
+            placement=kwargs['placement']
+        plt.rcParams["figure.figsize"] = [placement*14+11,5]
+        if 'color' in kwargs:
+            color=kwargs['color']
+        if 'style' in kwargs:
+            style=kwargs['style']
+        if 'scaled' in kwargs:
+            scaled=kwargs['scaled']
+        n=tree.leaves
+        intervals = tree.intervals
+        # sets placement depending on scaled or not
+        if scaled==1:
+            scale=4/(n-1)
+            placement = placement* (n*scale)*1.5+0.5
+        else:
+            placement=placement*7
+        # get points for vertices of triangle
+        for key,val in intervals.items():
+            for i in val:
+                vertices=[]
+                #left coordinate
+                x0=(key*scale)+ placement
+                y0=0
+                vertices.append((x0,y0))
+                #right coordinate
+                x1=(i*scale)+ placement
+                y1=0
+                base=x1-x0
+                vertices.append((x1,y1))
+                #top coordinate
+                x2= (base/2)+ x0
+                dist = math.sqrt( (x1 - x0)**2 + (y1 - y0)**2 )
+                y2=math.sqrt((dist*dist)-((base*base)/4))
+                vertices.append((x2,y2))
+                #plot left & right side of triangle
+                leftLine = LineString([vertices[0], vertices[2]])
+                plt.plot(*leftLine.xy, color=color, linestyle=style)
+                rightLine = LineString([vertices[1], vertices[2]])
+                plt.plot(*rightLine.xy, color=color, linestyle=style)
+                #if visible numbers is requested
+                if vNums==1:
+                    plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
+                    plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
+    def removeCommon(self,tree):
+      """ Create two pairs of trees after separating common edges """
+      interval = self.commonEdges(tree)
+      if len(interval)==0:
+        return None
+
+      # Get first common edge
+      interval = interval[0]
+
+      tree1 = []
+      tree2 = []
+      selfIntervals = dictToInt(self.intervals)
+      treeIntervals = dictToInt(tree.intervals)
+
+      nums = [i for i in range(interval[0],interval[1]+1) if i != 1]
+
+      # Delete
+      for i in nums:
+        for j in range(len(selfIntervals)):
+          if i in selfIntervals[j] and selfIntervals[j] not in tree1:
+            tree1.append(selfIntervals[j])
+        for j in range(len(treeIntervals)):
+          if i in treeIntervals[j] and treeIntervals[j] not in tree2:
+            tree2.append(treeIntervals[j])
+      
+
+      for i in range(len(tree1)):
+        selfIntervals.remove(tree1[i])
+        # print(i,treeIntervals,"hi",tree2)
+        treeIntervals.remove(tree2[i])
+
+      # shift
+      # shifting by the number of leaves we removed
+      numShift = len(nums)
+      for j in range(len(selfIntervals)):
+        if selfIntervals[j][0]>=interval[1]:
+          selfIntervals[j][0]-=numShift
+        if selfIntervals[j][1]>=interval[1]:
+          selfIntervals[j][1]-=numShift
+
+
+        if treeIntervals[j][0]>=interval[1]:
+          treeIntervals[j][0]-=numShift
+        if treeIntervals[j][1]>=interval[1]:
+          treeIntervals[j][1]-=numShift
+
+      numShift = nums[0]-1
+      for j in range(len(tree1)):
+        tree1[j][0]-=numShift
+        tree1[j][1]-=numShift
+
+        tree2[j][0]-=numShift
+        tree2[j][1]-=numShift
+
+      return [ [OrderedTree(selfIntervals),OrderedTree(tree1)], [OrderedTree(treeIntervals),OrderedTree(tree2)] ]
+
+                    
+                    
+def isOrdered(newick):
+    newickTuple = ""
+    for i in newick:
+        if i == "(":
+            newickTuple+="["
+        elif i == ")":
+            newickTuple+="]"
+        else:
+            newickTuple+=i
+
+    newickTuple = eval(newickTuple)
+    orderNewick(newickTuple)
+    newickTuple = str(tuple(newickTuple))
+    num = 0
+    for i in newickTuple:
+        if i.isnumeric() and int(i) == num+1:
+            num = int(i)
+        elif i.isnumeric() and int(i) != num+1:
+            return None
+    return newickTuple.replace(" ","")
+
+
+def orderNewick(newick):
+    if isinstance(newick, int):
+        return newick
+    left = orderNewick(newick[0])
+    right = orderNewick(newick[1])
+    if not isinstance(left, int):
+        left = left[1]
+
+    if not isinstance(right, int):
+        right = right[1]
+
+    if left > right:
+        max = left
+        temp = newick[1]
+        newick[1] = newick[0]
+        newick[0] = temp
+    else:
+        max = right
+
+
+    if not isinstance(newick[1], int):
+        newick[1] = tuple(newick[1])
+    if not isinstance(newick[0], int):
+        newick[0] = tuple(newick[0])
+
+        
+    return max
+
 def dictToInt(my_dict):
     """ Returns a list of intervals after converting from dictionary format """
     lst = []
@@ -205,7 +373,7 @@ def removeSiblings(tree, tree1):#non member
         return None
     # Check if only sibling pairs in tree
     if [0]*len(valences)==valences:
-        return [orderedTree(), orderedTree()]
+        return [OrderedTree(), OrderedTree()]
 
     # Get all pairs to remove
     pos = []
@@ -250,7 +418,7 @@ def removeSiblings(tree, tree1):#non member
             if treeIntervals[j][1]>=pos[i-1]:
                 treeIntervals[j][1]-=1
 
-    return [orderedTree(selfIntervals), orderedTree(treeIntervals)]
+    return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
 def interval2newick(interval):
     """ Interval notation to newick notation """
@@ -337,7 +505,7 @@ def newick2interval(newick):
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  """ Given an orderedTree object and an interval, return the smallest interval encasing input interval. """
+  """ Given an OrderedTree object and an interval, return the smallest interval encasing input interval. """
   tree = ordTree.intervals
   inKey = interval[0]
   inVal = interval[1]
