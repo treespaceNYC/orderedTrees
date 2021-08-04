@@ -33,11 +33,18 @@ The OrderedTree constructor accepts multiple input types:
 - A String in Newick notation
   - `tree = OrderedTree("(((1,2),3),4)")`
 
-It's also possible to create both random intervals and random OrderedTree objects. \
-`randOrdered(list)`
+It's also possible to create both random intervals and random OrderedTree objects. 
+- `randInterval()` will create random Intervals based on the input. If impossible, the function will return `None`. The function takes in two or one arguments. 
+`randInterval(1,5)` will create random intervals based on these two ints. `randOrdered([1,5])` will do the same.
+  - `randInterval(1,4)` may result in [[1,2],[3,4]] or [[1,3]] or [[3,4]]
+
+- `randOrdered(n)` will create a random OrderedTree object with n leaves.
+  - `randOrdered(20)` may create a tree with intervals: \
+[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] 
+<img src="https://i.imgur.com/lF7d3Hy.png">
+
+### Rotating Trees
 
 ### Drawing Trees
 
 ### Drawing Polygons
-
-### Rotating Trees
