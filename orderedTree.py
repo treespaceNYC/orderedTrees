@@ -247,6 +247,58 @@ class orderedTree:
                     plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
                     plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
 
+                    
+                    
+def isOrdered(newick):
+    newickTuple = ""
+    for i in newick:
+        if i == "(":
+            newickTuple+="["
+        elif i == ")":
+            newickTuple+="]"
+        else:
+            newickTuple+=i
+
+    newickTuple = eval(newickTuple)
+    orderNewick(newickTuple)
+    newickTuple = str(tuple(newickTuple))
+    num = 0
+    for i in newickTuple:
+        if i.isnumeric() and int(i) == num+1:
+            num = int(i)
+        elif i.isnumeric() and int(i) != num+1:
+            return None
+    return newickTuple.replace(" ","")
+
+
+def orderNewick(newick):
+    if isinstance(newick, int):
+        return newick
+    left = orderNewick(newick[0])
+    right = orderNewick(newick[1])
+    if not isinstance(left, int):
+        left = left[1]
+
+    if not isinstance(right, int):
+        right = right[1]
+
+    if left > right:
+        max = left
+        temp = newick[1]
+        newick[1] = newick[0]
+        newick[0] = temp
+    else:
+        max = right
+
+
+    if not isinstance(newick[1], int):
+        newick[1] = tuple(newick[1])
+    if not isinstance(newick[0], int):
+        newick[0] = tuple(newick[0])
+
+        
+    return max
+
 def dictToInt(my_dict):
     """ Returns a list of intervals after converting from dictionary format """
     lst = []
