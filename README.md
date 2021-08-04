@@ -9,6 +9,7 @@ Overrides print function to print the stored tree and number of leaves.
 
 Overrides equals operator in order to allow for comparison of two trees.
 
+## Contributors
 
 ## Dependencies
 - Python 3.9.x
@@ -40,7 +41,7 @@ It's also possible to create both random intervals and random OrderedTree object
 
 - `randOrdered(n)` will create a random OrderedTree object with n leaves.
   - `randOrdered(20)` may create a tree with intervals: \
-[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] \
+[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] 
 <img src="https://i.imgur.com/lF7d3Hy.png">
 
 ### Rotating Trees
