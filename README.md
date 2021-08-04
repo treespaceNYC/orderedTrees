@@ -40,16 +40,17 @@ It's also possible to create both random intervals and random OrderedTree object
 
 - `randOrdered(n)` will create a random OrderedTree object with n leaves.
   - `randOrdered(20)` may create a tree with intervals: \
-[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] 
+[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] \
 <img src="https://i.imgur.com/lF7d3Hy.png">
 
 ### Rotating Trees
 In order to rotate intervals in a tree, the user has the option of `rotateRight(tree,interval)` and `rotateLeft(tree,interval)`
-- `rotateRight(tree,interval)` will try to rotate the interval right. If successful then it will return the new OrderedTree, otherwise it will return `None`.
+- `rotateRight(tree,interval)` will try to rotate the interval right. If successful then it will return a tuple containing the rotated OrderedTree and a list of the rotated intervals, otherwise it will return `None`.
   ```
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
-  newTree = rotateRight(tree, [3,6])
+  newTree = rotateRight(tree, [3,6])[0]
   ```
+  <img src="https://i.imgur.com/Pw6U5SL.png">
 
 ### Drawing Trees
 
