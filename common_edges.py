@@ -2,7 +2,7 @@ from collections import OrderedDict, defaultdict
 
 #Need to include a way for python to know which constructor to use.
 
-class orderedTree:
+class OrderedTree:
     def __init__(self, *n):
             self.leaves = 0
             self.intervals = defaultdict(list)
