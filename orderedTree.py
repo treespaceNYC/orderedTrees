@@ -524,9 +524,11 @@ def encompassingInterval(ordTree, interval):
   return [prevKey, inVal]
 
 
-def rotateRight(tree, interval):
+def rotateRight(tree1, interval):
     """ Given a tree and interval, rotate interval to a right subtree if possible. """
     #if interval max is not a value in key (it is a min so can't rotate right)
+    tree = copy.deepcopy(tree1)
+    changed_intervals = []
     if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
         return None
     lonepair = True
@@ -547,12 +549,14 @@ def rotateRight(tree, interval):
             return None
         #if interval is lone pair
         if(encomp[0] == interval[0]):#if original interval and encompassing interval share a min
+            changed_intervals.append([interval[0], interval[1]])
             tree.intervals[interval[0]].remove(interval[1])#remove the max from the key
             if(not tree.intervals[interval[0]]):#if the key is now empty not sure if this is necessary
                 del tree.intervals[intervals[0]]#delete the key
             tree.intervals.setdefault(interval[1],[encomp[1]])#create a new key with the given interval max and set its value to the encompassing max
+            changed_intervals.append([interval[1],encomp[1]])
             tree.intervals = OrderedDict(sorted(tree.intervals.items()))#sort
-        return tree
+        return tree, changed_intervals
 
     #if lonepair is FALSE
     if(interval[0] == encomp[0]):#if min of given interval is the same as min of encompassing, you cannot rotate right
@@ -564,19 +568,23 @@ def rotateRight(tree, interval):
     elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
         return None
     tree.intervals[encomp[0]].remove(encomp[1])#remove the encompassing interval
+    changed_intervals.append([encomp[0], encomp[1]])
     if(not (tree.intervals[encomp[0]])):#if its empty, delete the key, not sure if needed
         del tree.intervals[encomp[0]]
     #loop through key of encompassing intervals
     for val in tree.intervals[encomp[0]]:
         if val > interval[1]:
             tree.intervals[interval[0]].append(val)
+            changed_intervals.append([interval[0], val])
             tree.intervals[interval[0]] = sorted(tree.intervals[interval[0]])
-            return tree
+            return tree, changed_intervals
 
     return None
 
-def rotateLeft(tree, interval):
+def rotateLeft(tree1, interval):
     """ Given a tree and interval, rotate interval to a left subtree if possible. """
+    tree = copy.deepcopy(tree1)
+    changed_intervals = []
     #if interval max is not a value in key (it is a min so can't rotate right)
     if(interval[1] not in tree.intervals[interval[0]]):#if the input interval doesnt consist of a real [min max]
         return None
@@ -595,10 +603,12 @@ def rotateLeft(tree, interval):
             return None
         #if interval is lone pair , rotate left
         if(encomp[1] == interval[1]):#if original interval and encompassing interval share a min
+            changed_intervals.append([interval[0], tree.intervals[interval[0]][0]])
             del tree.intervals[interval[0]]#delete the key
             tree.intervals[encomp[0]].append(interval[0])
+            changed_intervals.append([encomp[0],interval[0]])
             tree.intervals[encomp[0]] = sorted(tree.intervals[encomp[0]])#sort
-        return tree
+        return tree, changed_intervals
 
     #if lonepair is FALSE
     if(interval[1] == encomp[1]):#if min of given interval is the same as min of encompassing, you cannot rotate right
@@ -609,16 +619,16 @@ def rotateLeft(tree, interval):
         return None
     elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
         return None
-
+    changed_intervals.append([interval[0], encomp[1]])
     tree.intervals[interval[0]].remove(encomp[1])#remove the encompassing interval
     lst = list(tree.intervals.keys())
-
+    lst = sorted(lst)
     for i in range(len(lst)-1, -1, -1):#find the next smallest key behind interval[0] to attach
-        if lst[i] < interval[0]:
+        if lst[i] < interval[0] and tree.intervals[lst[i]].count(encomp[1]):
             tree.intervals[lst[i]].append(interval[1])
+            changed_intervals.append([lst[i], interval[1]])
             tree.intervals[lst[i]] = sorted(tree.intervals[lst[i]])
-            return tree
-
+            return tree, changed_intervals
     return None
 
 def randInterval(min, max=None):
