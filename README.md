@@ -23,6 +23,23 @@ Download orderedTree.py and place it in your working directory
 
 ## Examples
 
+### Preprocessing
+The orderedTree.py file allows the user to convert their tree into various notations. This includes:
+- Python Dictionary
+  - The keys are the minimum intervals and the values are the lists of their maximum intervals 
+- List of Intervals
+- Newick notation as a string
+
+There are various functions to convert these notations between themselves.
+- `dictToInt(dictionary)` will convert a tree in dictionary format
+  - `dictToInt({1:[2,3,4,5]})` will return [[1,2],[1,3],[1,4],[1,5]]
+- `newick2interval(string)` will convert a string in newick format to a list of intervals
+  - `newick2interval("((((1,2),3),4),5)")` will return [[1,2],[1,3],[1,4],[1,5]]
+- `interval2newick([[1,2],[1,3],[1,4],[1,5]])` will return `"((((1,2),3),4),5)"`
+
+In order to check if a string in newick notation is ordered, the function `isOrdered(string)` can be used.\
+`isOrdered(string)` will return the string in ordered format if its possible which will act as a True value. If it is impossible to order, it will return None.
+
 ### Building Trees
 The OrderedTree constructor accepts multiple input types:
 - No input for an empty constructor 
@@ -36,7 +53,7 @@ The OrderedTree constructor accepts multiple input types:
 
 It's also possible to create both random intervals and random OrderedTree objects. 
 - `randInterval()` will create random Intervals based on the input. If impossible, the function will return `None`. The function takes in two or one arguments. 
-`randInterval(1,5)` will create random intervals based on these two ints. `randOrdered([1,5])` will do the same.
+`randInterval(1,5)` will create random intervals based on these two ints. `randInterval([1,5])` will do the same.
   - `randInterval(1,4)` may result in [[1,2],[3,4]] or [[1,3]] or [[3,4]]
 
 - `randOrdered(n)` will create a random OrderedTree object with n leaves.
