@@ -71,9 +71,24 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   <img src="https://i.imgur.com/Pw6U5SL.png">
 
 ### Drawing Trees
+`drawTree(tree, **kwargs)` is the function used to draw trees when given a list of intervals and keyword arguments which allow the user to change the design and placement of the tree. Possible keyword arguments include:
+- color= (if no color is specified, it will choose at random)
+- style= 
+- placement= 
+- vNums=(0 or 1) 
+- scaled=(0 or 1)
+
+<b>Example 1<b>
+  ```
+  
+  ```
+<b>Example 2<b>
 
 ### Drawing Polygons
 `drawPolygon(tree, **kwargs)` is the function used to draw a polygon given a tree in interval form (list of lists) and keyword arguments that allow the user to change the color of the polygon as well as the line style.
+
+<b>Example 1<b>
+
   ```
   test1 = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]})) #brings in tree and turns into a list of lists through a helper function
   test1.drawPolygon(color='blue', linestyle='-')
@@ -84,7 +99,8 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 </p>
   
   - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
-  ##Example
+  
+  <b>Example 2<b>
   
   ```
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
@@ -96,7 +112,17 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
  <p align="center">
   <img src="https://user-images.githubusercontent.com/72881310/128402810-b3890cd5-d3f7-4868-a103-a2a4ee24f1a0.png" width="600">
  </p>
-  
-
-
+ 
+ Some possible keyword arguments that can be controlled by the user are as follows:
+ - placement=
+ - color= 
+ - style=
+ - thickness= 
+ - innerColor= 
+ - outerColor= 
+ - innerStyle= 
+ - outerStyle= 
+ - innerThickness=
+ - outerThickness=
+ - dottedLine=[interval,interval]
   
