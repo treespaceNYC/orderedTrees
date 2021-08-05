@@ -1,3 +1,4 @@
+![Figure_1](https://user-images.githubusercontent.com/72881310/128398102-142c62a1-774d-453b-9c4f-d7de99703c7c.png)
 # OrderedTrees
 
 Code for storing and comparing ordered trees.
@@ -78,6 +79,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   tree1 = orderedTree([[1,6], [2,6], [3,6], [4,6], [5,6]])
   tree1.drawPolygon(0,color='purple', linestyle='-')
   ```
-  <img src="https://user-images.githubusercontent.com/72881310/128397799-f1cbcb4f-cf9a-4ad1-8c3b-33d6859f11cb.png"
+  ![Figure_1](https://user-images.githubusercontent.com/72881310/128398149-4a732269-7c10-41ff-a0dc-47851f31c579.png)
+
 
   
