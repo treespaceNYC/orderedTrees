@@ -75,8 +75,8 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 ### Drawing Polygons
 `drawPolygon(tree, **kwargs)` is the function used to draw a polygon given a tree in interval form (list of lists) and keyword arguments that allow the user to change the color of the polygon as well as the line style.
   ```
-  tree1 = orderedTree([[1,6], [2,6], [3,6], [4,6], [5,6]])
-  tree1.drawPolygon(0,color='purple', linestyle='-')
+  test1 = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]})) #brings in tree and turns into a list of lists through a helper function
+  test1.drawPolygon(color='blue', linestyle='-')
   ```
   
 <p align="center">
@@ -87,6 +87,15 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   ##Example
   
   ```
+  tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
+  test1 = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]}))
+  test1.drawPolygon(color='blue', linestyle='-')
+  tree.drawPolygon(color='red', linestyle='.')
+  ```
+  
+ <p align="center">
+  <img src="https://user-images.githubusercontent.com/72881310/128402810-b3890cd5-d3f7-4868-a103-a2a4ee24f1a0.png" width="600">
+ </p>
   
 
 
