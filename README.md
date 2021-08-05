@@ -80,10 +80,14 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   ```
   
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/72881310/128398149-4a732269-7c10-41ff-a0dc-47851f31c579.png" width="600">
+  <img src="https://user-images.githubusercontent.com/72881310/128402066-2b4ab1d3-3bd1-4550-9294-492d5c60faf8.png" width="600">
 </p>
   
-  - This function can also be used to draw overlapping polygons by using different colors when using the 
+  - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
+  ##Example
+  
+  ```
+  
 
 
   
