@@ -100,8 +100,8 @@ class OrderedTree:
         return [ left[i]+right[i] for i in range(len(left)) ]
 
     def drawPolygon(tree, **kwargs):
-        """ Draws Triangulated Polygon from OrderedTree object """
-        # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness
+        """ Draws Triangulated Polygon from orderedTree object """
+        # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
         #default values
@@ -112,6 +112,8 @@ class OrderedTree:
         innerThickness= 2
         outerThickness= 2
         placement=0
+        dottedLine=0
+        dottedLineColor='black'
         #kwargs
         if 'placement' in kwargs:
             placement=kwargs['placement']
@@ -143,6 +145,14 @@ class OrderedTree:
         #if outerColor but no innerColor
         if 'outerColor' in kwargs and 'innerColor' not in kwargs:
             innerColor=kwargs['outerColor']
+        # if dottedLine is requested
+        if 'dottedLine' in kwargs:
+            dottedLine=1
+            interval=kwargs['dottedLine']
+            a=interval[0]
+            b=interval[1]
+        if 'dottedLineColor' in kwargs:
+            dottedLineColor=kwargs['dottedLineColor']
         n=tree.leaves
         sides=tree.leaves+1
         r=3    #radius size of shape
@@ -150,6 +160,7 @@ class OrderedTree:
         vertices=[]
         start=math.ceil(sides/2)
         offset=placement*7-7 #changes the X value of the points
+
         # get points for vertices of polygon
         for i in range(start,sides):
             if sides%2==0:
@@ -180,11 +191,17 @@ class OrderedTree:
                 else:
                     line = LineString([vertices[key-1], vertices[i]])
                     plt.plot(*line.xy,color=innerColor, linestyle=innerStyle, linewidth=innerThickness)
+
         #create polygon using the vertices found above
         polygon1 = Polygon(vertices)
         #plot polygon
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
+
+        #draw dotted line
+        if dottedLine==1:
+            dottedLine = LineString([vertices[a-1], vertices[b]])
+            plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
 
     def drawTree(tree, **kwargs):
         """ Draws a tree from an OrderedTree object """
