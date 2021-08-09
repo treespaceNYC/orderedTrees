@@ -70,6 +70,73 @@ class OrderedTree:
                             break
         return lst
 
+    def removeCommon(self,tree):
+        """ Create two pairs of trees after separating common edges """
+        interval = self.commonEdges(tree)
+        if len(interval)==0:
+        return None
+
+        # Get first common edge
+        interval = interval[0]
+
+        if interval = [self.min,self.max]:
+            return None
+
+        tree1 = []
+        tree2 = []
+        selfIntervals = dictToInt(self.intervals)
+        treeIntervals = dictToInt(tree.intervals)
+
+        # Get all numbers that were removed
+        nums = [i for i in range(interval[0],interval[1]+1) if i != 1]
+
+        # DELETE #
+
+        # Add all intervals that need to be removed to another list
+        for i in nums:
+            for j in range(len(selfIntervals)):
+                if i in selfIntervals[j] and selfIntervals[j] not in tree1:
+                    tree1.append(selfIntervals[j])
+            for j in range(len(treeIntervals)):
+                if i in treeIntervals[j] and treeIntervals[j] not in tree2:
+                    tree2.append(treeIntervals[j])
+
+        # delete all intervals from original tree
+        for i in range(len(tree1)):
+            selfIntervals.remove(tree1[i])
+            treeIntervals.remove(tree2[i])
+
+        # SHIFT #
+        # shifting by the number of leaves we removed
+        numShift = len(nums)
+        for j in range(len(selfIntervals)):
+            if selfIntervals[j][0]>=interval[1]:
+                selfIntervals[j][0]-=numShift
+            if selfIntervals[j][1]>=interval[1]:
+                selfIntervals[j][1]-=numShift
+
+
+            if treeIntervals[j][0]>=interval[1]:
+                treeIntervals[j][0]-=numShift
+            if treeIntervals[j][1]>=interval[1]:
+                treeIntervals[j][1]-=numShift
+
+        # Loop through smaller subtrees and shift
+        numShift = nums[0]-1
+        for j in range(len(tree1)):
+            if tree1[j][0]>nums[0]:
+                tree1[j][0]-=numShift
+            if tree1[j][1]>nums[0]:
+                tree1[j][1]-=numShift
+
+            if tree2[j][0]>nums[0]:
+                tree2[j][0]-=numShift
+            if tree2[j][1]>nums[0]:
+                tree2[j][1]-=numShift
+
+        # Return a list of pairs of trees resulting from separating common edges
+        return [ [orderedTree(sorted(selfIntervals)),orderedTree(sorted(tree1))], [orderedTree(sorted(treeIntervals)),orderedTree(sorted(tree2))] ]
+    
     def getValences(self):
         """ Gets the valences of an OrderedTree object and returns it as a list """
 
@@ -100,7 +167,7 @@ class OrderedTree:
         return [ left[i]+right[i] for i in range(len(left)) ]
 
     def drawPolygon(tree, **kwargs):
-        """ Draws Triangulated Polygon from orderedTree object """
+        """ Draws Triangulated Polygon from OrderedTree object """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
@@ -264,65 +331,9 @@ class OrderedTree:
                     plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
                     plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
 
-    def removeCommon(self,tree):
-      """ Create two pairs of trees after separating common edges """
-      interval = self.commonEdges(tree)
-      if len(interval)==0:
-        return None
-
-      # Get first common edge
-      interval = interval[0]
-
-      tree1 = []
-      tree2 = []
-      selfIntervals = dictToInt(self.intervals)
-      treeIntervals = dictToInt(tree.intervals)
-
-      nums = [i for i in range(interval[0],interval[1]+1) if i != 1]
-
-      # Delete
-      for i in nums:
-        for j in range(len(selfIntervals)):
-          if i in selfIntervals[j] and selfIntervals[j] not in tree1:
-            tree1.append(selfIntervals[j])
-        for j in range(len(treeIntervals)):
-          if i in treeIntervals[j] and treeIntervals[j] not in tree2:
-            tree2.append(treeIntervals[j])
-
-
-      for i in range(len(tree1)):
-        selfIntervals.remove(tree1[i])
-        # print(i,treeIntervals,"hi",tree2)
-        treeIntervals.remove(tree2[i])
-
-      # shift
-      # shifting by the number of leaves we removed
-      numShift = len(nums)
-      for j in range(len(selfIntervals)):
-        if selfIntervals[j][0]>=interval[1]:
-          selfIntervals[j][0]-=numShift
-        if selfIntervals[j][1]>=interval[1]:
-          selfIntervals[j][1]-=numShift
-
-
-        if treeIntervals[j][0]>=interval[1]:
-          treeIntervals[j][0]-=numShift
-        if treeIntervals[j][1]>=interval[1]:
-          treeIntervals[j][1]-=numShift
-
-      numShift = nums[0]-1
-      for j in range(len(tree1)):
-        tree1[j][0]-=numShift
-        tree1[j][1]-=numShift
-
-        tree2[j][0]-=numShift
-        tree2[j][1]-=numShift
-
-      return [ [OrderedTree(selfIntervals),OrderedTree(tree1)], [OrderedTree(treeIntervals),OrderedTree(tree2)] ]
-
-
 
 def isOrdered(newick):
+    """ Checks if a tree is  """
     newickTuple = ""
     for i in newick:
         if i == "(":
@@ -345,6 +356,7 @@ def isOrdered(newick):
 
 
 def orderNewick(newick):
+    """ Helper Function for isOrdered that will try to order a tree """
     if isinstance(newick, int):
         return newick
     left = orderNewick(newick[0])
