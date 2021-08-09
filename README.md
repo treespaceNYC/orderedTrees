@@ -79,10 +79,13 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 - color= (if no color is specified, it will choose at random)
 - style= 
 - placement= 
-- vNums=(0 or 1) 
+  - `placement = 1.1` will print the second tree to the right side of the first tree
+- vNums=(0 or 1)
+  - `vNums = 1` means that the tree will be marked with numbers at the bottom of each leaf. Otherwise, it will be an unnumbered tree. 
 - scaled=(0 or 1)
+  - If there are 2 trees that have different number of leaves, use `scale = 1` to make sure both trees are the same width and height
 
-<b>Example 1<b>
+<b>Example<b>
   ```
   tree = OrderedTree([[1,2], [1,5], [1,8], [3,4], [3,5], [6,7], [6,8]])
   test1 = OrderedTree([[1,8], [1,2], [3,8], [3,7], [3,6], [4,6], [5,6]])
@@ -93,8 +96,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   <p align="center" >
     <img src="https://user-images.githubusercontent.com/72881310/128757620-8d32607f-52c2-4389-a538-28fd01c4a7cc.png" height="400" width="1000"
   </p>
-
-<b>Example 2<b>
+    
 
 ### Drawing Polygons
 `drawPolygon(tree, **kwargs)` is the function used to draw a polygon given a tree in interval form (list of lists) and keyword arguments that allow the user to change the color of the polygon as well as the line style.
