@@ -246,6 +246,7 @@ class OrderedTree:
                 if vNums==1:
                     plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
                     plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
+
     def removeCommon(self,tree):
       """ Create two pairs of trees after separating common edges """
       interval = self.commonEdges(tree)
@@ -512,7 +513,7 @@ def encompassingInterval(ordTree, interval):
 
   prevKey = 1
 
-  for value in tree[inKey]: #tree1.Intervals[inKey]: HERE
+  for value in tree[inKey]: #tree1.Intervals[inKey]:
       if value > inVal:
         return [inKey, value]
 
@@ -520,7 +521,10 @@ def encompassingInterval(ordTree, interval):
     if i == inKey:
       break
     else:
-      prevKey = i
+      for elem in tree[i]:
+        if elem == inVal:
+          prevKey = i
+
   return [prevKey, inVal]
 
 
@@ -567,7 +571,10 @@ def rotateRight(tree1, interval):
         return None
     elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
         return None
-    tree.intervals[encomp[0]].remove(encomp[1])#remove the encompassing interval
+    try:
+        tree.intervals[encomp[0]].remove(encomp[1])#remove the encompassing interval
+    except:
+        return None
     changed_intervals.append([encomp[0], encomp[1]])
     if(not (tree.intervals[encomp[0]])):#if its empty, delete the key, not sure if needed
         del tree.intervals[encomp[0]]
@@ -620,7 +627,10 @@ def rotateLeft(tree1, interval):
     elif(interval[1] == interval[0]):#if the interval min == interval max ie: [2,2]
         return None
     changed_intervals.append([interval[0], encomp[1]])
-    tree.intervals[interval[0]].remove(encomp[1])#remove the encompassing interval
+    try:
+        tree.intervals[interval[0]].remove(encomp[1])#remove the encompassing interval
+    except:
+        return None
     lst = list(tree.intervals.keys())
     lst = sorted(lst)
     for i in range(len(lst)-1, -1, -1):#find the next smallest key behind interval[0] to attach
