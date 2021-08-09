@@ -85,6 +85,7 @@ class OrderedTree:
         # Get first common edge
         interval = interval[0]
 
+        # Get lists of intervals from trees
         tree1 = []
         tree2 = []
         selfIntervals = dictToInt(self.intervals)
