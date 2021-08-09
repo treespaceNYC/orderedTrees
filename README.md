@@ -59,7 +59,9 @@ It's also possible to create both random intervals and random OrderedTree object
 - `randOrdered(n)` will create a random OrderedTree object with n leaves.
   - `randOrdered(20)` may create a tree with intervals: \
 [1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] 
-<img src="https://i.imgur.com/lF7d3Hy.png">
+<p align=center>
+  <img src="https://i.imgur.com/lF7d3Hy.png" height="400" width="800">
+</p>
 
 ### Rotating Trees
 In order to rotate intervals in a tree, the user has the option of `rotateRight(tree,interval)` and `rotateLeft(tree,interval)`
@@ -68,7 +70,9 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
   newTree = rotateRight(tree, [3,6])[0]
   ```
-  <img src="https://i.imgur.com/Pw6U5SL.png">
+  <p align="center">
+    <img src="https://i.imgur.com/Pw6U5SL.png" height="400" width="800">
+  </p>
 
 ### Drawing Trees
 `drawTree(tree, **kwargs)` is the function used to draw trees when given a list of intervals and keyword arguments which allow the user to change the design and placement of the tree. Possible keyword arguments include:
@@ -80,8 +84,16 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 
 <b>Example 1<b>
   ```
-  
+  tree = OrderedTree([[1,2], [1,5], [1,8], [3,4], [3,5], [6,7], [6,8]])
+  test1 = OrderedTree([[1,8], [1,2], [3,8], [3,7], [3,6], [4,6], [5,6]])
+  test1.drawTree(color='blue', placement=1.1, vNums = 1)
+  tree.drawTree(color='red', vNums = 1, placement = 0)
   ```
+  
+  <p align="center" >
+    <img src="https://user-images.githubusercontent.com/72881310/128757620-8d32607f-52c2-4389-a538-28fd01c4a7cc.png" height="400" width="1000"
+  </p>
+
 <b>Example 2<b>
 
 ### Drawing Polygons
@@ -95,7 +107,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   ```
   
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/72881310/128402066-2b4ab1d3-3bd1-4550-9294-492d5c60faf8.png" width="600">
+  <img src="https://user-images.githubusercontent.com/72881310/128402066-2b4ab1d3-3bd1-4550-9294-492d5c60faf8.png" width="500" height="500">
 </p>
   
   - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
@@ -110,8 +122,9 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   ```
   
  <p align="center">
-  <img src="https://user-images.githubusercontent.com/72881310/128402810-b3890cd5-d3f7-4868-a103-a2a4ee24f1a0.png" width="600">
+  <img src="https://user-images.githubusercontent.com/72881310/128748398-5bc2b879-6497-4933-893e-d7e480bdaca1.png" width="500" height="500">
  </p>
+
  
  Some possible keyword arguments that can be controlled by the user are as follows:
  - placement=
