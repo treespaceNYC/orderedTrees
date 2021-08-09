@@ -5,7 +5,6 @@ from shapely.geometry import LineString
 import math
 import random
 import matplotlib.pyplot as plt
-#Need to include a way for python to know which constructor to use.
 
 class OrderedTree:
     def __init__(self, *n):
