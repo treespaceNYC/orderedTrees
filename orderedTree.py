@@ -1,11 +1,11 @@
 from collections import OrderedDict, defaultdict
+from shapely.geometry import LineString, Polygon
 import copy
 import math
 import matplotlib.pyplot as plt
 import random
 import re
-from shapely.geometry import Polygon
-from shapely.geometry import LineString
+
 
 class OrderedTree:
     def __init__(self, *n):
