@@ -1,10 +1,11 @@
 from collections import OrderedDict, defaultdict
+import copy
+import math
+import matplotlib.pyplot as plt
+import random
 import re
 from shapely.geometry import Polygon
 from shapely.geometry import LineString
-import math
-import random
-import matplotlib.pyplot as plt
 
 class OrderedTree:
     def __init__(self, *n):
