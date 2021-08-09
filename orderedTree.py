@@ -73,7 +73,7 @@ class OrderedTree:
     def removeCommon(self,tree):
         """ Create two pairs of trees after separating common edges """
         interval = self.commonEdges(tree)
-        
+
         # Edge case
         if len(interval)==0:
             return None
@@ -81,7 +81,7 @@ class OrderedTree:
         # No more common edges
         if interval[0] = [self.min,self.max] and len(interval)==1:
             return None
-    
+
         # Get first common edge
         interval = interval[0]
 
@@ -140,7 +140,7 @@ class OrderedTree:
 
         # Return a list of pairs of trees resulting from separating common edges
         return [ [orderedTree(sorted(selfIntervals)),orderedTree(sorted(tree1))], [orderedTree(sorted(treeIntervals)),orderedTree(sorted(tree2))] ]
-    
+
     def getValences(self):
         """ Gets the valences of an OrderedTree object and returns it as a list """
 
@@ -169,6 +169,61 @@ class OrderedTree:
 
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
+    def oneOffs(self, tree):
+        " " " Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value " " "
+        " " " will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate. " " "
+        lst1 = dictToInt(self.intervals)
+        lst2 = dictToInt(tree.intervals)
+        common = self.commonEdges(tree)
+        difference = []
+        for i in lst1:##get the differences in the self tree
+            if i not in common:
+                difference.append(i)
+        unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
+        # the second index is the rotation used to add that interval
+        # print(difference)
+        for i in difference:
+            decomp = decompassingInterval(self, i)
+            encomp = encompassingInterval(self, i)
+            if not decomp and encomp:##if there is no decompassing
+                ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
+                unoffs["R"].append([(rotateRight(self, i))[1][1], i])# the value, aka the interval to rotate, is simply i
+                unoffs["L"].append([(rotateLeft(self, i))[1][1], i])
+                ##if complex subtree
+            else:
+                unoffs["R"].append([[decomp[0], encomp[1]], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
+                #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
+                unoffs["L"].append([[encomp[0], decomp[1]], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
+                #the interval to call is the decompassing interval
+
+        right = []
+        left = []
+        for key in unoffs.keys():## delete the ones not in the lst2? or the ones in lst2? not sure brain too fried
+            for added in unoffs[key]:
+                # print((added))
+                if list(added[0]) not in lst2:
+                    # unoffs[key].remove(added)
+                    if key == "R":
+                        right.append(added)
+                    else:
+                        left.append(added)
+        for delete in right:
+            unoffs["R"].remove(delete)
+        for delete in left:
+            unoffs["L"].remove(delete)
+
+        return unoffs
+
+    def rotate1(self, tree):
+        new_tree = copy.deepcopy(self)##make a copy to return
+        rotates = oneOffs(self, tree)##get a dictonary
+        for key in rotates.keys():##loop through keys: "R" or "L"
+            for val in rotates[key]:##loop through the pair of values where the first is the added interval and the second is the one needed to call in rotate functions
+                if key == "R":##if right rotation, make a deep copy of the rotation and set that as the original
+                    new_tree = copy.deepcopy(rotateRight(new_tree, val[1])[0])
+                elif key == "L":##if left rotation, make a deep copy of the rotation and set that as the original
+                    new_tree = copy.deepcopy(rotateLeft(new_tree, val[1])[0])
+        return [new_tree, tree]##return the two trees
 
     def drawPolygon(tree, **kwargs):
         """ Draws Triangulated Polygon from OrderedTree object """
@@ -352,29 +407,29 @@ def isOrdered(newick):
     orderNewick(newickTuple)
     newickTuple = str(tuple(newickTuple))
     num = 0
-    
+
     # Check for order
     for i in newickTuple:
         if i.isnumeric() and int(i) == num+1:
             num = int(i)
         elif i.isnumeric() and int(i) != num+1:
             return None
-        
+
     # return tree
     return newickTuple.replace(" ","")
 
 
 def orderNewick(newick):
     """ Helper Function for isOrdered that will try to order a tree """
-    
+
     # Base Case
     if isinstance(newick, int):
         return newick
-    
+
     # Recursive step
     left = orderNewick(newick[0])
     right = orderNewick(newick[1])
-    
+
     # Get max of tuple
     if not isinstance(left, int):
         left = left[1]
@@ -548,6 +603,22 @@ def newick2interval(newick):
     for k, v in intervals:
         d[k].append(v)
     return OrderedDict(sorted(d.items()))#sort and return
+
+
+def decompassingInterval(self, interval):
+    """ Given an OrderedTree object and an interval, return the largest interval inside the input interval. """
+    ##two cases, either decompassing will share a key or a value
+    ##if key:
+    for val in self.intervals.get(interval[0]):##loop through values in the key
+        if val < interval[1]:## if value is less than the input value, we return that as the decompassingInterval
+            return [interval[0], val]
+    ##if they share a value:
+    ##loop through keys and find which key greater than interval[0] has the value interval[1]
+    for key in self.intervals.keys():
+        if key > interval[0]:
+            if interval[1] in self.intervals[key]:
+                return [key,interval[1]]
+    return None
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
