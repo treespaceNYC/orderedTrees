@@ -73,14 +73,17 @@ class OrderedTree:
     def removeCommon(self,tree):
         """ Create two pairs of trees after separating common edges """
         interval = self.commonEdges(tree)
+        
+        # Edge case
         if len(interval)==0:
-        return None
+            return None
 
+        # No more common edges
+        if interval[0] = [self.min,self.max] and len(interval)==1:
+            return None
+    
         # Get first common edge
         interval = interval[0]
-
-        if interval = [self.min,self.max]:
-            return None
 
         tree1 = []
         tree2 = []
@@ -333,8 +336,9 @@ class OrderedTree:
 
 
 def isOrdered(newick):
-    """ Checks if a tree is  """
+    """ Checks if a tree is ordered """
     newickTuple = ""
+    # Can't edit a tuple
     for i in newick:
         if i == "(":
             newickTuple+="["
@@ -347,26 +351,37 @@ def isOrdered(newick):
     orderNewick(newickTuple)
     newickTuple = str(tuple(newickTuple))
     num = 0
+    
+    # Check for order
     for i in newickTuple:
         if i.isnumeric() and int(i) == num+1:
             num = int(i)
         elif i.isnumeric() and int(i) != num+1:
             return None
+        
+    # return tree
     return newickTuple.replace(" ","")
 
 
 def orderNewick(newick):
     """ Helper Function for isOrdered that will try to order a tree """
+    
+    # Base Case
     if isinstance(newick, int):
         return newick
+    
+    # Recursive step
     left = orderNewick(newick[0])
     right = orderNewick(newick[1])
+    
+    # Get max of tuple
     if not isinstance(left, int):
         left = left[1]
 
     if not isinstance(right, int):
         right = right[1]
 
+    # Compare and swap
     if left > right:
         max = left
         temp = newick[1]
@@ -375,7 +390,7 @@ def orderNewick(newick):
     else:
         max = right
 
-
+    # Turn into tuple
     if not isinstance(newick[1], int):
         newick[1] = tuple(newick[1])
     if not isinstance(newick[0], int):
