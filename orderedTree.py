@@ -365,7 +365,7 @@ class OrderedTree:
         # sets placement depending on scaled or not
         if scaled==1:
             scale=4/(n-1)
-            placement = placement* (n*scale)*1.5+0.5
+            placement = placement* (n*scale)
         elif scaled==0:
             placement=placement*n
         # get points for vertices of triangle
