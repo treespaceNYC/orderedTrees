@@ -173,8 +173,8 @@ class OrderedTree:
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
     def oneOffs(self, tree):
-        " " " Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value " " "
-        " " " will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate. " " "
+        """ Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value """
+        """ will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate. """
         lst1 = dictToInt(self.intervals)
         lst2 = dictToInt(tree.intervals)
         common = self.commonEdges(tree)
@@ -219,7 +219,7 @@ class OrderedTree:
 
     def rotate1(self, tree):
         new_tree = copy.deepcopy(self)##make a copy to return
-        rotates = oneOffs(self, tree)##get a dictonary
+        rotates = new_tree.oneOffs(tree)##get a dictonary
         for key in rotates.keys():##loop through keys: "R" or "L"
             for val in rotates[key]:##loop through the pair of values where the first is the added interval and the second is the one needed to call in rotate functions
                 if key == "R":##if right rotation, make a deep copy of the rotation and set that as the original
