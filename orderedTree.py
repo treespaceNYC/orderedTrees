@@ -233,6 +233,7 @@ class OrderedTree:
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        plt.axis('off')
         #default values
         innerColor=rand_color
         outerColor=rand_color
@@ -338,6 +339,7 @@ class OrderedTree:
         # create random default color for tree
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        plt.axis('off')
         #default values
         color=rand_color
         style='-'
@@ -533,7 +535,7 @@ class OrderedTree:
                         allTriangles.append(verts)
         allTriangles.sort()
         result = [allTriangles[i] for i in range(len(allTriangles)) if i == 0 or allTriangles[i] != allTriangles[i-1]]
-
+        temp=[]
         # Connecting centers... the centers of two triangles will connect if they have a common edge. search through the triangle list to find triangles with a common edge, and connect their centers
         for i in range(1,len(result)):
             for triangle in result:
@@ -541,12 +543,12 @@ class OrderedTree:
                 b=triangle[1]
                 c=triangle[2]
                 # look for triangles w only 2 of the same points
-                if a in result[i] and b in result[i] and not c in result[i] or a in result[i] and c in result[i] and not b in result[i] or b in result[i] and c in result[i] and not a in result[i]:
+                if a in result[i] and b in result[i] or a in result[i] and c in result[i] or b in result[i] and c in result[i]:
                     TriOne=result[i]
-                    a=TriOne[0]
-                    b=TriOne[1]
-                    c=TriOne[2]
-                    triangleOne=Polygon([vertices[a],vertices[b],vertices[c]])
+                    aa=TriOne[0]
+                    bb=TriOne[1]
+                    cc=TriOne[2]
+                    triangleOne=Polygon([vertices[aa],vertices[bb],vertices[cc]])
                     triOneCenter=triangleOne.centroid
                     TriTwo=triangle
                     d=TriTwo[0]
@@ -554,9 +556,14 @@ class OrderedTree:
                     f=TriTwo[2]
                     triangleTwo=Polygon([vertices[d],vertices[e],vertices[f]])
                     triTwoCenter=triangleTwo.centroid
-                    internalConnectingLine = LineString([triOneCenter, triTwoCenter])
-                    plt.plot(*internalConnectingLine.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
-                    break
+                    bothPts=[triOneCenter.x, triOneCenter.y,triTwoCenter.x, triTwoCenter.y]
+                    bothPts.sort()
+                    # Only draw a line if it has not been drawn yet. Append each line into temp list to store all the lines that have been made
+                    if bothPts not in temp:
+                        internalConnectingLine = LineString([triOneCenter, triTwoCenter])
+                        plt.plot(*internalConnectingLine.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                        temp.append(bothPts)
+                        temp.sort()
         # Find the outer triangles and draw the external lines
         for triangle in result:
             a=triangle[0]
