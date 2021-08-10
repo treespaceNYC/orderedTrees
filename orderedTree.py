@@ -83,7 +83,10 @@ class OrderedTree:
             return None
 
         # Get first common edge
-        interval = interval[0]
+        if interval[0] == [self.min,self.max]:
+            interval = interval[1]
+        else:
+            interval = interval[0]
 
         # Get lists of intervals from trees
         tree1 = []
