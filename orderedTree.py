@@ -908,7 +908,7 @@ def rotateRight(tree1, interval):
             changed_intervals.append([interval[0], interval[1]])
             tree.intervals[interval[0]].remove(interval[1])#remove the max from the key
             if(not tree.intervals[interval[0]]):#if the key is now empty not sure if this is necessary
-                del tree.intervals[intervals[0]]#delete the key
+                del tree.intervals[interval[0]]#delete the key
             tree.intervals.setdefault(interval[1],[encomp[1]])#create a new key with the given interval max and set its value to the encompassing max
             changed_intervals.append([interval[1],encomp[1]])
             tree.intervals = OrderedDict(sorted(tree.intervals.items()))#sort
