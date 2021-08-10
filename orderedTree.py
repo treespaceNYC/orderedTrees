@@ -70,7 +70,7 @@ class OrderedTree:
                             break
         return lst
 
-    def removeCommon(self,tree):
+        def removeCommon(self,tree):
         """ Create two pairs of trees after separating common edges """
         interval = self.commonEdges(tree)
 
@@ -102,10 +102,10 @@ class OrderedTree:
         # Add all intervals that need to be removed to another list
         for i in nums:
             for j in range(len(selfIntervals)):
-                if i in selfIntervals[j] and selfIntervals[j] not in tree1:
+                if i in selfIntervals[j] and selfIntervals[j] not in tree1 and selfIntervals[j]!=[self.min,self.max]:
                     tree1.append(selfIntervals[j])
             for j in range(len(treeIntervals)):
-                if i in treeIntervals[j] and treeIntervals[j] not in tree2:
+                if i in treeIntervals[j] and treeIntervals[j] not in tree2 and treeIntervals[j]!=[self.min,self.max]:
                     tree2.append(treeIntervals[j])
 
         # delete all intervals from original tree
@@ -116,6 +116,8 @@ class OrderedTree:
         # SHIFT #
         # shifting by the number of leaves we removed
         numShift = len(nums)
+        if self.max in nums:
+            numShift-=1
         for j in range(len(selfIntervals)):
             if selfIntervals[j][0]>=interval[1]:
                 selfIntervals[j][0]-=numShift
@@ -131,19 +133,18 @@ class OrderedTree:
         # Loop through smaller subtrees and shift
         numShift = nums[0]-1
         for j in range(len(tree1)):
-            if tree1[j][0]>nums[0]:
+            if tree1[j][0]>=nums[0]:
                 tree1[j][0]-=numShift
-            if tree1[j][1]>nums[0]:
+            if tree1[j][1]>=nums[0]:
                 tree1[j][1]-=numShift
 
-            if tree2[j][0]>nums[0]:
+            if tree2[j][0]>=nums[0]:
                 tree2[j][0]-=numShift
-            if tree2[j][1]>nums[0]:
+            if tree2[j][1]>=nums[0]:
                 tree2[j][1]-=numShift
 
         # Return a list of pairs of trees resulting from separating common edges
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
-
     def getValences(self):
         """ Gets the valences of an OrderedTree object and returns it as a list """
 
