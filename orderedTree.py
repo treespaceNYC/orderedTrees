@@ -880,7 +880,7 @@ def encompassingInterval(ordTree, interval):
 
   return [prevKey, inVal]
 
-
+# Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateRight(tree1, interval):
     """ Given a tree and interval, rotate interval to a right subtree if possible. """
     #if interval max is not a value in key (it is a min so can't rotate right)
@@ -941,6 +941,7 @@ def rotateRight(tree1, interval):
 
     return None
 
+# Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateLeft(tree1, interval):
     """ Given a tree and interval, rotate interval to a left subtree if possible. """
     tree = copy.deepcopy(tree1)
