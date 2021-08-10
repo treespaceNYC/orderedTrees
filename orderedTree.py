@@ -139,7 +139,7 @@ class OrderedTree:
                 tree2[j][1]-=numShift
 
         # Return a list of pairs of trees resulting from separating common edges
-        return [ [orderedTree(sorted(selfIntervals)),orderedTree(sorted(tree1))], [orderedTree(sorted(treeIntervals)),orderedTree(sorted(tree2))] ]
+        return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
 
     def getValences(self):
         """ Gets the valences of an OrderedTree object and returns it as a list """
