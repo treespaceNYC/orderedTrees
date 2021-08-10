@@ -79,7 +79,7 @@ class OrderedTree:
             return None
 
         # No more common edges
-        if interval[0] = [self.min,self.max] and len(interval)==1:
+        if interval[0] == [self.min,self.max] and len(interval)==1:
             return None
 
         # Get first common edge
@@ -390,6 +390,232 @@ class OrderedTree:
                     plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
                     plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
 
+    def drawPolygonTree(tree, **kwargs):
+        """ Draws a Triangulated Polygon with a tree inside, given an OrderedTree object """
+        # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
+        # treeColor=, treeStyle=, treeThickness=
+        r = lambda: random.randint(0,255)
+        rand_color=('#%02X%02X%02X' % (r(),r(),r()))
+        #default values
+        innerColor=rand_color
+        outerColor=rand_color
+        innerStyle= '-'
+        outerStyle= '-'
+        innerThickness= 2
+        outerThickness= 2
+        placement=0
+        dottedLine=0
+        dottedLineColor='black'
+        treeColor='red'
+        treeStyle='-'
+        treeThickness=1.5
+        #kwargs
+        if 'placement' in kwargs:
+            placement=kwargs['placement']
+        plt.rcParams["figure.figsize"] = [placement*12+5,5] #the dimensions of plot
+        if 'color' in kwargs:
+            innerColor=kwargs['color']
+            outerColor=kwargs['color']
+        if 'thickness' in kwargs:
+            innerThickness=kwargs['thickness']
+            outerThickness=kwargs['thickness']
+        if 'style' in kwargs:
+            innerStyle=kwargs['style']
+            outerStyle=kwargs['style']
+        if 'innerColor' in kwargs:
+            innerColor=kwargs['innerColor']
+        if 'outerColor' in kwargs:
+            outerColor=kwargs['outerColor']
+        if 'innerStyle' in kwargs:
+            innerStyle=kwargs['innerStyle']
+        if 'outerStyle' in kwargs:
+            outerStyle=kwargs['outerStyle']
+        if 'innerThickness' in kwargs:
+            innerThickness=kwargs['innerThickness']
+        if 'outerThickness' in kwargs:
+            outerThickness=kwargs['outerThickness']
+        #if innerColor but no outerColor
+        if 'innerColor' in kwargs and 'outerColor' not in kwargs:
+            outerColor=kwargs['innerColor']
+        #if outerColor but no innerColor
+        if 'outerColor' in kwargs and 'innerColor' not in kwargs:
+            innerColor=kwargs['outerColor']
+        # if dottedLine is requested
+        if 'dottedLine' in kwargs:
+            dottedLine=1
+            interval=kwargs['dottedLine']
+            a=interval[0]
+            b=interval[1]
+        if 'dottedLineColor' in kwargs:
+            dottedLineColor=kwargs['dottedLineColor']
+        if 'treeColor' in kwargs:
+            treeColor=kwargs['treeColor']
+        if 'treeStyle' in kwargs:
+            treeStyle=kwargs['treeStyle']
+        if 'treeThickness' in kwargs:
+            treeThickness=kwargs['treeThickness']
+
+        # get points for vertices of polygon
+        n=tree.leaves
+        sides=tree.leaves+1
+        r=3    #radius size of shape
+        angle=(2*math.pi)/(sides)
+        vertices=[]
+        start=math.ceil(sides/2)
+        offset=placement*7-7 #changes the X value of the points
+        for i in range(start,sides):
+            if sides%2==0:
+                x = r * math.sin(i * angle+math.pi/sides) +offset
+                y = -(r * math.cos(i * angle+math.pi/sides)) #negate y value to flip the polygon
+                vertices.append((x,y))
+            else:
+                x = r * math.sin(i * angle) +offset
+                y = -(r * math.cos(i * angle)) #negate y value to flip the polygon
+                vertices.append((x,y))
+        for i in range(0,start):
+            if sides%2==0:
+                x = r * math.sin(i * angle+math.pi/sides)+offset
+                y = -(r * math.cos(i * angle+math.pi/sides)) #negate y value to flip the polygon
+                vertices.append((x,y))
+            else:
+                x = r * math.sin(i * angle)+offset
+                y = -(r * math.cos(i * angle)) #negate y value to flip the polygon
+                vertices.append((x,y))
+
+        #create polygon using the vertices found above
+        polygon1 = Polygon(vertices)
+        #plot polygon
+        x, y = polygon1.exterior.xy
+        plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
+
+        # create dictionary for inner triangle vertices
+        triVert=defaultdict(list)
+        for i in range(n+1):
+            if i+1 > n:
+                triVert[i]=[i-1]
+            elif i-1 < 0:
+                triVert[i]=[i+1]
+            else:
+                triVert[i]=[i-1,i+1]
+
+        # draw the internal edges
+        intervals = tree.intervals
+        for key, val in intervals.items():
+            for i in val:
+                if (key==1 and i==n):
+                    #make the top edge (the min,max interval) thicker
+                    topEdge = LineString([vertices[0], vertices[-1]])
+                    plt.plot(*topEdge.xy,color=outerColor,linewidth=5)
+                else:
+                    line = LineString([vertices[key-1], vertices[i]])
+                    plt.plot(*line.xy,color=innerColor, linestyle=innerStyle, linewidth=innerThickness)
+                # append the vertices to triVert dictionary
+                triVert[key-1].append(i)
+                triVert[i].append(key-1)
+
+        # Create triangles out of dictionary values... Check each value at each key, and if that value as a key contains the same values, it's a triangle.
+        allTriangles=[]
+        lists=triVert.items()
+        for key,val in triVert.items():
+            for i in val:
+                for j in range(len(val)):
+                    element=val[j]
+                    elementinlists=[element in list[1] for list in lists]
+                    if elementinlists[i]==1:
+                        verts=[]
+                        verts.append(i)
+                        verts.append(val[j])
+                        verts.append(key)
+                        verts.sort()
+                        allTriangles.append(verts)
+        allTriangles.sort()
+        result = [allTriangles[i] for i in range(len(allTriangles)) if i == 0 or allTriangles[i] != allTriangles[i-1]]
+
+        # Connecting centers... the centers of two triangles will connect if they have a common edge. search through the triangle list to find triangles with a common edge, and connect their centers
+        for i in range(1,len(result)):
+            for triangle in result:
+                a=triangle[0]
+                b=triangle[1]
+                c=triangle[2]
+                # look for triangles w only 2 of the same points
+                if a in result[i] and b in result[i] and not c in result[i] or a in result[i] and c in result[i] and not b in result[i] or b in result[i] and c in result[i] and not a in result[i]:
+                    TriOne=result[i]
+                    a=TriOne[0]
+                    b=TriOne[1]
+                    c=TriOne[2]
+                    triangleOne=Polygon([vertices[a],vertices[b],vertices[c]])
+                    triOneCenter=triangleOne.centroid
+                    TriTwo=triangle
+                    d=TriTwo[0]
+                    e=TriTwo[1]
+                    f=TriTwo[2]
+                    triangleTwo=Polygon([vertices[d],vertices[e],vertices[f]])
+                    triTwoCenter=triangleTwo.centroid
+                    internalConnectingLine = LineString([triOneCenter, triTwoCenter])
+                    plt.plot(*internalConnectingLine.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                    break
+        # Find the outer triangles and draw the external lines
+        for triangle in result:
+            a=triangle[0]
+            b=triangle[1]
+            c=triangle[2]
+            # Look for the triangles with two external lines leaving the polygon... aka vertices are all next to each other
+            if b+1==c and b-1==a or a==0 and b==1 and c==n or a==0 and b==n-1 and c==n:
+                midpointOneX=(vertices[a][0]+vertices[b][0])/2
+                midpointOneY=(vertices[a][1]+vertices[b][1])/2
+                midpointTwoX=(vertices[b][0]+vertices[c][0])/2
+                midpointTwoY=(vertices[b][1]+vertices[c][1])/2
+                if a==0 and b==1 and c==n:
+                    midpointTwoX=(vertices[a][0]+vertices[c][0])/2
+                    midpointTwoY=(vertices[a][1]+vertices[c][1])/2
+                if a==0 and b==n-1 and c==n:
+                    midpointOneX=(vertices[b][0]+vertices[c][0])/2
+                    midpointOneY=(vertices[b][1]+vertices[c][1])/2
+                    midpointTwoX=(vertices[a][0]+vertices[c][0])/2
+                    midpointTwoY=(vertices[a][1]+vertices[c][1])/2
+                midpointOne=(midpointOneX,midpointOneY)
+                midpointTwo=(midpointTwoX,midpointTwoY)
+                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
+                outerTriangleCenter=outerTriangle.centroid
+
+                distance1=math.sqrt((outerTriangleCenter.x-midpointOneX)**2 + (outerTriangleCenter.y-midpointOneY)**2)
+                newX1=midpointOneX + (midpointOneX - outerTriangleCenter.x) / distance1 * 0.5
+                newY1=midpointOneY + (midpointOneY - outerTriangleCenter.y) / distance1 * 0.5
+                newPoint=(newX1, newY1)
+                tailOne = LineString([outerTriangleCenter, newPoint])
+                plt.plot(*tailOne.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+
+                distance2=math.sqrt((outerTriangleCenter.x-midpointTwoX)**2 + (outerTriangleCenter.y-midpointTwoY)**2)
+                newX2=midpointTwoX + (midpointTwoX - outerTriangleCenter.x) / distance2 * 0.5
+                newY2=midpointTwoY + (midpointTwoY - outerTriangleCenter.y) / distance2 * 0.5
+                newPoint2=(newX2, newY2)
+                tailTwo = LineString([outerTriangleCenter, newPoint2])
+                plt.plot(*tailTwo.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+            # triangles with only 1 external line... if two vertices are next to each other, and the third is elsewhere
+            elif b+1==c and a+1!=b or a+1==b and b+1!=c or a==0 and c==n:
+                midpointX=(vertices[b][0]+vertices[c][0])/2
+                midpointY=(vertices[b][1]+vertices[c][1])/2
+                if a+1==b and b+1!=c:
+                    midpointX=(vertices[a][0]+vertices[b][0])/2
+                    midpointY=(vertices[a][1]+vertices[b][1])/2
+                if a==0 and c==n:
+                    midpointX=(vertices[a][0]+vertices[c][0])/2
+                    midpointY=(vertices[a][1]+vertices[c][1])/2
+                midpoint=(midpointX,midpointY)
+                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
+                outerTriangleCenter=outerTriangle.centroid
+                distance=math.sqrt((outerTriangleCenter.x-midpointX)**2 + (outerTriangleCenter.y-midpointY)**2)
+                newX1=midpointX + (midpointX - outerTriangleCenter.x) / distance * 0.5
+                newY1=midpointY + (midpointY - outerTriangleCenter.y) / distance * 0.5
+                newPoint=(newX1, newY1)
+                tail=LineString([outerTriangleCenter, newPoint])
+                plt.plot(*tail.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+
+        #draw dotted line
+        if dottedLine==1:
+            dottedLine = LineString([vertices[a-1], vertices[b]])
+            plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
+        plt.axis('off')
 
 def isOrdered(newick):
     """ Checks if a tree is ordered """
