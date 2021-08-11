@@ -71,45 +71,92 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   newTree = rotateRight(tree, [3,6])[0]
   ```
   <p align="center">
-    <img src="https://i.imgur.com/Pw6U5SL.png" height="400" width="500">
+    <img src="https://i.imgur.com/0RkeaFH.png" height="300" >
   </p>
 
 ### Drawing Trees
-`drawTree(tree, **kwargs)` is the function used to draw trees when given a list of intervals and keyword arguments which allow the user to change the design and placement of the tree. Possible keyword arguments include:
-- color= (if no color is specified, it will choose at random)
-- style= 
+`drawTree(tree, **kwargs)` is the function used to draw trees when given an OrderedTree object. It allows the user to change the design and placement of the tree. Possible keyword arguments include:
+- color= ('color' or 'hexcode')
+  - If no color is specified, a random color will be chosen
+- style= ('', ' ', 'None', '--', '-.', '-', ':')
+  - If no style is specified, a solid line will be drawn
 - placement= 
-  - `placement = 1.1` will print the second tree to the right side of the first tree
+  - If no placement is specified, tree is drawn in placement 0
+  - `placement = 1` will print the second tree to the right side of the first tree
+  - to draw overlapping trees, allocate 0.03 between placements. ex: `placement = 0` and `placement = 0.03` draws overlapping trees
 - vNums=(0 or 1)
-  - `vNums = 1` means that the tree will be marked with numbers at the bottom of each leaf. Otherwise, it will be an unnumbered tree. 
+  - If not specified, an unnumbered tree will be drawn
+  - `vNums = 1` marks the tree with numbers at the bottom of each leaf
 - scaled=(0 or 1)
-  - If there are 2 trees that have different number of leaves, use `scale = 1` to make sure both trees are the same width and height
+  - When comparing trees with differing number of leaves, use `scale = 1` for the drawings to have the same height
 
-<b>Example<b>
+<b>Example: Drawing Two Trees<b>
   ```
   tree = OrderedTree([[1,2], [1,5], [1,8], [3,4], [3,5], [6,7], [6,8]])
   test1 = OrderedTree([[1,8], [1,2], [3,8], [3,7], [3,6], [4,6], [5,6]])
-  test1.drawTree(color='blue', placement=1.1, vNums = 1)
+  test1.drawTree(color='blue', placement=1, vNums = 1)
   tree.drawTree(color='red', vNums = 1, placement = 0)
   ```
   
   <p align="center" >
-    <img src="https://user-images.githubusercontent.com/72881310/128757620-8d32607f-52c2-4389-a538-28fd01c4a7cc.png" height="400" width="1000"
+    <img src="https://i.imgur.com/O2EvuVa.png" height="300"
   </p>
     
+<b>Example: Overlapping Trees<b>
+  ```
+  tree=randOrdered(8)
+  tree.drawTree(color='#8ea164', vNums = 1)
+  tree2 = OrderedTree([[1,8], [1,2], [3,8], [3,7], [3,6], [4,6], [5,6]])
+  tree2.drawTree(color='#d49844', placement=0.03, style=':')
 
+  ```
+  
+  <p align="center" >
+    <img src="https://i.imgur.com/MtJt8f0.png" height="300"
+  </p>
+    
 ### Drawing Polygons
-`drawPolygon(tree, **kwargs)` is the function used to draw a polygon given a tree in interval form (list of lists) and keyword arguments that allow the user to change the color of the polygon as well as the line style.
+`drawPolygon(tree, **kwargs)` is the function used to draw a polygon given an OrderedTree object with keyword arguments that give the user the option to alter the design of the polygon. Possible keyword arguments include:
+- color= ('color' or 'hexcode')
+  - The color for the entire polygon, external and internal lines
+  - If no color is specified, a random color will be chosen
+- innerColor=
+  - The color of the internal lines of the polygon
+- outerColor=
+  - The color of the external lines of the polygon
+- style= ('', ' ', 'None', '--', '-.', '-', ':')
+  - The linestyle of the entire polygon, external and internal lines
+  - If no style is specified, a solid line will be drawn
+- innerStyle= ('', ' ', 'None', '--', '-.', '-', ':')
+  - The linestyle of the internal lines of the polygon
+- outerStyle= ('', ' ', 'None', '--', '-.', '-', ':')
+  - The linestyle of the external lines of the polygon
+- thickness=
+  - The linewidth of the entire polygon, external and internal lines
+- innerThickness=
+  - The linewidth of the internal lines of the polygon
+- outerThickness=
+  - The linewidth of the external lines of the polygon
+- placement= 
+  - If no placement is specified, polygon is drawn in placement 0
+  - `placement = 1` will draw the second polygon to the right side of the first tree
+  - To draw overlapping polygons, allocate 0.03 between placements. ex: `placement = 0` and `placement = 0.03` draws overlapping polygons
+- dottedLine=[interval1,interval2]
+  - Draws a dotted line given an interval.
 
 <b>Example 1<b>
 
   ```
-  test1 = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]})) #brings in tree and turns into a list of lists through a helper function
-  test1.drawPolygon(color='blue', linestyle='-')
+  tree = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]})) #brings in tree and turns into a list of lists through a helper function
+  tree.drawPolygon(color='#0d4b54', outerThickness='3', innerThickness='1')
+  tree1= randOrdered(10) #creates a randomly generated tree of 10 leaves
+  tree1.drawPolygon(placement=1, innerStyle=':', innerColor='orange', outerColor='#d94f0b')
+  tree2= randOrdered(10)
+  tree2.drawPolygon(placement=2)
   ```
   
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/72881310/128402066-2b4ab1d3-3bd1-4550-9294-492d5c60faf8.png" width="500" height="500">
+  <img src="https://i.imgur.com/ZoVDAw0.png" height="300">
 </p>
   
   - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
@@ -118,26 +165,13 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   
   ```
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
-  test1 = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]}))
-  test1.drawPolygon(color='blue', linestyle='-')
-  tree.drawPolygon(color='red', linestyle='.')
+  tree1= randOrdered(7)
+  tree.drawPolygon(color='red')
+  tree1.drawPolygon(color='blue', innerStyle=':', outerStyle='-',placement=0.03, thickness=1)
+
   ```
   
  <p align="center">
-  <img src="https://user-images.githubusercontent.com/72881310/128748398-5bc2b879-6497-4933-893e-d7e480bdaca1.png" width="500" height="500">
+  <img src="https://i.imgur.com/Zh2FhJ8.png" height="300">
  </p>
 
- 
- Some possible keyword arguments that can be controlled by the user are as follows:
- - placement=
- - color= 
- - style=
- - thickness= 
- - innerColor= 
- - outerColor= 
- - innerStyle= 
- - outerStyle= 
- - innerThickness=
- - outerThickness=
- - dottedLine=[interval,interval]
-  
