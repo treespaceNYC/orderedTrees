@@ -342,6 +342,7 @@ class OrderedTree:
         vNums=0
         scaled=0
         scale=1
+        tempNums=[]
         #kwargs
         if 'vNums' in kwargs:
             vNums=kwargs['vNums']
@@ -387,8 +388,12 @@ class OrderedTree:
                 plt.plot(*rightLine.xy, color=color, linestyle=style)
                 #if visible numbers is requested
                 if vNums==1:
-                    plt.annotate(key, (vertices[0][0], vertices[0][1] -0.01*n))
-                    plt.annotate(i, (vertices[1][0], vertices[1][1]-0.01*n))
+                    if key not in tempNums:
+                        plt.annotate(key, (vertices[0][0], vertices[0][1] -(.027*n)))
+                        tempNums.append(key)
+                    if i not in tempNums:
+                        plt.annotate(i, (vertices[1][0], vertices[1][1]- (.027*n)))
+                        tempNums.append(i)
 
     def drawPolygonTree(tree, **kwargs):
         """ Draws a Triangulated Polygon with a tree inside, given an OrderedTree object """
