@@ -230,7 +230,14 @@ class OrderedTree:
         return [new_tree, tree]##return the two trees
 
     def drawPolygon(tree, **kwargs):
-        """ Draws Triangulated Polygon from OrderedTree object """
+        """ Draws Triangulated Polygon from OrderedTree object 
+        
+        Parameters: 
+            tree: OrderedTree object as a list of lists of intervals
+            **kwargs: all the possible keyword arguments that can be spcified to edit polygon
+        Returns:
+            polygon1: a picture of a polygon with all the specified arguments (default if not specified)
+        """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
