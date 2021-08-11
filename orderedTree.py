@@ -60,11 +60,9 @@ class OrderedTree:
 
     def commonEdges(self, tree1):
         """ finds common edges between two trees. ex: tree1.commonEdges(tree2) """
-        lst = []
         self_intervals = dictToInt(self.intervals)##change dictionaries to intervals
         tree1_intervals = dictToInt(tree1.intervals)
-        lst = [i for i in self_intervals if i in tree1_intervals]##find the commons
-        return lst
+        return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
     def removeCommon(self,tree):
         """ Create two pairs of trees after separating common edges """
