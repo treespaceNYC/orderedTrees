@@ -362,7 +362,7 @@ class OrderedTree:
             scale=4/(n-1)
             placement = 1.5*placement*(n-1)*scale
         elif scaled==0:
-            placement=placement*n
+            placement=placement*n*1.2
         # get points for vertices of triangle
         for key,val in intervals.items():
             for i in val:
