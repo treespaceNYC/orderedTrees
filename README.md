@@ -199,7 +199,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   test4 = OrderedTree([[1,2],[1,3],[1,14],[4,14],[5,11],[5,12],[5,13],[5,14],[6,7],[6,11],[8,9],[8,11],[10,11]])
   ```
 <p align="center">
-  <img src="https://imgur.com/a/ADUzDSC" height="300">
+  <img src="https://imgur.com/EwnnSbR" height="300">
 </p>
   
     
