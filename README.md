@@ -179,19 +179,17 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 
     
  ### Drawing Tree Inside Polygons
-`drawPolygonTree(tree, **kwargs)` is the function used to draw a tree within a polygon given an OrderedTree object with keyword arguments that give the user the option to alter the design of the polygon. Most of the keywords are similar to that of the Draw Polygon Function with additional keywords including: 
+`drawPolygonTree(tree, **kwargs)` is the function used to draw a tree within a polygon given an OrderedTree object with keyword arguments that give the user the option to alter the design of the polygon. Most of the keywords are similar to that of the Draw Polygon function with additional keywords including: 
 - treeColor=
   - The color of the tree inside polygon
   - If no color is specified, a random color will be chosen
-    
 - treeStyle=
-  - linestyle of the tree lines inside polygon
-    
+  - linestyle of the tree lines inside polygon 
 - treeThickness=
   - The linewidth of the tree lines inside polygon
   - If no number is specified, default is 1.5
     
-<b> Examples <b>
+<b>Examples<b>
   ```
   test1 = OrderedTree([[1,2],[1,4],[3,4]])
   test2 = OrderedTree([[1,2],[1,4],[1,5],[3,4]])
