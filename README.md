@@ -182,7 +182,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 `drawPolygonTree(tree, **kwargs)` is the function used to draw a tree within a polygon given an OrderedTree object with keyword arguments that give the user the option to alter the design of the polygon. Most of the keywords are similar to that of the Draw Polygon function with additional keywords including: 
 - treeColor= ('color' or 'hexcode')
   - The color of the tree inside polygon
-  - If no color is specified, a random color will be chosen
+  - If no color is specified, default is red
 - treeStyle= ('', ' ', 'None', '--', '-.', '-', ':')
   - linestyle of the tree lines inside polygon 
 - treeThickness=
