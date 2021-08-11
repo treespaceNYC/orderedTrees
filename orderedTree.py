@@ -196,7 +196,7 @@ class OrderedTree:
 
         right = []
         left = []
-        for key in unoffs.keys():## delete the ones not in the lst2? or the ones in lst2? not sure brain too fried
+        for key in unoffs.keys():## delete the ones not in the lst2
             for added in unoffs[key]:
                 # print((added))
                 if list(added[0]) not in lst2:
@@ -688,12 +688,7 @@ def orderNewick(newick):
 
 def dictToInt(my_dict):
     """ Returns a list of intervals after converting from dictionary format """
-    lst = []
-    for key,item in my_dict.items():
-        for i in item:
-            lst.append([key,i])
-
-    return lst
+    return [[key,val] for key in my_dict.keys() for val in my_dict[key]]
 
 def removeSiblings(tree, tree1):#non member
     """ Compares two trees and returns a list of two trees with their common sibling pairs removed """
