@@ -42,7 +42,7 @@ In order to check if a string in newick notation is ordered, the function `isOrd
 
 ### Building Trees
 The OrderedTree constructor accepts multiple input types:
-- No input for an empty constructor 
+- No input for an empty constructor, produces a tree with no leaves.
   - `tree = OrderedTree()`
 - An Int, n, that creates a caterpillar tree with n leaves
   - `tree = OrderedTree(4)`
@@ -68,7 +68,9 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 - `rotateRight(tree,interval)` will try to rotate the interval right. If successful then it will return a tuple containing the rotated OrderedTree and a list of the rotated intervals, otherwise it will return `None`.
   ```
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
-  newTree = rotateRight(tree, [3,6])[0]
+  newTree = rotateRight(tree, [3,6])[0]tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
+  deletedInterval = rotateRight(tree, [3,6])[1][0]
+  addedInterval = rotateRight(tree, [3,6])[1][1]
   ```
   <p align="center">
     <img src="https://i.imgur.com/0RkeaFH.png" height="300" >
