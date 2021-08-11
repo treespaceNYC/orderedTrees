@@ -330,6 +330,7 @@ class OrderedTree:
 
     def drawTree(tree, **kwargs):
         """ Draws a tree from an OrderedTree object """
+        """ When drawing trees of different sizes, overlap may occur. Standard placement method may not work, thus adjust placement value as necessary"""
         # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
         # create random default color for tree
         r = lambda: random.randint(0,255)
@@ -360,7 +361,7 @@ class OrderedTree:
         # sets placement depending on scaled or not
         if scaled==1:
             scale=4/(n-1)
-            placement = 1.5*placement*(n-1)*scale
+            placement=((n*scale)-scale)*1.8*placement
         elif scaled==0:
             placement=placement*n*1.2
         # get points for vertices of triangle
@@ -389,10 +390,16 @@ class OrderedTree:
                 #if visible numbers is requested
                 if vNums==1:
                     if key not in tempNums:
-                        plt.annotate(key, (vertices[0][0], vertices[0][1] -(.027*n)))
+                        if scaled==1:
+                            plt.annotate(key, (vertices[0][0], vertices[0][1] -(0.1)))
+                        else:
+                            plt.annotate(key, (vertices[0][0], vertices[0][1] -(.027*n)))
                         tempNums.append(key)
                     if i not in tempNums:
-                        plt.annotate(i, (vertices[1][0], vertices[1][1]- (.027*n)))
+                        if scaled==1:
+                            plt.annotate(i, (vertices[1][0], vertices[1][1]- (.1)))
+                        else:
+                            plt.annotate(i, (vertices[1][0], vertices[1][1]- (.027*n)))
                         tempNums.append(i)
 
     def drawPolygonTree(tree, **kwargs):
