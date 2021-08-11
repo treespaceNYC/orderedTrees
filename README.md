@@ -58,9 +58,9 @@ It's also possible to create both random intervals and random OrderedTree object
 
 - `randOrdered(n)` will create a random OrderedTree object with n leaves.
   - `randOrdered(20)` may create a tree with intervals: \
-[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15,20], [17.18], [19,20] 
+[1,2], [1,3], [1,14], [1,20], [4,5], [4,8], [4,9], [4,14], [6,8], [7,8], [10,14], [10,11], [12,14], [13,14], [15,16], [15, 18], [15,20], [17,18], [19,20] 
 <p align=center>
-  <img src="https://i.imgur.com/lF7d3Hy.png" height="400" width="800">
+  <img src="https://i.imgur.com/xibxwHM.png" height="300">
 </p>
 
 ### Rotating Trees
@@ -71,7 +71,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   newTree = rotateRight(tree, [3,6])[0]
   ```
   <p align="center">
-    <img src="https://i.imgur.com/Pw6U5SL.png" height="400" width="800">
+    <img src="https://i.imgur.com/Pw6U5SL.png" height="400" width="500">
   </p>
 
 ### Drawing Trees
