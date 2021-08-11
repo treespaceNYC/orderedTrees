@@ -156,7 +156,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   ```
   
 <p align="center">
-  <img src="https://i.imgur.com/ZoVDAw0.png" height="300">
+  <img src="https://i.imgur.com/ZoVDAw0.png" height="250">
 </p>
   
   - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
