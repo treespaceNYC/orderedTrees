@@ -195,6 +195,13 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   test2 = OrderedTree([[1,2],[1,4],[1,5],[3,4]])
   test3 = OrderedTree([[1,3],[1,5],[1,6],[1,8],[2,3],[4,5],[7,8]])
   test4 = OrderedTree([[1,2],[1,3],[1,14],[4,14],[5,11],[5,12],[5,13],[5,14],[6,7],[6,11],[8,9],[8,11],[10,11]])
+  
+  test1.drawPolygonTree(placement=0)
+  test2.drawPolygonTree(placement=1, treeStyle='-.')
+  test4.drawPolygonTree(placement=2, treeStyle='--', treeColor='blue')
+  test3.drawPolygonTree(placement=3, treeColor='green',treeThickness = 3)
+  
+  plt.show()
   ```
 <p align="center">
   <img src="https://i.imgur.com/EwnnSbR.png" height="300">
