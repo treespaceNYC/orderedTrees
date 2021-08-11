@@ -65,7 +65,13 @@ class OrderedTree:
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
     def removeCommon(self,tree):
-        """ Create two pairs of trees after separating common edges """
+        """ Create two pairs of trees after separating common edges 
+        
+        Parameters:
+            tree: OrderedTree object 1
+        Returns:
+            tree1 & tree2: list of lists of intervals after removing the common edges.
+        """
         interval = self.commonEdges(tree)
 
         # Edge case
