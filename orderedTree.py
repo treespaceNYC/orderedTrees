@@ -70,7 +70,7 @@ class OrderedTree:
                             break
         return lst
 
-        def removeCommon(self,tree):
+    def removeCommon(self,tree):
         """ Create two pairs of trees after separating common edges """
         interval = self.commonEdges(tree)
 
