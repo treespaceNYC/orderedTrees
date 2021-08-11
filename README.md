@@ -199,7 +199,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   test1.drawPolygonTree(placement=0)
   test2.drawPolygonTree(placement=1, treeStyle='-.')
   test4.drawPolygonTree(placement=2, treeStyle='--', treeColor='blue')
-  test3.drawPolygonTree(placement=3, treeColor='green',treeThickness = 3)
+  test3.drawPolygonTree(placement=3, treeColor='green', treeThickness = 3)
   
   plt.show()
   ```
