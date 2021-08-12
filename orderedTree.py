@@ -88,12 +88,12 @@ class OrderedTree:
         selfIntervals = dictToInt(self.intervals)
         treeIntervals = dictToInt(tree.intervals)
 
-        
+
         # Get all numbers that were removed
         nums = [i for i in range(interval[0],interval[1]+1)]
-    
+
         # DELETE #
-    
+
         # Add all intervals that need to be removed to another list
         for i in nums:
             for j in range(len(selfIntervals)):
@@ -141,7 +141,7 @@ class OrderedTree:
 
         # Return a list of pairs of trees resulting from separating common edges
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
-    
+
     def getValences(self):
         """Gets the valences of an OrderedTree object and returns it as a list."""
 
@@ -229,7 +229,7 @@ class OrderedTree:
     def deleteLeaf(tree, leaf):
         """ Takes a tree and leaf. Deletes the leaf and shrinks """
         self = copy.deepcopy(tree)##make a copy
-        
+
         #if leaf is greater than tree.max or equal to 0
         if (leaf > tree.max) or (leaf == 0):
             return None
@@ -467,9 +467,9 @@ class OrderedTree:
                         tempNums.append(i)
 
     def drawPolygonTree(tree, **kwargs):
-        """Draws a Triangulated Polygon with a tree inside, given an OrderedTree object."""
+        """ Draws a Triangulated Polygon with a tree inside, given an OrderedTree object """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
-        # treeColor=, treeStyle=, treeThickness=
+        # treeColor=, treeStyle=, treeThickness=, vNums=
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
         #default values
@@ -485,6 +485,19 @@ class OrderedTree:
         treeColor='red'
         treeStyle='-'
         treeThickness=1.5
+        vNums=0
+
+        #for annotations and external line extension
+        if tree.leaves<26:
+            externalExtensionSingle=0.25
+            externalExtensionDouble=0.35
+            numberDistanceSingle=0.35
+            numberDistanceDouble=0.45
+        else:
+            externalExtensionSingle=0.2
+            externalExtensionDouble=0.2
+            numberDistanceSingle=0.3
+            numberDistanceDouble=0.3
         #kwargs
         if 'placement' in kwargs:
             placement=kwargs['placement']
@@ -530,6 +543,8 @@ class OrderedTree:
             treeStyle=kwargs['treeStyle']
         if 'treeThickness' in kwargs:
             treeThickness=kwargs['treeThickness']
+        if 'vNums' in kwargs:
+            vNums=kwargs['vNums']
 
         # get points for vertices of polygon
         n=tree.leaves
@@ -563,7 +578,7 @@ class OrderedTree:
         #plot polygon
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
-
+        polyCenter=polygon1.centroid
         # create dictionary for inner triangle vertices
         triVert=defaultdict(list)
         for i in range(n+1):
@@ -589,7 +604,7 @@ class OrderedTree:
                 triVert[key-1].append(i)
                 triVert[i].append(key-1)
 
-        # Create triangles out of dictionary values... Check each value at each key, and if that value as a key contains the same values, it's a triangle.
+        # Create triangles out of dictionary values. Check each value at each key, and if that value as a key contains the same values, it's a triangle.
         allTriangles=[]
         lists=triVert.items()
         for key,val in triVert.items():
@@ -607,7 +622,7 @@ class OrderedTree:
         allTriangles.sort()
         result = [allTriangles[i] for i in range(len(allTriangles)) if i == 0 or allTriangles[i] != allTriangles[i-1]]
         temp=[]
-        # Connecting centers... the centers of two triangles will connect if they have a common edge. search through the triangle list to find triangles with a common edge, and connect their centers
+        # Connecting centers. The centers of two triangles will connect if they have a common edge. search through the triangle list to find triangles with a common edge, and connect their centers
         for i in range(1,len(result)):
             for triangle in result:
                 a=triangle[0]
@@ -640,57 +655,78 @@ class OrderedTree:
             a=triangle[0]
             b=triangle[1]
             c=triangle[2]
-            # Look for the triangles with two external lines leaving the polygon... aka vertices are all next to each other
+            # Look for the triangles with two external lines leaving the polygon, aka where vertices are all next to each other
             if b+1==c and b-1==a or a==0 and b==1 and c==n or a==0 and b==n-1 and c==n:
                 midpointOneX=(vertices[a][0]+vertices[b][0])/2
                 midpointOneY=(vertices[a][1]+vertices[b][1])/2
                 midpointTwoX=(vertices[b][0]+vertices[c][0])/2
                 midpointTwoY=(vertices[b][1]+vertices[c][1])/2
+                num1=b
+                num2=c
                 if a==0 and b==1 and c==n:
                     midpointTwoX=(vertices[a][0]+vertices[c][0])/2
                     midpointTwoY=(vertices[a][1]+vertices[c][1])/2
+                    num1=a
+                    num2=b
                 if a==0 and b==n-1 and c==n:
                     midpointOneX=(vertices[b][0]+vertices[c][0])/2
                     midpointOneY=(vertices[b][1]+vertices[c][1])/2
                     midpointTwoX=(vertices[a][0]+vertices[c][0])/2
                     midpointTwoY=(vertices[a][1]+vertices[c][1])/2
+                    num1=c
+                    num2=a
                 midpointOne=(midpointOneX,midpointOneY)
                 midpointTwo=(midpointTwoX,midpointTwoY)
                 outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
                 outerTriangleCenter=outerTriangle.centroid
-
-                distance1=math.sqrt((outerTriangleCenter.x-midpointOneX)**2 + (outerTriangleCenter.y-midpointOneY)**2)
-                newX1=midpointOneX + (midpointOneX - outerTriangleCenter.x) / distance1 * 0.5
-                newY1=midpointOneY + (midpointOneY - outerTriangleCenter.y) / distance1 * 0.5
+                # use the midpoint of the vertices to extend the line from the midpoint from the center of the polygn to get the new point
+                distance1=math.sqrt((polyCenter.x-midpointOneX)**2 + (polyCenter.y-midpointOneY)**2)
+                newX1=midpointOneX + (midpointOneX - polyCenter.x) / distance1 * externalExtensionDouble
+                newY1=midpointOneY + (midpointOneY - polyCenter.y) / distance1 * externalExtensionDouble
                 newPoint=(newX1, newY1)
-                tailOne = LineString([outerTriangleCenter, newPoint])
-                plt.plot(*tailOne.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                # connect the center of the triangle to the new point
+                tailOneA = LineString([outerTriangleCenter, newPoint])
+                newPointNum1=(midpointOneX + (midpointOneX - polyCenter.x) / distance1 * numberDistanceDouble, midpointOneY + (midpointOneY - polyCenter.y) / distance1 * numberDistanceDouble)
+                plt.plot(*tailOneA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
 
-                distance2=math.sqrt((outerTriangleCenter.x-midpointTwoX)**2 + (outerTriangleCenter.y-midpointTwoY)**2)
-                newX2=midpointTwoX + (midpointTwoX - outerTriangleCenter.x) / distance2 * 0.5
-                newY2=midpointTwoY + (midpointTwoY - outerTriangleCenter.y) / distance2 * 0.5
+                distance2=math.sqrt((polyCenter.x-midpointTwoX)**2 + (polyCenter.y-midpointTwoY)**2)
+                newX2=midpointTwoX + (midpointTwoX - polyCenter.x) / distance2 * externalExtensionDouble
+                newY2=midpointTwoY + (midpointTwoY - polyCenter.y) / distance2 * externalExtensionDouble
                 newPoint2=(newX2, newY2)
-                tailTwo = LineString([outerTriangleCenter, newPoint2])
-                plt.plot(*tailTwo.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
-            # triangles with only 1 external line... if two vertices are next to each other, and the third is elsewhere
+                newPointNum2=(midpointTwoX + (midpointTwoX - polyCenter.x) / distance2 * numberDistanceDouble, midpointTwoY + (midpointTwoY - polyCenter.y) / distance2 * numberDistanceDouble)
+                tailTwoA = LineString([outerTriangleCenter, newPoint2])
+                plt.plot(*tailTwoA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                # annotated if needed
+                if vNums==1:
+                    plt.annotate(num1, (newPointNum1))
+                    plt.annotate(num2, (newPointNum2))
+            # Triangles with only 1 external line: If two vertices are next to each other, and the third is elsewhere
             elif b+1==c and a+1!=b or a+1==b and b+1!=c or a==0 and c==n:
                 midpointX=(vertices[b][0]+vertices[c][0])/2
                 midpointY=(vertices[b][1]+vertices[c][1])/2
+                num=c
                 if a+1==b and b+1!=c:
                     midpointX=(vertices[a][0]+vertices[b][0])/2
                     midpointY=(vertices[a][1]+vertices[b][1])/2
+                    num=b
                 if a==0 and c==n:
                     midpointX=(vertices[a][0]+vertices[c][0])/2
                     midpointY=(vertices[a][1]+vertices[c][1])/2
+                    num=a
                 midpoint=(midpointX,midpointY)
                 outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
                 outerTriangleCenter=outerTriangle.centroid
-                distance=math.sqrt((outerTriangleCenter.x-midpointX)**2 + (outerTriangleCenter.y-midpointY)**2)
-                newX1=midpointX + (midpointX - outerTriangleCenter.x) / distance * 0.5
-                newY1=midpointY + (midpointY - outerTriangleCenter.y) / distance * 0.5
+
+                distance=math.sqrt((polyCenter.x-midpointX)**2 + (polyCenter.y-midpointY)**2)
+                newX1=midpointX + (midpointX - polyCenter.x) / distance * externalExtensionSingle
+                newY1=midpointY + (midpointY - polyCenter.y) / distance * externalExtensionSingle
                 newPoint=(newX1, newY1)
-                tail=LineString([outerTriangleCenter, newPoint])
-                plt.plot(*tail.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                newPointNum3=(midpointX + (midpointX - polyCenter.x) / distance * numberDistanceSingle, midpointY + (midpointY - polyCenter.y) / distance * numberDistanceSingle)
+                tailA=LineString([outerTriangleCenter, newPoint])
+                plt.plot(*tailA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                # annotated if needed
+                if vNums==1:
+                    plt.annotate(num, (newPointNum3))
 
         #draw dotted line
         if dottedLine==1:
