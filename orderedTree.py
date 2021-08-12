@@ -223,6 +223,54 @@ class OrderedTree:
                     new_tree = copy.deepcopy(rotateLeft(new_tree, val[1])[0])
         return [new_tree, tree]##return the two trees
 
+    def deleteLeaf(tree, leaf):
+    """ Takes a tree and leaf. Deletes the leaf and shrinks """
+    self = copy.deepcopy(tree)##make a copy
+    if leaf in self.intervals.keys():##if is a key
+        if len(self.intervals[leaf]) > 1:## if key has more than one value
+            lst = self.intervals.get(leaf)##keep the values in the key
+            del self.intervals[leaf]##delete the key
+            if leaf+1 in self.intervals.keys():#if the next leaf is a key
+                self.intervals[leaf+1] = lst
+            else:#if the next leaf is a value
+                self.intervals[lst[0]] = lst[1:]##make a new key which is the first value of the key, meaning the first element of the lst, and then the value will be the whole list
+        else:
+            del self.intervals[leaf]##delete the key if it only has 1 val
+
+    else:##if is a value
+        count = 0
+        for key in self.intervals.keys():#count how many times it appears
+            count += self.intervals[key].count(leaf)
+
+        if count > 1:##if value appears more than once
+            value = leaf-1##value is the leaf that will replace the deleted leaf
+            if value in self.intervals.keys():#if the previous leaf is a key:
+                del self.intervals[value]#delete the key that will turn into a value
+                leaf = leaf-1##decrease shift down by one and let the shift later do the work
+            else:#if the previous leaf is a max
+                for k in self.intervals.keys():#remove the previous leaf
+                    if value in self.intervals[k]:
+                        self.intervals[k].remove(value)
+                for k in self.intervals.keys():##loop through all the values, and if any of them were equal to leaf
+                    for val in range(len(self.intervals[k])):
+                        if self.intervals[k][val] == leaf:
+                            self.intervals[k][val] = value
+
+        else:
+            for k in self.intervals.keys():##if val only shows up in one key, delete that value from key
+                if leaf in self.intervals[k]:
+                    self.intervals[k].remove(leaf)
+                    break
+
+
+    intervals = dictToInt(self.intervals)
+    for pairs in range(len(intervals)):##shift
+        for leafs in range(len(intervals[pairs])):
+            if intervals[pairs][leafs] > leaf:
+                intervals[pairs][leafs] -=1
+    self = copy.deepcopy(OrderedTree(intervals))##make a new object with shifted values
+    return self
+
     def drawPolygon(tree, **kwargs):
         """ Draws Triangulated Polygon from OrderedTree object """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
