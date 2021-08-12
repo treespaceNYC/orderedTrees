@@ -348,7 +348,7 @@ class OrderedTree:
         angle=(2*math.pi)/(sides)
         vertices=[]
         start=math.ceil(sides/2)
-        offset=placement*7-7 #changes the X value of the points
+        offset=placement*7.5-7.5 #changes the X value of the points
 
         # get points for vertices of polygon
         for i in range(start,sides):
@@ -553,7 +553,7 @@ class OrderedTree:
         angle=(2*math.pi)/(sides)
         vertices=[]
         start=math.ceil(sides/2)
-        offset=placement*7-7 #changes the X value of the points
+        offset=placement*7.5-7.5 #changes the X value of the points
         for i in range(start,sides):
             if sides%2==0:
                 x = r * math.sin(i * angle+math.pi/sides) +offset
