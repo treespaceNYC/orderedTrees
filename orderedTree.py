@@ -307,20 +307,27 @@ class OrderedTree:
             tree: OrderedTree object as a list of lists of intervals
             **kwargs: all the possible keyword arguments that can be spcified to edit polygon
         Returns:
-            polygon1: a picture of a polygon with all the specified arguments (default if not specified)
-            
+            polygon1: a picture of a polygon with all the specified arguments (default if not specified)   
         Keyword Arguments:
             placement: determines the placement of each tree (Ex: placement = 1, placement = 2, etc.)
                 DEFAULT: placement = 0
             color: used to choose a specific color of the polygon
-                DEFAULT: color=red
+                DEFAULT: color=random color
             style: states the style of the line that is wanted 
                 DEFAULT: style = '-'
-            thickness: 
-            
-            NEED TO FINISH
-                
-            
+            innerColor: the color of the lines inside the polygon 
+                DEFAULT: innerColor=random color
+            outerColor: color of outer lines if innerColor is specified
+                DEFAULT: outerColor=random color
+            innerStyle: chooses the inner line style 
+                DEFAULT: innterStyle = '-'
+            outerStyle: chooses the outer line style
+                DEFAULT: outerStyle = '-'
+            innerThickness: states how thick the inner lines will be
+                DEFAULT: innerThickness = '-'
+            outerThickness: states how thich the outer lines will be
+                DEFAULT: outerThickness = '-'
+            dottedLine=[interval,interval]: used to draw a specific dotted line from one vertices to another
         """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
@@ -426,8 +433,22 @@ class OrderedTree:
             plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
 
     def drawTree(tree, **kwargs):
-        """Draws a tree from an OrderedTree object."""
-        """When drawing trees of different sizes, overlap may occur. Standard placement method may not work, thus adjust placement value as necessary."""
+        """Draws a tree from an OrderedTree object.
+        
+        Parameters:
+            tree: OrderedTree object.
+            **kwargs: possible keyword arguments that can be specified to print out a specific style for the tree
+        Returns: 
+            A picture of an ordered tree
+        Keyword Arguments:
+            color: determines the overall color of the tree (DEFAULT: random color)
+            style: the line style used to draw tree
+            placement: needs to be specified when drawing several trees at the same time (DEFAULT: placement=0)
+            vNums: needs to be specified if you want the numbers to show (DEFAULT: vNums = 0 --> numbers won't be visible at bottom of leaves)
+            scaled: needs to be specified as "scaled = 1" if you have trees with different number of leaves (DEFAULT: scaled = 0)
+            
+        WARNING: When drawing trees of different sizes, overlap may occur. Standard placement method may not work, thus adjust placement value as necessary.
+        """
         # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
         # create random default color for tree
         r = lambda: random.randint(0,255)
@@ -500,7 +521,34 @@ class OrderedTree:
                         tempNums.append(i)
 
     def drawPolygonTree(tree, **kwargs):
-        """Draws a Triangulated Polygon with a tree inside, given an OrderedTree object."""
+        """Draws a Triangulated Polygon with a tree inside, given an OrderedTree object.
+        
+        Parameters:
+            tree: an OrderedTree object
+            **kwargs: all the possible keyword arguments that can be specified to draw out the Polygon Tree.
+        Returns:
+            Prints out Triangulated polygon with a tree drawing inside
+        Keyword Arguments:
+            placement: determines the placement of each tree (Ex: placement = 1, placement = 2, etc.)
+                DEFAULT: placement = 0 (2nd tree should have "placement = 1")
+            color: used to choose a specific color of the polygon
+                DEFAULT: color=random color
+            style: states the style of the line that is wanted 
+                DEFAULT: style = '-'
+            innerColor: the color of the lines inside the polygon 
+                DEFAULT: innerColor=random color
+            outerColor: color of outer lines if innerColor is specified
+                DEFAULT: outerColor=random color
+            innerStyle: chooses the inner line style 
+                DEFAULT: innterStyle = '-'
+            outerStyle: chooses the outer line style
+                DEFAULT: outerStyle = '-'
+            innerThickness: states how thick the inner lines will be
+                DEFAULT: innerThickness = '-'
+            outerThickness: states how thich the outer lines will be
+                DEFAULT: outerThickness = '-'
+            dottedLine=[interval,interval]: used to draw a specific dotted line from one vertices to another
+        """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         # treeColor=, treeStyle=, treeThickness=
         r = lambda: random.randint(0,255)
@@ -732,7 +780,13 @@ class OrderedTree:
         plt.axis('off')
 
 def isOrdered(newick):
-    """Checks if a tree is ordered."""
+    """Checks if a tree is ordered.
+    
+    Parameters:
+        newick: a tree in newick notation
+    Returns:
+        an ordered newick string
+    """
     newickTuple = ""
     # Can't edit a tuple
     for i in newick:
@@ -760,7 +814,7 @@ def isOrdered(newick):
 
 
 def orderNewick(newick):
-    """Helper Function for isOrdered that will try to order a tree."""
+    """Helper Function for isOrdered that will order a tree."""
 
     # Base Case
     if isinstance(newick, int):
@@ -796,11 +850,23 @@ def orderNewick(newick):
     return max
 
 def dictToInt(my_dict):
-    """Returns a list of intervals after converting from dictionary format."""
+    """Returns a list of intervals after converting from dictionary format.
+    
+    Parameters: 
+        my_dict: a tree in dictionary form
+    Returns:
+        tree in interval form
+    """
     return [[key,val] for key in my_dict.keys() for val in my_dict[key]]
 
 def removeSiblings(tree, tree1):#non member
-    """Compares two trees and returns a list of two trees with their common sibling pairs removed."""
+    """Compares two trees and returns a list of two trees with their common sibling pairs removed.
+    
+    Parameters:
+        tree & tree1: OrderedTree object
+    Returns:
+        list that contains 2 trees after common sibling pairs have been removed.
+    """
     # ========= Get valences ========= #
     valences = tree.getSummedValences(tree1)
 
@@ -857,7 +923,13 @@ def removeSiblings(tree, tree1):#non member
     return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
 def interval2newick(interval):
-    """Interval notation to newick notation."""
+    """Interval notation to newick notation.
+    
+    Parameters:
+        interval: tree in interval notation
+    Returns:
+        tree in newick notation
+    """
     intervals = defaultdict(list)
     for k, v in interval:
         intervals[k].append(v)
@@ -887,7 +959,13 @@ def interval2newick(interval):
     return result[:-1]
 
 def newick2interval(newick):
-    """Newick format to interval format converter."""
+    """Newick format to interval format converter.
+    
+    Parameters:
+        newick: a tree in newick notation 
+    Returns:
+        Tree in interval notation
+    """
     intervals = []
     commaCount = newick.count(",")
     while commaCount!=1:
@@ -941,7 +1019,14 @@ def newick2interval(newick):
 
 
 def decompassingInterval(self, interval):
-    """Given an OrderedTree object and an interval, return the largest interval inside the input interval."""
+    """Given an OrderedTree object and an interval, return the largest interval inside the input interval.
+    
+    Parameters: 
+        self: an OrderedTree object 
+        interval: the interval that you want to check (format: [int, int])
+    Returns: 
+        Largest interval within the interval inputted.
+    """
     ##two cases, either decompassing will share a key or a value
     ##if key:
     for val in self.intervals.get(interval[0]):##loop through values in the key
@@ -957,7 +1042,15 @@ def decompassingInterval(self, interval):
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  """Given an OrderedTree object and an interval, return the smallest interval encasing input interval."""
+  """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.
+  
+    Parameters:
+        ordTree: OrderedTree object
+        interval: interval that gives the scope of inspection for this function
+    Returns:
+        Smallest interval within the interval inputted.
+    
+  """
   tree = ordTree.intervals
   inKey = interval[0]
   inVal = interval[1]
@@ -980,7 +1073,14 @@ def encompassingInterval(ordTree, interval):
 
 # Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateRight(tree1, interval):
-    """Given a tree and interval, rotate interval to a right subtree if possible."""
+    """Given a tree and interval, rotate interval to a right subtree if possible.
+    
+    Parameters: 
+        tree1: OrderedTree object
+        interval: interval that will be rotated to the right.
+    Returns:
+        
+    """
     #if interval max is not a value in key (it is a min so can't rotate right)
     tree = copy.deepcopy(tree1)
     changed_intervals = []
@@ -1094,7 +1194,14 @@ def rotateLeft(tree1, interval):
     return None
 
 def randInterval(min, max=None):
-    """Takes a min and max, returns intervals after splitting on random midpoint."""
+    """Takes a min and max, returns intervals after splitting on random midpoint.
+    
+    Parameters: 
+        min: integer that is the smallest number in the interval
+        max: integer that is the largest number in the interval
+    Returns:
+        2 sub-intervals after being split by a random midpoint.
+    """
     interval = []
 
     # If input is (list,None)
@@ -1123,7 +1230,13 @@ def randInterval(min, max=None):
     return [interval,interval2]
 
 def randOrdered(n):
-    """Given n leaves, returns a randomly generated OrderedTree object."""
+    """Given n leaves, returns a randomly generated OrderedTree object.
+    
+    Parameters: 
+        n: integer that represents the number of leaves wanted in the random tree.
+    Returns: 
+        A random OrderedTree object (list of lists of intervals)
+    """
     # Edge cases with impossible intervals
     if n<=1:
         return OrderedTree()
