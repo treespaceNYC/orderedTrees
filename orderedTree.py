@@ -232,6 +232,10 @@ class OrderedTree:
     def deleteLeaf(tree, leaf):
         """ Takes a tree and leaf. Deletes the leaf and shrinks """
         self = copy.deepcopy(tree)##make a copy
+        
+        #if leaf is greater than tree.max or equal to 0
+        if (leaf > tree.max) or (leaf == 0):
+            return None
         if leaf in self.intervals.keys():##if is a key
             if len(self.intervals[leaf]) > 1:## if key has more than one value
                 lst = self.intervals.get(leaf)##keep the values in the key
