@@ -59,7 +59,16 @@ class OrderedTree:
         return False
 
     def commonEdges(self, tree1):
-        """Finds common edges between two trees. ex: tree1.commonEdges(tree2)."""
+        """Finds common edges between two trees. ex: tree1.commonEdges(tree2).
+        
+        Parameters:
+            tree1: OrderedTree object
+        Returns:
+            list of intervals of all common edges within both inputted trees
+            
+        Example of Usage:
+            tree1.commonEdges(tree2) --> finds the common edges between tree1 & tree2
+        """
         self_intervals = dictToInt(self.intervals)##change dictionaries to intervals
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
@@ -145,6 +154,7 @@ class OrderedTree:
 
         # Return a list of pairs of trees resulting from separating common edges
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
+    
     def getValences(self):
         """Gets the valences of an OrderedTree object and returns it as a list."""
 
@@ -230,7 +240,14 @@ class OrderedTree:
         return [new_tree, tree]##return the two trees
 
     def deleteLeaf(tree, leaf):
-        """ Takes a tree and leaf. Deletes the leaf and shrinks """
+        """Takes a tree and leaf. Deletes the leaf and shrinks.
+        
+        Parameters:
+            tree: OrderedTree object.
+            leaf: integer that represents the leaf that you want to get rid of.
+        Returns: 
+            self: a new OrderedTree object that has the tree with new shifted values after deleting a leaf.
+        """
         self = copy.deepcopy(tree)##make a copy
         
         #if leaf is greater than tree.max or equal to 0
@@ -291,6 +308,19 @@ class OrderedTree:
             **kwargs: all the possible keyword arguments that can be spcified to edit polygon
         Returns:
             polygon1: a picture of a polygon with all the specified arguments (default if not specified)
+            
+        Keyword Arguments:
+            placement: determines the placement of each tree (Ex: placement = 1, placement = 2, etc.)
+                DEFAULT: placement = 0
+            color: used to choose a specific color of the polygon
+                DEFAULT: color=red
+            style: states the style of the line that is wanted 
+                DEFAULT: style = '-'
+            thickness: 
+            
+            NEED TO FINISH
+                
+            
         """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
