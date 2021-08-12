@@ -8,9 +8,22 @@ import re
 
 
 class OrderedTree:
+    """
+    A class to represent ordered trees 
+    """
     def __init__(self, *n):
+        """Default constructor that creates an empty tree.
+        
+        Parameters:
+            n: integer that represents the number of leaves.
+        Returns: 
+            Can return one of 4 options:
+                1. Can return an empty tree
+                2. Can return a dictionary of the intervals [1,2]..., [1,n]
+                3. Can return a tree from a given list of intervals
+                4. Can return a tree from newick form
+        """
         if(len(n) == 0):
-            """Default constructor that creates an empty tree."""
             self.leaves = 0
             self.intervals = defaultdict(list)
             self.min=0
@@ -156,8 +169,13 @@ class OrderedTree:
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
     
     def getValences(self):
-        """Gets the valences of an OrderedTree object and returns it as a list."""
-
+        """Gets the valences of an OrderedTree object and returns it as a list.
+        
+        Parameters:
+            self: an OrderedTree object.
+        Returns: 
+            A list of the valences of the OrderedTree object.
+        """
         # Create list to hold valences
         valences = [0]*(self.max+1)
         for key,val in self.intervals.items():
@@ -166,13 +184,19 @@ class OrderedTree:
                 valences[key-1]+=1
                 # add right interval to valence[interval]
                 valences[i]+=1
-
         # remove interval [min,max]
         valences[0]-=1
         valences[self.max]-=1
         return valences
+    
     def getSummedValences(self, tree):
-        """Takes two trees and return the a list of the summedvalences."""
+        """Takes two trees and return the a list of the summed valences.
+        
+        Parameters:
+            self & tree: OrderedTree objects.
+        Returns: 
+            A list of all summed valences.
+        """
         # Trees arent the same amount of leaves
         if tree.leaves != self.leaves:
             return None
@@ -183,9 +207,16 @@ class OrderedTree:
 
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
+    
     def oneOffs(self, tree):
         """Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value
-        will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate."""
+        will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate.
+        
+        Parameters:
+            self & tree: OrderedTree objects
+        Returns: 
+            Dictionary that includes type of rotation (key) and a list (value) that includes the interval being added and the interval being used when rotating.
+        """
         lst1 = dictToInt(self.intervals)
         lst2 = dictToInt(tree.intervals)
         common = self.commonEdges(tree)
@@ -1079,7 +1110,8 @@ def rotateRight(tree1, interval):
         tree1: OrderedTree object
         interval: interval that will be rotated to the right.
     Returns:
-        
+        A tuple in which the first element is the tree after we rotate and the second element is a list that includes the deleted interval as the first element
+        and the added interval as the second element within the list.      
     """
     #if interval max is not a value in key (it is a min so can't rotate right)
     tree = copy.deepcopy(tree1)
@@ -1141,7 +1173,15 @@ def rotateRight(tree1, interval):
 
 # Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateLeft(tree1, interval):
-    """Given a tree and interval, rotate interval to a left subtree if possible."""
+    """Given a tree and interval, rotate interval to a left subtree if possible.
+    
+    Parameters: 
+        tree1: OrderedTree object
+        interval: interval that will be rotated to the left.
+    Returns:
+        A tuple in which the first element is the tree after we rotate and the second element is a list that includes the deleted interval as the first element
+        and the added interval as the second element within the list. 
+    """
     tree = copy.deepcopy(tree1)
     changed_intervals = []
     #if interval max is not a value in key (it is a min so can't rotate right)
