@@ -237,7 +237,9 @@ class OrderedTree:
                 lst = self.intervals.get(leaf)##keep the values in the key
                 del self.intervals[leaf]##delete the key
                 if leaf+1 in self.intervals.keys():#if the next leaf is a key
-                    self.intervals[leaf+1] = lst
+                    self.intervals[leaf+1] += lst##combine the values of the leaf key and leaf + 1 key
+                    self.intervals[leaf+1] = list(set(self.intervals[leaf+1]))##get rid of duplicates
+                    self.intervals[leaf+1].sort()##sort
                 else:#if the next leaf is a value
                     self.intervals[lst[0]] = lst[1:]##make a new key which is the first value of the key, meaning the first element of the lst, and then the value will be the whole list
             else:
