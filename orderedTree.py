@@ -221,6 +221,8 @@ class OrderedTree:
         lst1 = dictToInt(self.intervals)
         lst2 = dictToInt(tree.intervals)
         common = self.commonEdges(tree)
+
+        #oneoffs looking from the first tree to the second tree
         difference = [i for i in lst1 if i not in common]##get the differences in the self tree
         unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
         # the second index is the rotation used to add that interval
@@ -258,6 +260,7 @@ class OrderedTree:
                         unoffs["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
                     #the interval to call is the decompassing interval
 
+        ##one offs from the second tree to the first tree
         difference2 = [i for i in lst2 if i not in common]
         values = []
         for j in tree.intervals.values():
@@ -274,26 +277,26 @@ class OrderedTree:
                 ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
                 rRotation = rotateRight(tree, j)
                 if rRotation:
-                    if rRotation[1][1] in lst1 and [rRotation[1][1],j] not in unoffs2["R"]:
+                    if rRotation[1][1] in lst1 and [rRotation[1][1],j] not in unoffs2["R"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         if [j, rRotation[1][1]] not in unoffs["L"]:
                             unoffs2["R"].append([rRotation[1][1], j])# the value, aka the interval to rotate, is simply i
                 lRotation = rotateLeft(tree, j)
                 if lRotation:
-                    if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:
+                    if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         if [j, lRotation[1][1]] not in unoffs["R"]:
                             unoffs2["L"].append([lRotation[1][1], j])
                 ##if complex subtree
             elif decomp and encomp:
                 rRotation = rotateRight(tree, decomp)
                 if rRotation:
-                    if rRotation[1][1] in lst1 and [rRotation[1][1], decomp] not in unoffs2["R"]:
+                    if rRotation[1][1] in lst1 and [rRotation[1][1], decomp] not in unoffs2["R"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         # print(j)
                         if [decomp, rRotation[1][1]] not in unoffs["L"]:
                             unoffs2["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
                             #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
                 lRotation = rotateLeft(tree, decomp)
                 if lRotation:
-                    if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:
+                    if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         if [decomp, lRotation[1][1]]:
                             unoffs2["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
                             #the interval to call is the decompassing interval
@@ -303,17 +306,17 @@ class OrderedTree:
 
     def rotate1(self, tree):
         """ Executes the rotations provided by one off function and returns the two trees """
-        if self == tree:
+        if self == tree:##if the two trees are the same return none
             return None
         distance = 0
         new_self = copy.deepcopy(self)##make a copy to return
         new_tree = copy.deepcopy(tree)
         rotates = self.oneOffs(tree)##get a tuple of dictonaries
-        switch = False
+        switch = False##switch to know on which trees to do the rotation
 
         if not rotates[0] and not rotates[1]:
             return None
-        for dict in rotates:
+        for dict in rotates:##loop through the two dictionaries, first dict holds oneoffs from self to tree, and the second holds oneoffs from right to left
             if switch:
                 switch = False
             else:
