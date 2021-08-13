@@ -170,61 +170,126 @@ class OrderedTree:
 
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
+
     def oneOffs(self, tree):
-        """Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value
-        will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate."""
-        lst1 = dictToInt(self.intervals)
-        lst2 = dictToInt(tree.intervals)
-        common = self.commonEdges(tree)
-        difference = []
-        for i in lst1:##get the differences in the self tree
-            if i not in common:
-                difference.append(i)
-        unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
-        # the second index is the rotation used to add that interval
-        # print(difference)
-        for i in difference:
-            decomp = decompassingInterval(self, i)
-            encomp = encompassingInterval(self, i)
-            if not decomp and encomp:##if there is no decompassing
-                ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
-                unoffs["R"].append([(rotateRight(self, i))[1][1], i])# the value, aka the interval to rotate, is simply i
-                unoffs["L"].append([(rotateLeft(self, i))[1][1], i])
-                ##if complex subtree
-            else:
-                unoffs["R"].append([[decomp[0], encomp[1]], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
-                #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
-                unoffs["L"].append([[encomp[0], decomp[1]], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
-                #the interval to call is the decompassing interval
+        """Finds the one offs and returns a dictionary with the rotations to make the one off changes for both trees"""
+            lst1 = dictToInt(self.intervals)
+            lst2 = dictToInt(tree.intervals)
+            common = self.commonEdges(tree)
+            difference = [i for i in lst1 if i not in common]##get the differences in the self tree
+            unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
+            # the second index is the rotation used to add that interval
+            unoffs2 = defaultdict(list)
+            values = []
+            for j in self.intervals.values():
+                values+=j
+            for i in difference:
+                decomp = decompassingInterval(self, i)
+                encomp = encompassingInterval(self, i)
+                lonepair = False
 
-        right = []
-        left = []
-        for key in unoffs.keys():## delete the ones not in the lst2
-            for added in unoffs[key]:
-                # print((added))
-                if list(added[0]) not in lst2:
-                    # unoffs[key].remove(added)
-                    if key == "R":
-                        right.append(added)
-                    else:
-                        left.append(added)
-        for delete in right:
-            unoffs["R"].remove(delete)
-        for delete in left:
-            unoffs["L"].remove(delete)
+                if (values.count(i[1]) == 1) or (len(self.intervals[i[0]]) == 1):
+                    lonepair = True
+                if lonepair:##if there is no decompassing
+                    ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
+                    rRotation = rotateRight(self, i)
+                    if rRotation:
+                        if rRotation[1][1] in lst2 and [rRotation[1][1], i] not in unoffs["R"]:
+                            unoffs["R"].append([rRotation[1][1], i])# the value, aka the interval to rotate, is simply i
+                    lRotation = rotateLeft(self, i)
+                    if lRotation:
+                        if lRotation[1][1] in lst2 and [lRotation[1][1], i] not in unoffs["L"]:
+                            unoffs["L"].append([lRotation[1][1], i])
+                    ##if complex subtree
+                elif decomp and encomp:
+                    rRotation = rotateRight(self, i)
+                    if rRotation:
+                        if rRotation[1][1] in lst2 and [rRotation[1][1], decomp] not in unoffs["R"]:
+                            unoffs["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
+                        #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
+                    lRotation = rotateLeft(self, i)
+                    if lRotation:
+                        if lRotation[1][1] in lst2 and [lRotation[1][1], decomp] not in unoffs["L"]:
+                            unoffs["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
+                        #the interval to call is the decompassing interval
 
-        return unoffs
+            difference2 = [i for i in lst2 if i not in common]
+            values = []
+            for j in tree.intervals.values():
+                values+=j
+            for j in difference2:
+                decomp = decompassingInterval(tree, j)
+                encomp = encompassingInterval(tree, j)
+                lonepair = False
+
+
+                if (values.count(j[1]) == 1) or (len(tree.intervals[j[0]]) == 1):
+                    lonepair = True
+                if lonepair:##if there is no decompassing
+                    ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
+                    rRotation = rotateRight(tree, j)
+                    if rRotation:
+                        if rRotation[1][1] in lst1 and [rRotation[1][1],j] not in unoffs2["R"]:
+                            if [j, rRotation[1][1]] not in unoffs["L"]:
+                                unoffs2["R"].append([rRotation[1][1], j])# the value, aka the interval to rotate, is simply i
+                    lRotation = rotateLeft(tree, j)
+                    if lRotation:
+                        if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:
+                            if [j, lRotation[1][1]] not in unoffs["R"]:
+                                unoffs2["L"].append([lRotation[1][1], j])
+                    ##if complex subtree
+                elif decomp and encomp:
+                    rRotation = rotateRight(tree, decomp)
+                    if rRotation:
+                        if rRotation[1][1] in lst1 and [rRotation[1][1], decomp] not in unoffs2["R"]:
+                            # print(j)
+                            if [decomp, rRotation[1][1]] not in unoffs["L"]:
+                                unoffs2["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
+                                #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
+                    lRotation = rotateLeft(tree, decomp)
+                    if lRotation:
+                        if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:
+                            if [decomp, lRotation[1][1]]:
+                                unoffs2["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
+                                #the interval to call is the decompassing interval
+
+            return unoffs, unoffs2
+
 
     def rotate1(self, tree):
-        new_tree = copy.deepcopy(self)##make a copy to return
-        rotates = new_tree.oneOffs(tree)##get a dictonary
-        for key in rotates.keys():##loop through keys: "R" or "L"
-            for val in rotates[key]:##loop through the pair of values where the first is the added interval and the second is the one needed to call in rotate functions
-                if key == "R":##if right rotation, make a deep copy of the rotation and set that as the original
-                    new_tree = copy.deepcopy(rotateRight(new_tree, val[1])[0])
-                elif key == "L":##if left rotation, make a deep copy of the rotation and set that as the original
-                    new_tree = copy.deepcopy(rotateLeft(new_tree, val[1])[0])
-        return [new_tree, tree]##return the two trees
+        """ Executes the rotations provided by one off function and returns the two trees """
+        if self == tree:
+            return None
+        distance = 0
+        new_self = copy.deepcopy(self)##make a copy to return
+        new_tree = copy.deepcopy(tree)
+        rotates = self.oneOffs(tree)##get a tuple of dictonaries
+        switch = False
+
+        if not rotates[0] and not rotates[1]:
+            return None
+        for dict in rotates:
+            if switch:
+                switch = False
+            else:
+                switch = True
+            for key in dict.keys():##loop through keys: "R" or "L"
+                for val in dict[key]:##loop through the pair of values where the first is the added interval and the second is the one needed to call in rotate functions
+                    if key == "R":##if right rotation, make a deep copy of the rotation and set that as the original
+                        if switch:
+                            new_self = copy.deepcopy(rotateRight(new_self, val[1])[0])
+                            distance +=1
+                        else:
+                            new_tree = copy.deepcopy(rotateRight(new_tree, val[1])[0])
+                            distance +=1
+                    elif key == "L":##if left rotation, make a deep copy of the rotation and set that as the original
+                        if switch:
+                            new_self = copy.deepcopy(rotateLeft(new_self, val[1])[0])
+                            distance +=1
+                        else:
+                            new_tree = copy.deepcopy(rotateLeft(new_tree, val[1])[0])
+                            distance +=1
+        return [new_self, new_tree, distance]##return the two trees
 
     def deleteLeaf(tree, leaf):
         """ Takes a tree and leaf. Deletes the leaf and shrinks """
@@ -1030,8 +1095,6 @@ def rotateRight(tree1, interval):
     except:
         return None
     changed_intervals.append([encomp[0], encomp[1]])
-    if(not (tree.intervals[encomp[0]])):#if its empty, delete the key, not sure if needed
-        del tree.intervals[encomp[0]]
     #loop through key of encompassing intervals
     for val in tree.intervals[encomp[0]]:
         if val > interval[1]:
