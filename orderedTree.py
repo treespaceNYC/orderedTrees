@@ -238,22 +238,22 @@ class OrderedTree:
             if lonepair:##if there is no decompassing
                 ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
                 rRotation = rotateRight(self, i)
-                if rRotation:
-                    if rRotation[1][1] in lst2 and [rRotation[1][1], i] not in unoffs["R"]:
-                        unoffs["R"].append([rRotation[1][1], i])# the value, aka the interval to rotate, is simply i
+                if rRotation:##if the right rotation for this interval exists (as a sibling pair, denoted by the interval being i)
+                    if rRotation[1][1] in lst2 and [rRotation[1][1], i] not in unoffs["R"]:##if the added interval from the rotation is in the intervals of the second tree and does not already exist in our dictionary
+                        unoffs["R"].append([rRotation[1][1], i])#append the rotation into the dictionary for rotation later
                 lRotation = rotateLeft(self, i)
-                if lRotation:
-                    if lRotation[1][1] in lst2 and [lRotation[1][1], i] not in unoffs["L"]:
+                if lRotation:##if left rotation of this interval exists (as a sibling pair, denoted by the interval being i)
+                    if lRotation[1][1] in lst2 and [lRotation[1][1], i] not in unoffs["L"]:##if the added interval from rotation is in the intervals of the second tree and does not already exist in the dict
                         unoffs["L"].append([lRotation[1][1], i])
-                ##if complex subtree
+            ##if complex subtree
             elif decomp and encomp:
-                rRotation = rotateRight(self, i)
-                if rRotation:
-                    if rRotation[1][1] in lst2 and [rRotation[1][1], decomp] not in unoffs["R"]:
+                rRotation = rotateRight(self, decomp)
+                if rRotation:##if right rotation for this interval exists (as a subtree denoted by the interval being decomp)
+                    if rRotation[1][1] in lst2 and [rRotation[1][1], decomp] not in unoffs["R"]:##if the added interval from this rotation exists and does not already exist in the dictionary
                         unoffs["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
                     #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
-                lRotation = rotateLeft(self, i)
-                if lRotation:
+                lRotation = rotateLeft(self, decomp)
+                if lRotation:##if the left rotation for this interval exists ( as a subtree denoted by the interval being decomp)
                     if lRotation[1][1] in lst2 and [lRotation[1][1], decomp] not in unoffs["L"]:
                         unoffs["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
                     #the interval to call is the decompassing interval
