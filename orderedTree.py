@@ -8,7 +8,21 @@ import re
 
 
 class OrderedTree:
+    """
+    A class to represent ordered trees
+    """
     def __init__(self, *n):
+        """Default constructor that creates an empty tree.
+
+        Parameters:
+            n: integer that represents the number of leaves.
+        Returns:
+            Can return one of 4 options:
+                1. Can return an empty tree
+                2. Can return a dictionary of the intervals [1,2]..., [1,n]
+                3. Can return a tree from a given list of intervals
+                4. Can return a tree from newick form
+        """
         if(len(n) == 0):
             """Default constructor that creates an empty tree."""
             self.leaves = 0
@@ -59,13 +73,28 @@ class OrderedTree:
         return False
 
     def commonEdges(self, tree1):
-        """Finds common edges between two trees. ex: tree1.commonEdges(tree2)."""
+        """Finds common edges between two trees. ex: tree1.commonEdges(tree2).
+
+        Parameters:
+            tree1: OrderedTree object
+        Returns:
+            list of intervals of all common edges within both inputted trees
+
+        Example of Usage:
+            tree1.commonEdges(tree2) --> finds the common edges between tree1 & tree2
+        """
         self_intervals = dictToInt(self.intervals)##change dictionaries to intervals
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
     def removeCommon(self,tree):
-        """ Create two pairs of trees after separating common edges """
+        """Create two pairs of trees after separating common edges.
+
+        Parameters:
+            tree: OrderedTree object 1.
+        Returns:
+            tree1 & tree2: list of lists of intervals after removing the common edges.
+        """
         interval = self.commonEdges(tree)
 
         # Edge case
@@ -143,8 +172,13 @@ class OrderedTree:
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
 
     def getValences(self):
-        """Gets the valences of an OrderedTree object and returns it as a list."""
+        """Gets the valences of an OrderedTree object and returns it as a list.
 
+        Parameters:
+            self: an OrderedTree object.
+        Returns:
+            A list of the valences of the OrderedTree object.
+        """
         # Create list to hold valences
         valences = [0]*(self.max+1)
         for key,val in self.intervals.items():
@@ -153,107 +187,118 @@ class OrderedTree:
                 valences[key-1]+=1
                 # add right interval to valence[interval]
                 valences[i]+=1
-
         # remove interval [min,max]
         valences[0]-=1
         valences[self.max]-=1
         return valences
+
     def getSummedValences(self, tree):
-        """Takes two trees and return the a list of the summedvalences."""
+        """Takes two trees and return the a list of the summed valences.
+
+        Parameters:
+            self & tree: OrderedTree objects.
+        Returns:
+            A list of all summed valences.
+        """
         # Trees arent the same amount of leaves
         if tree.leaves != self.leaves:
             return None
-
         # get the valences of the two trees
         left = tree.getValences()
         right = self.getValences()
-
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
 
     def oneOffs(self, tree):
-        """Finds the one offs and returns a dictionary with the rotations to make the one off changes for both trees"""
-            lst1 = dictToInt(self.intervals)
-            lst2 = dictToInt(tree.intervals)
-            common = self.commonEdges(tree)
-            difference = [i for i in lst1 if i not in common]##get the differences in the self tree
-            unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
-            # the second index is the rotation used to add that interval
-            unoffs2 = defaultdict(list)
-            values = []
-            for j in self.intervals.values():
-                values+=j
-            for i in difference:
-                decomp = decompassingInterval(self, i)
-                encomp = encompassingInterval(self, i)
-                lonepair = False
+        """Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value
+        will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate.
 
-                if (values.count(i[1]) == 1) or (len(self.intervals[i[0]]) == 1):
-                    lonepair = True
-                if lonepair:##if there is no decompassing
-                    ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
-                    rRotation = rotateRight(self, i)
-                    if rRotation:
-                        if rRotation[1][1] in lst2 and [rRotation[1][1], i] not in unoffs["R"]:
-                            unoffs["R"].append([rRotation[1][1], i])# the value, aka the interval to rotate, is simply i
-                    lRotation = rotateLeft(self, i)
-                    if lRotation:
-                        if lRotation[1][1] in lst2 and [lRotation[1][1], i] not in unoffs["L"]:
-                            unoffs["L"].append([lRotation[1][1], i])
-                    ##if complex subtree
-                elif decomp and encomp:
-                    rRotation = rotateRight(self, i)
-                    if rRotation:
-                        if rRotation[1][1] in lst2 and [rRotation[1][1], decomp] not in unoffs["R"]:
-                            unoffs["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
-                        #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
-                    lRotation = rotateLeft(self, i)
-                    if lRotation:
-                        if lRotation[1][1] in lst2 and [lRotation[1][1], decomp] not in unoffs["L"]:
-                            unoffs["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
-                        #the interval to call is the decompassing interval
+        Parameters:
+            self & tree: OrderedTree objects
+        Returns:
+            Dictionary that includes type of rotation (key) and a list (value) that includes the interval being added and the interval being used when rotating.
+        """
+        lst1 = dictToInt(self.intervals)
+        lst2 = dictToInt(tree.intervals)
+        common = self.commonEdges(tree)
+        difference = [i for i in lst1 if i not in common]##get the differences in the self tree
+        unoffs = defaultdict(list)##create a dictionary where the key is the type of rotation that is needed to undo the rotation, and the value is a list where the first index is the interval added and
+        # the second index is the rotation used to add that interval
+        unoffs2 = defaultdict(list)
+        values = []
+        for j in self.intervals.values():
+            values+=j
+        for i in difference:
+            decomp = decompassingInterval(self, i)
+            encomp = encompassingInterval(self, i)
+            lonepair = False
 
-            difference2 = [i for i in lst2 if i not in common]
-            values = []
-            for j in tree.intervals.values():
-                values+=j
-            for j in difference2:
-                decomp = decompassingInterval(tree, j)
-                encomp = encompassingInterval(tree, j)
-                lonepair = False
+            if (values.count(i[1]) == 1) or (len(self.intervals[i[0]]) == 1):
+                lonepair = True
+            if lonepair:##if there is no decompassing
+                ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
+                rRotation = rotateRight(self, i)
+                if rRotation:
+                    if rRotation[1][1] in lst2 and [rRotation[1][1], i] not in unoffs["R"]:
+                        unoffs["R"].append([rRotation[1][1], i])# the value, aka the interval to rotate, is simply i
+                lRotation = rotateLeft(self, i)
+                if lRotation:
+                    if lRotation[1][1] in lst2 and [lRotation[1][1], i] not in unoffs["L"]:
+                        unoffs["L"].append([lRotation[1][1], i])
+                ##if complex subtree
+            elif decomp and encomp:
+                rRotation = rotateRight(self, i)
+                if rRotation:
+                    if rRotation[1][1] in lst2 and [rRotation[1][1], decomp] not in unoffs["R"]:
+                        unoffs["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
+                    #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
+                lRotation = rotateLeft(self, i)
+                if lRotation:
+                    if lRotation[1][1] in lst2 and [lRotation[1][1], decomp] not in unoffs["L"]:
+                        unoffs["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
+                    #the interval to call is the decompassing interval
+
+        difference2 = [i for i in lst2 if i not in common]
+        values = []
+        for j in tree.intervals.values():
+            values+=j
+        for j in difference2:
+            decomp = decompassingInterval(tree, j)
+            encomp = encompassingInterval(tree, j)
+            lonepair = False
 
 
-                if (values.count(j[1]) == 1) or (len(tree.intervals[j[0]]) == 1):
-                    lonepair = True
-                if lonepair:##if there is no decompassing
-                    ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
-                    rRotation = rotateRight(tree, j)
-                    if rRotation:
-                        if rRotation[1][1] in lst1 and [rRotation[1][1],j] not in unoffs2["R"]:
-                            if [j, rRotation[1][1]] not in unoffs["L"]:
-                                unoffs2["R"].append([rRotation[1][1], j])# the value, aka the interval to rotate, is simply i
-                    lRotation = rotateLeft(tree, j)
-                    if lRotation:
-                        if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:
-                            if [j, lRotation[1][1]] not in unoffs["R"]:
-                                unoffs2["L"].append([lRotation[1][1], j])
-                    ##if complex subtree
-                elif decomp and encomp:
-                    rRotation = rotateRight(tree, decomp)
-                    if rRotation:
-                        if rRotation[1][1] in lst1 and [rRotation[1][1], decomp] not in unoffs2["R"]:
-                            # print(j)
-                            if [decomp, rRotation[1][1]] not in unoffs["L"]:
-                                unoffs2["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
-                                #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
-                    lRotation = rotateLeft(tree, decomp)
-                    if lRotation:
-                        if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:
-                            if [decomp, lRotation[1][1]]:
-                                unoffs2["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
-                                #the interval to call is the decompassing interval
+            if (values.count(j[1]) == 1) or (len(tree.intervals[j[0]]) == 1):
+                lonepair = True
+            if lonepair:##if there is no decompassing
+                ##if sibling pair we can just use the rotate right and rotate left for these since the interval that is deleted is also the same as the one that is called
+                rRotation = rotateRight(tree, j)
+                if rRotation:
+                    if rRotation[1][1] in lst1 and [rRotation[1][1],j] not in unoffs2["R"]:
+                        if [j, rRotation[1][1]] not in unoffs["L"]:
+                            unoffs2["R"].append([rRotation[1][1], j])# the value, aka the interval to rotate, is simply i
+                lRotation = rotateLeft(tree, j)
+                if lRotation:
+                    if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:
+                        if [j, lRotation[1][1]] not in unoffs["R"]:
+                            unoffs2["L"].append([lRotation[1][1], j])
+                ##if complex subtree
+            elif decomp and encomp:
+                rRotation = rotateRight(tree, decomp)
+                if rRotation:
+                    if rRotation[1][1] in lst1 and [rRotation[1][1], decomp] not in unoffs2["R"]:
+                        # print(j)
+                        if [decomp, rRotation[1][1]] not in unoffs["L"]:
+                            unoffs2["R"].append([rRotation[1][1], decomp])##rotating right the interval called when rotating for subtrees follow a different rule: for rotate right,
+                            #the added interval is min of the decompassing interval and the max of the encompassing interval, the interval to call is the decompassing interval
+                lRotation = rotateLeft(tree, decomp)
+                if lRotation:
+                    if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:
+                        if [decomp, lRotation[1][1]]:
+                            unoffs2["L"].append([lRotation[1][1], decomp])##rotating left: the added interval is the min of the encompassing interval and the max of the decompassing interval
+                            #the interval to call is the decompassing interval
 
-            return unoffs, unoffs2
+        return unoffs, unoffs2
 
 
     def rotate1(self, tree):
@@ -292,7 +337,14 @@ class OrderedTree:
         return [new_self, new_tree, distance]##return the two trees
 
     def deleteLeaf(tree, leaf):
-        """ Takes a tree and leaf. Deletes the leaf and shrinks """
+        """Takes a tree and leaf. Deletes the leaf and shrinks.
+
+        Parameters:
+            tree: OrderedTree object.
+            leaf: integer that represents the leaf that you want to get rid of.
+        Returns:
+            self: a new OrderedTree object that has the tree with new shifted values after deleting a leaf.
+        """
         self = copy.deepcopy(tree)##make a copy
 
         #if leaf is greater than tree.max or equal to 0
@@ -353,6 +405,26 @@ class OrderedTree:
             **kwargs: all the possible keyword arguments that can be spcified to edit polygon
         Returns:
             polygon1: a picture of a polygon with all the specified arguments (default if not specified)
+        Keyword Arguments:
+            placement: determines the placement of each tree (Ex: placement = 1, placement = 2, etc.)
+                DEFAULT: placement = 0
+            color: used to choose a specific color of the polygon
+                DEFAULT: color=random color
+            style: states the style of the line that is wanted
+                DEFAULT: style = '-'
+            innerColor: the color of the lines inside the polygon
+                DEFAULT: innerColor=random color
+            outerColor: color of outer lines if innerColor is specified
+                DEFAULT: outerColor=random color
+            innerStyle: chooses the inner line style
+                DEFAULT: innterStyle = '-'
+            outerStyle: chooses the outer line style
+                DEFAULT: outerStyle = '-'
+            innerThickness: states how thick the inner lines will be
+                DEFAULT: innerThickness = '-'
+            outerThickness: states how thich the outer lines will be
+                DEFAULT: outerThickness = '-'
+            dottedLine=[interval,interval]: used to draw a specific dotted line from one vertices to another
         """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         r = lambda: random.randint(0,255)
@@ -403,8 +475,8 @@ class OrderedTree:
         if 'dottedLine' in kwargs:
             dottedLine=1
             interval=kwargs['dottedLine']
-            a=interval[0]
-            b=interval[1]
+            dottedLineA=interval[0]
+            dottedLineB=interval[1]
         if 'dottedLineColor' in kwargs:
             dottedLineColor=kwargs['dottedLineColor']
         n=tree.leaves
@@ -454,12 +526,26 @@ class OrderedTree:
 
         #draw dotted line
         if dottedLine==1:
-            dottedLine = LineString([vertices[a-1], vertices[b]])
+            dottedLine = LineString([vertices[dottedLineA-1], vertices[dottedLineB]])
             plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
 
     def drawTree(tree, **kwargs):
-        """Draws a tree from an OrderedTree object."""
-        """When drawing trees of different sizes, overlap may occur. Standard placement method may not work, thus adjust placement value as necessary."""
+        """Draws a tree from an OrderedTree object.
+
+        Parameters:
+            tree: OrderedTree object.
+            **kwargs: possible keyword arguments that can be specified to print out a specific style for the tree
+        Returns:
+            A picture of an ordered tree
+        Keyword Arguments:
+            color: determines the overall color of the tree (DEFAULT: random color)
+            style: the line style used to draw tree
+            placement: needs to be specified when drawing several trees at the same time (DEFAULT: placement=0)
+            vNums: needs to be specified if you want the numbers to show (DEFAULT: vNums = 0 --> numbers won't be visible at bottom of leaves)
+            scaled: needs to be specified as "scaled = 1" if you have trees with different number of leaves (DEFAULT: scaled = 0)
+
+        WARNING: When drawing trees of different sizes, overlap may occur. Standard placement method may not work, thus adjust placement value as necessary.
+        """
         # possible attributes: color=, style=, placement=, vNums=(0 or 1), scaled=(0 or 1)
         # create random default color for tree
         r = lambda: random.randint(0,255)
@@ -532,9 +618,37 @@ class OrderedTree:
                         tempNums.append(i)
 
     def drawPolygonTree(tree, **kwargs):
-        """ Draws a Triangulated Polygon with a tree inside, given an OrderedTree object """
+        """Draws a Triangulated Polygon with a tree inside, given an OrderedTree object.
+
+        Parameters:
+            tree: an OrderedTree object
+            **kwargs: all the possible keyword arguments that can be specified to draw out the Polygon Tree.
+        Returns:
+            Prints out Triangulated polygon with a tree drawing inside
+        Keyword Arguments:
+            placement: determines the placement of each tree (Ex: placement = 1, placement = 2, etc.)
+                DEFAULT: placement = 0 (2nd tree should have "placement = 1")
+            color: used to choose a specific color of the polygon
+                DEFAULT: color=random color
+            style: states the style of the line that is wanted
+                DEFAULT: style = '-'
+            innerColor: the color of the lines inside the polygon
+                DEFAULT: innerColor=random color
+            outerColor: color of outer lines if innerColor is specified
+                DEFAULT: outerColor=random color
+            innerStyle: chooses the inner line style
+                DEFAULT: innterStyle = '-'
+            outerStyle: chooses the outer line style
+                DEFAULT: outerStyle = '-'
+            innerThickness: states how thick the inner lines will be
+                DEFAULT: innerThickness = '-'
+            outerThickness: states how thich the outer lines will be
+                DEFAULT: outerThickness = '-'
+            dottedLine=[interval,interval]: used to draw a specific dotted line from one vertices to another
+        """
         # possible attributes: placement=, color=, style=, thickness=, innerColor=, outerColor=, innerStyle=, outerStyle=, innerThickness=, outerThickness=, dottedLine=[interval,interval]
         # treeColor=, treeStyle=, treeThickness=, vNums=
+        # generate random color
         r = lambda: random.randint(0,255)
         rand_color=('#%02X%02X%02X' % (r(),r(),r()))
         #default values
@@ -551,18 +665,12 @@ class OrderedTree:
         treeStyle='-'
         treeThickness=1.5
         vNums=0
+        plt.axis('off')
 
-        #for annotations and external line extension
-        if tree.leaves<26:
-            externalExtensionSingle=0.25
-            externalExtensionDouble=0.35
-            numberDistanceSingle=0.35
-            numberDistanceDouble=0.45
-        else:
-            externalExtensionSingle=0.2
-            externalExtensionDouble=0.2
-            numberDistanceSingle=0.3
-            numberDistanceDouble=0.3
+        # tree external line extension distance
+        externalExtensionSingle=0.25 #for single external lines leaving the polygon
+        externalExtensionDouble=0.35 #for double (sibling pairs) lines leaving the polygon
+
         #kwargs
         if 'placement' in kwargs:
             placement=kwargs['placement']
@@ -598,8 +706,8 @@ class OrderedTree:
         if 'dottedLine' in kwargs:
             dottedLine=1
             interval=kwargs['dottedLine']
-            a=interval[0]
-            b=interval[1]
+            dottedLineA=interval[0]
+            dottedLineB=interval[1]
         if 'dottedLineColor' in kwargs:
             dottedLineColor=kwargs['dottedLineColor']
         if 'treeColor' in kwargs:
@@ -643,8 +751,8 @@ class OrderedTree:
         #plot polygon
         x, y = polygon1.exterior.xy
         plt.plot(x, y, color=outerColor, linestyle=outerStyle, linewidth=outerThickness)
-        polyCenter=polygon1.centroid
-        # create dictionary for inner triangle vertices
+        polyCenter=polygon1.centroid #get center of polygon for external lines later on
+        # create dictionary for inner triangle vertices. for each vertice, get the numbers of the vertices that connect to it on the outer polygon
         triVert=defaultdict(list)
         for i in range(n+1):
             if i+1 > n:
@@ -654,7 +762,7 @@ class OrderedTree:
             else:
                 triVert[i]=[i-1,i+1]
 
-        # draw the internal edges
+        # draw the internal edges of the triangulated polygon
         intervals = tree.intervals
         for key, val in intervals.items():
             for i in val:
@@ -665,11 +773,11 @@ class OrderedTree:
                 else:
                     line = LineString([vertices[key-1], vertices[i]])
                     plt.plot(*line.xy,color=innerColor, linestyle=innerStyle, linewidth=innerThickness)
-                # append the vertices to triVert dictionary
+                # append the vertices to triVert dictionary. for each vertice, get the vertices that connect to it internally
                 triVert[key-1].append(i)
                 triVert[i].append(key-1)
 
-        # Create triangles out of dictionary values. Check each value at each key, and if that value as a key contains the same values, it's a triangle.
+        # Create triangles out of triVert values. Check each value at each key, and if that value as a key contains the same values, it forms a triangle. Add triangle to allTriangles list
         allTriangles=[]
         lists=triVert.items()
         for key,val in triVert.items():
@@ -685,27 +793,27 @@ class OrderedTree:
                         verts.sort()
                         allTriangles.append(verts)
         allTriangles.sort()
-        result = [allTriangles[i] for i in range(len(allTriangles)) if i == 0 or allTriangles[i] != allTriangles[i-1]]
-        temp=[]
+        result = [allTriangles[i] for i in range(len(allTriangles)) if i == 0 or allTriangles[i] != allTriangles[i-1]] #remove all triangle duplicates
+        temp=[] #create temp list to store connecting centers
         # Connecting centers. The centers of two triangles will connect if they have a common edge. search through the triangle list to find triangles with a common edge, and connect their centers
         for i in range(1,len(result)):
             for triangle in result:
                 a=triangle[0]
                 b=triangle[1]
                 c=triangle[2]
-                # look for triangles w only 2 of the same points
+                # look for triangles with only 2 of the same points
                 if a in result[i] and b in result[i] or a in result[i] and c in result[i] or b in result[i] and c in result[i]:
-                    TriOne=result[i]
-                    aa=TriOne[0]
-                    bb=TriOne[1]
-                    cc=TriOne[2]
-                    triangleOne=Polygon([vertices[aa],vertices[bb],vertices[cc]])
+                    triOne=result[i]
+                    tri1V1=triOne[0]
+                    tri1V2=triOne[1]
+                    tri1V3=triOne[2]
+                    triangleOne=Polygon([vertices[tri1V1],vertices[tri1V2],vertices[tri1V3]])
                     triOneCenter=triangleOne.centroid
-                    TriTwo=triangle
-                    d=TriTwo[0]
-                    e=TriTwo[1]
-                    f=TriTwo[2]
-                    triangleTwo=Polygon([vertices[d],vertices[e],vertices[f]])
+                    triTwo=triangle
+                    tri2V1=triTwo[0]
+                    tri2V2=triTwo[1]
+                    tri2V3=triTwo[2]
+                    triangleTwo=Polygon([vertices[tri2V1],vertices[tri2V2],vertices[tri2V3]])
                     triTwoCenter=triangleTwo.centroid
                     bothPts=[triOneCenter.x, triOneCenter.y,triTwoCenter.x, triTwoCenter.y]
                     bothPts.sort()
@@ -722,85 +830,102 @@ class OrderedTree:
             c=triangle[2]
             # Look for the triangles with two external lines leaving the polygon, aka where vertices are all next to each other
             if b+1==c and b-1==a or a==0 and b==1 and c==n or a==0 and b==n-1 and c==n:
+                #create triangle using the vertices
+                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
+                outerTriangleCenter=outerTriangle.centroid
+                #get the midpoints between the vertices
                 midpointOneX=(vertices[a][0]+vertices[b][0])/2
                 midpointOneY=(vertices[a][1]+vertices[b][1])/2
                 midpointTwoX=(vertices[b][0]+vertices[c][0])/2
                 midpointTwoY=(vertices[b][1]+vertices[c][1])/2
-                num1=b
-                num2=c
+                leafNum1=b
+                leafNum2=c
                 if a==0 and b==1 and c==n:
                     midpointTwoX=(vertices[a][0]+vertices[c][0])/2
                     midpointTwoY=(vertices[a][1]+vertices[c][1])/2
-                    num1=a
-                    num2=b
+                    leafNum1=a
+                    leafNum2=b
                 if a==0 and b==n-1 and c==n:
                     midpointOneX=(vertices[b][0]+vertices[c][0])/2
                     midpointOneY=(vertices[b][1]+vertices[c][1])/2
                     midpointTwoX=(vertices[a][0]+vertices[c][0])/2
                     midpointTwoY=(vertices[a][1]+vertices[c][1])/2
-                    num1=c
-                    num2=a
+                    leafNum1=c
+                    leafNum2=a
                 midpointOne=(midpointOneX,midpointOneY)
                 midpointTwo=(midpointTwoX,midpointTwoY)
-                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
-                outerTriangleCenter=outerTriangle.centroid
-                # use the midpoint of the vertices to extend the line from the midpoint from the center of the polygn to get the new point
+                #if leafnum is less than or equal to, n/2 +1, allocate more space between the external line and the number
+                if leafNum1<= ((n/2)+1) and leafNum1>0:
+                    numberDistanceDouble=0.6
+                elif leafNum2<=((n/2)+1) and leafNum2>0 :
+                    numberDistanceDouble=0.5
+                else:
+                    numberDistanceDouble=0.4
+                # use the midpoint of the vertices to extend the line from the midpoint from the center of the polygon to get the new point
                 distance1=math.sqrt((polyCenter.x-midpointOneX)**2 + (polyCenter.y-midpointOneY)**2)
                 newX1=midpointOneX + (midpointOneX - polyCenter.x) / distance1 * externalExtensionDouble
                 newY1=midpointOneY + (midpointOneY - polyCenter.y) / distance1 * externalExtensionDouble
                 newPoint=(newX1, newY1)
                 # connect the center of the triangle to the new point
                 tailOneA = LineString([outerTriangleCenter, newPoint])
-                newPointNum1=(midpointOneX + (midpointOneX - polyCenter.x) / distance1 * numberDistanceDouble, midpointOneY + (midpointOneY - polyCenter.y) / distance1 * numberDistanceDouble)
-                plt.plot(*tailOneA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
-
+                plt.plot(*tailOneA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness) #draws the first line of the two external lines
+                #repeat for the second external line
                 distance2=math.sqrt((polyCenter.x-midpointTwoX)**2 + (polyCenter.y-midpointTwoY)**2)
                 newX2=midpointTwoX + (midpointTwoX - polyCenter.x) / distance2 * externalExtensionDouble
                 newY2=midpointTwoY + (midpointTwoY - polyCenter.y) / distance2 * externalExtensionDouble
                 newPoint2=(newX2, newY2)
-                newPointNum2=(midpointTwoX + (midpointTwoX - polyCenter.x) / distance2 * numberDistanceDouble, midpointTwoY + (midpointTwoY - polyCenter.y) / distance2 * numberDistanceDouble)
-                tailTwoA = LineString([outerTriangleCenter, newPoint2])
+                tailTwoA = LineString([outerTriangleCenter, newPoint2]) #draws the second line of the two external lines
                 plt.plot(*tailTwoA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
-                # annotated if needed
+                # if visible numbers is on
                 if vNums==1:
-                    plt.annotate(num1, (newPointNum1))
-                    plt.annotate(num2, (newPointNum2))
+                    newPointNum1=(midpointOneX + (midpointOneX - polyCenter.x) / distance1 * numberDistanceDouble, midpointOneY + (midpointOneY - polyCenter.y) / distance1 * numberDistanceDouble)
+                    newPointNum2=(midpointTwoX + (midpointTwoX - polyCenter.x) / distance2 * numberDistanceDouble, midpointTwoY + (midpointTwoY - polyCenter.y) / distance2 * numberDistanceDouble)
+                    plt.annotate(leafNum1, (newPointNum1))
+                    plt.annotate(leafNum2, (newPointNum2))
             # Triangles with only 1 external line: If two vertices are next to each other, and the third is elsewhere
             elif b+1==c and a+1!=b or a+1==b and b+1!=c or a==0 and c==n:
+                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
+                outerTriangleCenter=outerTriangle.centroid
                 midpointX=(vertices[b][0]+vertices[c][0])/2
                 midpointY=(vertices[b][1]+vertices[c][1])/2
-                num=c
+                leafNum=c
                 if a+1==b and b+1!=c:
                     midpointX=(vertices[a][0]+vertices[b][0])/2
                     midpointY=(vertices[a][1]+vertices[b][1])/2
-                    num=b
+                    leafNum=b
                 if a==0 and c==n:
                     midpointX=(vertices[a][0]+vertices[c][0])/2
                     midpointY=(vertices[a][1]+vertices[c][1])/2
-                    num=a
+                    leafNum=a
+                if leafNum<= ((n/2)+1) and leafNum>0:
+                    numberDistanceSingle=0.5
+                else:
+                    numberDistanceSingle=0.4
                 midpoint=(midpointX,midpointY)
-                outerTriangle=Polygon([vertices[a],vertices[b],vertices[c]])
-                outerTriangleCenter=outerTriangle.centroid
-
                 distance=math.sqrt((polyCenter.x-midpointX)**2 + (polyCenter.y-midpointY)**2)
                 newX1=midpointX + (midpointX - polyCenter.x) / distance * externalExtensionSingle
                 newY1=midpointY + (midpointY - polyCenter.y) / distance * externalExtensionSingle
                 newPoint=(newX1, newY1)
-                newPointNum3=(midpointX + (midpointX - polyCenter.x) / distance * numberDistanceSingle, midpointY + (midpointY - polyCenter.y) / distance * numberDistanceSingle)
                 tailA=LineString([outerTriangleCenter, newPoint])
-                plt.plot(*tailA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness)
+                plt.plot(*tailA.xy, color=treeColor,linestyle=treeStyle, linewidth=treeThickness) #draws the single external line
                 # annotated if needed
                 if vNums==1:
-                    plt.annotate(num, (newPointNum3))
+                    newPointNum3=(midpointX + (midpointX - polyCenter.x) / distance * numberDistanceSingle, midpointY + (midpointY - polyCenter.y) / distance * numberDistanceSingle)
+                    plt.annotate(leafNum, (newPointNum3))
 
         #draw dotted line
         if dottedLine==1:
-            dottedLine = LineString([vertices[a-1], vertices[b]])
+            dottedLine = LineString([vertices[dottedLineA-1], vertices[dottedLineB]])
             plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
-        plt.axis('off')
 
 def isOrdered(newick):
-    """Checks if a tree is ordered."""
+    """Checks if a tree is ordered.
+
+    Parameters:
+        newick: a tree in newick notation
+    Returns:
+        an ordered newick string
+    """
     newickTuple = ""
     # Can't edit a tuple
     for i in newick:
@@ -859,16 +984,26 @@ def orderNewick(newick):
         newick[1] = tuple(newick[1])
     if not isinstance(newick[0], int):
         newick[0] = tuple(newick[0])
-
-
     return max
 
 def dictToInt(my_dict):
-    """Returns a list of intervals after converting from dictionary format."""
+    """Returns a list of intervals after converting from dictionary format.
+
+    Parameters:
+        my_dict: a tree in dictionary form.
+    Returns:
+        tree in interval form.
+    """
     return [[key,val] for key in my_dict.keys() for val in my_dict[key]]
 
 def removeSiblings(tree, tree1):#non member
-    """Compares two trees and returns a list of two trees with their common sibling pairs removed."""
+    """Compares two trees and returns a list of two trees with their common sibling pairs removed.
+
+    Parameters:
+        tree & tree1: OrderedTree object.
+    Returns:
+        list that contains 2 trees after common sibling pairs have been removed.
+    """
     # ========= Get valences ========= #
     valences = tree.getSummedValences(tree1)
 
@@ -925,7 +1060,13 @@ def removeSiblings(tree, tree1):#non member
     return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
 def interval2newick(interval):
-    """Interval notation to newick notation."""
+    """Interval notation to newick notation.
+
+    Parameters:
+        interval: tree in interval notation.
+    Returns:
+        tree in newick notation.
+    """
     intervals = defaultdict(list)
     for k, v in interval:
         intervals[k].append(v)
@@ -955,7 +1096,13 @@ def interval2newick(interval):
     return result[:-1]
 
 def newick2interval(newick):
-    """Newick format to interval format converter."""
+    """Newick format to interval format converter.
+
+    Parameters:
+        newick: a tree in newick notation
+    Returns:
+        Tree in interval notation
+    """
     intervals = []
     commaCount = newick.count(",")
     while commaCount!=1:
@@ -1009,7 +1156,14 @@ def newick2interval(newick):
 
 
 def decompassingInterval(self, interval):
-    """Given an OrderedTree object and an interval, return the largest interval inside the input interval."""
+    """Given an OrderedTree object and an interval, return the largest interval inside the input interval.
+
+    Parameters:
+        self: an OrderedTree object
+        interval: the interval that you want to check (format: [int, int])
+    Returns:
+        Largest interval within the interval inputted.
+    """
     ##two cases, either decompassing will share a key or a value
     ##if key:
     for val in self.intervals.get(interval[0]):##loop through values in the key
@@ -1025,7 +1179,14 @@ def decompassingInterval(self, interval):
 
 #Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
-  """Given an OrderedTree object and an interval, return the smallest interval encasing input interval."""
+  """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.
+
+    Parameters:
+        ordTree: OrderedTree object
+        interval: interval that gives the scope of inspection for this function
+    Returns:
+        Smallest interval within the interval inputted.
+  """
   tree = ordTree.intervals
   inKey = interval[0]
   inVal = interval[1]
@@ -1048,7 +1209,15 @@ def encompassingInterval(ordTree, interval):
 
 # Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateRight(tree1, interval):
-    """Given a tree and interval, rotate interval to a right subtree if possible."""
+    """Given a tree and interval, rotate interval to a right subtree if possible.
+
+    Parameters:
+        tree1: OrderedTree object
+        interval: interval that will be rotated to the right.
+    Returns:
+        A tuple in which the first element is the tree after we rotate and the second element is a list that includes the deleted interval as the first element
+        and the added interval as the second element within the list.
+    """
     #if interval max is not a value in key (it is a min so can't rotate right)
     tree = copy.deepcopy(tree1)
     changed_intervals = []
@@ -1107,7 +1276,15 @@ def rotateRight(tree1, interval):
 
 # Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateLeft(tree1, interval):
-    """Given a tree and interval, rotate interval to a left subtree if possible."""
+    """Given a tree and interval, rotate interval to a left subtree if possible.
+
+    Parameters:
+        tree1: OrderedTree object.
+        interval: interval that will be rotated to the left.
+    Returns:
+        A tuple in which the first element is the tree after we rotate and the second element is a list that includes the deleted interval as the first element
+        and the added interval as the second element within the list.
+    """
     tree = copy.deepcopy(tree1)
     changed_intervals = []
     #if interval max is not a value in key (it is a min so can't rotate right)
@@ -1160,7 +1337,14 @@ def rotateLeft(tree1, interval):
     return None
 
 def randInterval(min, max=None):
-    """Takes a min and max, returns intervals after splitting on random midpoint."""
+    """Takes a min and max, returns intervals after splitting on random midpoint.
+
+    Parameters:
+        min: integer that is the smallest number in the interval
+        max: integer that is the largest number in the interval
+    Returns:
+        2 sub-intervals after being split by a random midpoint.
+    """
     interval = []
 
     # If input is (list,None)
@@ -1189,7 +1373,14 @@ def randInterval(min, max=None):
     return [interval,interval2]
 
 def randOrdered(n):
-    """Given n leaves, returns a randomly generated OrderedTree object."""
+    """Given n leaves, returns a randomly generated OrderedTree object.
+
+    Parameters:
+        n: integer that represents the number of leaves wanted in the random tree.
+    Returns:
+        A random OrderedTree object (list of lists of intervals).
+    """
+
     # Edge cases with impossible intervals
     if n<=1:
         return OrderedTree()
