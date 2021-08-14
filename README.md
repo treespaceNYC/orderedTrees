@@ -16,7 +16,7 @@ Overrides equals operator in order to allow for comparison of two trees.
 - [Joyce Zhang](https://jzblank.github.io/) - [JZBlank](https://github.com/JZBlank)
 - [Amy Tse](https://amy-tse.github.io/) - [amy-tse](https://github.com/amy-tse)
 - [Steven Salto](https://stevensalto.github.io/) - [StevenSalto](https://github.com/StevenSalto)
-- [Diana Luna](https://dianaluna0201.wixsite.com/my-site) - [Diana Luna](https://github.com/dianaluna01)
+- [Diana Luna](https://dianaluna0201.wixsite.com/my-site) - [dianaluna01](https://github.com/dianaluna01)
 ## Dependencies
 - Python 3.9.x
 - Shapely
