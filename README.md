@@ -11,12 +11,16 @@ Overrides equals operator in order to allow for comparison of two trees.
 
 ## Contributors
 
-- [Daniel Elkik](https://delkik.github.io/) - [Delkik](https://github.com/Delkik)
 - [Adrian Mok](https://adrian-mok15.github.io/) - [Adrian-Mok15](https://github.com/Adrian-Mok15)
-- [Joyce Zhang](https://jzblank.github.io/) - [JZBlank](https://github.com/JZBlank)
 - [Amy Tse](https://amy-tse.github.io/) - [amy-tse](https://github.com/amy-tse)
-- [Steven Salto](https://stevensalto.github.io/) - [StevenSalto](https://github.com/StevenSalto)
+- [Daniel Elkik](https://delkik.github.io/) - [Delkik](https://github.com/Delkik)
 - [Diana Luna](https://dianaluna0201.wixsite.com/my-site) - [dianaluna01](https://github.com/dianaluna01)
+- [Joyce Zhang](https://jzblank.github.io/) - [JZBlank](https://github.com/JZBlank)
+- [Katherine St. John](https:://stjohn.github.io/) - [stjohn](https://github.com/stjohn)
+- [Steven Salto](https://stevensalto.github.io/) - [StevenSalto](https://github.com/StevenSalto)
+
+
+
 ## Dependencies
 - Python 3.9.x
 - Shapely
