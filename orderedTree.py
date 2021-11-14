@@ -964,6 +964,66 @@ def isOrdered(newick):
     # return tree
     return newickTuple.replace(" ","")
 
+def shrink(tree, tree1):
+    """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
+        Parameters: 
+            Two trees of the same size
+        Returns:
+            A list of pairs of subtrees and the distance
+    """
+    distance = 0
+    common = [[tree,tree1]] # queue of common edges to shrink
+    one = [] # queue of one offs to rotate
+    result = [] # List of reduced subtrees and distance
+
+    # Run until both queues are empty
+    while True:
+
+        # Run until common edges queue is empty
+        while len(common)!=0:
+
+            # Get first pair of trees on the queue to compare and remove edges
+            first = common.pop(0)
+            com = first[0].removeCommon(first[1])
+
+            # if there are no common edges and they are not the same tree
+            if not com:
+                if first[0] != first[1]:
+                    # Send tree to one offs queue to try to rotate
+                    one.append([first[0],first[1]])
+            
+            # Try to shrink the trees again
+            else:
+                common.append([com[0][0],com[1][0]])
+                common.append([com[0][1],com[1][1]])
+        
+        # Run until the one offs queue is empty
+        while len(one)!=0:
+
+            # Get first pair of trees and rotate until they can't
+            first = one.pop(0)
+            rot = first[0].rotate1(first[1])
+
+            # If no more rotations and they are not the same
+            if not rot and first[0]!=first[1]:
+                # Add subtrees to result
+                result.append([first[0], first[1]])
+
+            # If its still possible to rotate
+            elif rot:
+                # Add to distance
+                distance+=rot[2]
+                # Add back to rotate again
+                one.append(rot)
+                # Add to common edges queue
+                common.append(rot)
+
+        # Both queues are empty
+        if len(one)==0 and len(common)==0:
+            break
+
+    return [result,distance] # list of subtrees and the distance
+
 
 def orderNewick(newick):
     """Helper Function for isOrdered that will try to order a tree."""
