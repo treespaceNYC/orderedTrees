@@ -288,9 +288,9 @@ class OrderedTree:
                     if lRotation[1][1] in lst1 and [lRotation[1][1],j] not in unoffs2["L"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         if(len(unoffs["R"]) != 0):
                             if(j not in unoffs["R"][0]):
-                                unoffs2["L"].append([rRotation[1][1], j])
+                                unoffs2["L"].append([lRotation[1][1], j])
                         else:
-                            unoffs2["R"].append([rRotation[1][1], j])
+                            unoffs2["L"].append([lRotation[1][1], j])
                 ##if complex subtree
             elif decomp and encomp:
                 rRotation = rotateRight(tree, decomp)
@@ -306,9 +306,9 @@ class OrderedTree:
                     if lRotation[1][1] in lst1 and [lRotation[1][1], decomp] not in unoffs2["L"]:##if the added interval from the rotation exists in the first tree, and does not exist flipped in the other dictionary
                         if(len(unoffs["R"]) != 0):
                             if(decomp not in unoffs["R"][0]):
-                                unoffs2["L"].append([rRotation[1][1], decomp])
+                                unoffs2["L"].append([lRotation[1][1], decomp])
                         else:
-                            unoffs2["R"].append([rRotation[1][1], decomp])
+                            unoffs2["L"].append([lRotation[1][1], decomp])
                             #the interval to call is the decompassing interval
 
         return unoffs, unoffs2
