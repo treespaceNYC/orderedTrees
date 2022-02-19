@@ -23,14 +23,14 @@ class OrderedTree:
                 3. Can return a tree from a given list of intervals
                 4. Can return a tree from newick form
         """
-        if(len(n) == 0):
+        if len(n) == 0:
             """Default constructor that creates an empty tree."""
             self.leaves = 0
             self.intervals = defaultdict(list)
             self.min=0
             self.max=0
 
-        elif(isinstance(n[0], int)):
+        elif isinstance(n[0], int):
             """Takes an Int and creates a dictionary with intervals[1, 2]...[1, n]."""
             self.intervals = defaultdict(list)
             self.leaves = n[0]
@@ -41,7 +41,7 @@ class OrderedTree:
             for i in range(2,n[0]+1):
                 self.intervals[1].append(i)
 
-        elif(isinstance(n[0], list)):
+        elif isinstance(n[0], list) or isinstance(n[0],set):
             """Creates a tree based on a list entered in intervals (List of lists)."""
             self.intervals = defaultdict(list)
             self.min=1
@@ -52,7 +52,8 @@ class OrderedTree:
                     max = v
             self.leaves = max
             self.max = max
-        elif(isinstance(n[0], str)):
+
+        elif isinstance(n[0], str):
             """Creates a tree from newick string input."""
             self.intervals = newick2interval(n[0])
             self.min = 1
@@ -60,11 +61,15 @@ class OrderedTree:
             self.max = lst[-1][0]
             self.leaves = self.max
 
+        elif isinstance(n[0], dict):
+            self.intervals = n[0]
+            self.min = 1
+            self.max = max(self.intervals.values())
+            self.leaves = self.max
+
     def __str__(self):
         """Allows for printing of dictionary and # of leaves."""
-        lst = list(zip(self.intervals.keys(), self.intervals.values()))
-        return(f"(Dictionary: {lst}\n# of leaves = {self.leaves}\n min = {self.min} \n max = {self.max}")
-
+        return(f"(Dictionary: {dict(self.intervals)}\n# of leaves = {self.leaves}\n min = {self.min} \n max = {self.max}")
 
     def __eq__(self, tree):
         """Allows for == override."""
@@ -86,6 +91,18 @@ class OrderedTree:
         self_intervals = dictToInt(self.intervals)##change dictionaries to intervals
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
+
+    def collapse(self, n):
+        s = []
+        for interval in dictToInt(self.intervals):
+            newInterval = interval
+            if interval[0] > n:
+                newInterval[0]-=1
+            if interval[1] > n:
+                newInterval[1]-=1
+            if (newInterval not in s) and (newInterval[0] != newInterval[1]):
+                s.append(newInterval)
+        return OrderedTree(s)
 
     def removeCommon(self,tree):
         """Create two pairs of trees after separating common edges.
@@ -312,7 +329,6 @@ class OrderedTree:
                             #the interval to call is the decompassing interval
 
         return unoffs, unoffs2
-
 
     def rotate1(self, tree):
         """ Executes the rotations provided by one off function and returns the two trees """
@@ -1024,7 +1040,6 @@ def shrink(tree, tree1):
 
     return [result,distance] # list of subtrees and the distance
 
-
 def orderNewick(newick):
     """Helper Function for isOrdered that will try to order a tree."""
 
@@ -1226,7 +1241,6 @@ def newick2interval(newick):
     for k, v in intervals:
         d[k].append(v)
     return OrderedDict(sorted(d.items()))#sort and return
-
 
 def decompassingInterval(self, interval):
     """Given an OrderedTree object and an interval, return the largest interval inside the input interval.
