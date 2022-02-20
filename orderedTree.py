@@ -1,4 +1,5 @@
 from collections import OrderedDict, defaultdict
+from numpy import maximum
 from shapely.geometry import LineString, Polygon
 import copy
 import math
@@ -45,26 +46,28 @@ class OrderedTree:
             """Creates a tree based on a list entered in intervals (List of lists)."""
             self.intervals = defaultdict(list)
             self.min=1
-            max = 0
+            maximum = 0
             for k, v in n[0]:
                 self.intervals[k].append(v)
                 if(v > max):
                     max = v
-            self.leaves = max
-            self.max = max
+            self.leaves = maximum
+            self.max = maximum
 
         elif isinstance(n[0], str):
             """Creates a tree from newick string input."""
             self.intervals = newick2interval(n[0])
             self.min = 1
-            lst = list(self.intervals.values())
-            self.max = lst[-1][0]
+            lst = sorted(list(self.intervals.values()))
+            self.max = lst[-1][-1]
             self.leaves = self.max
 
         elif isinstance(n[0], dict):
             self.intervals = n[0]
             self.min = 1
-            self.max = max(self.intervals.values())
+            lst = sorted(list(self.intervals.values()))
+            self.max = lst[-1][-1]
+            # self.max = dictToInt(n[0])[-1][-1]
             self.leaves = self.max
 
     def __str__(self):
@@ -96,7 +99,7 @@ class OrderedTree:
         s = []
         for interval in dictToInt(self.intervals):
             newInterval = interval
-            if interval[0] > n:
+            if interval[0] > n and n != 0:
                 newInterval[0]-=1
             if interval[1] > n:
                 newInterval[1]-=1
@@ -980,7 +983,7 @@ def isOrdered(newick):
     # return tree
     return newickTuple.replace(" ","")
 
-def shrink(tree, tree1):
+def bruteShrink(tree, tree1):
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
         Parameters: 
             Two trees of the same size
@@ -1033,6 +1036,76 @@ def shrink(tree, tree1):
                 one.append(rot)
                 # Add to common edges queue
                 common.append(rot)
+
+        # Both queues are empty
+        if len(one)==0 and len(common)==0:
+            break
+
+    return [result,distance] # list of subtrees and the distance
+
+def shrink(tree, tree1):
+    """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
+        Parameters: 
+            Two trees of the same size
+        Returns:
+            A list of pairs of subtrees and the distance
+    """
+    distance = 0
+    common = [[tree,tree1]] # queue of common edges to shrink
+    one = [] # queue of one offs to rotate
+    result = [] # List of reduced subtrees and distance
+
+    # Run until both queues are empty
+    while True:
+
+        # Run until common edges queue is empty
+        while len(common)!=0:
+
+            # Get first pair of trees on the queue to compare and remove edges
+            first = common.pop(0)
+            com = first[0].removeCommon(first[1])
+
+            # if there are no common edges and they are not the same tree
+            if not com:
+                if first[0] != first[1]:
+                    # Send tree to one offs queue to try to rotate
+                    one.append([first[0],first[1]])
+            
+            # Try to shrink the trees again
+            else:
+                common.append([com[0][0],com[1][0]])
+                common.append([com[0][1],com[1][1]])
+        
+        # Run until the one offs queue is empty
+        while len(one)!=0:
+
+            # Get first pair of trees on the queue
+            val = one.pop(0)
+
+            # Find first 1 summed valence
+            pos = -1
+            valences = val[0].getSummedValences(val[1])
+            for index, valence in enumerate(valences):
+                if valence == 1:
+                    pos = index
+                    break
+            
+            # No 1 summed valence
+            if pos == -1:
+                result.append(val)
+                break
+
+            # Collapse both trees and add 1 to distance
+            val[0] = val[0].collapse(pos)
+            val[1] = val[1].collapse(pos)
+            distance+=1
+
+            # Send back to remove common edges
+            common.append(val)
+
+            # No more
+            if 1 not in val[0].getSummedValences(val[1]) and val[0]!=val[1]:
+                result.append(val)
 
         # Both queues are empty
         if len(one)==0 and len(common)==0:
@@ -1264,7 +1337,6 @@ def decompassingInterval(self, interval):
                 return [key,interval[1]]
     return None
 
-#Encompassing Interval Method:
 def encompassingInterval(ordTree, interval):
   """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.
 
@@ -1294,7 +1366,6 @@ def encompassingInterval(ordTree, interval):
 
   return [prevKey, inVal]
 
-# Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateRight(tree1, interval):
     """Given a tree and interval, rotate interval to a right subtree if possible.
 
@@ -1361,7 +1432,6 @@ def rotateRight(tree1, interval):
 
     return None
 
-# Decompassing interval can be used to modularize the function but there are two possible intervals
 def rotateLeft(tree1, interval):
     """Given a tree and interval, rotate interval to a left subtree if possible.
 
