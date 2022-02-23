@@ -42,15 +42,15 @@ class OrderedTree:
             for i in range(2,n[0]+1):
                 self.intervals[1].append(i)
 
-        elif isinstance(n[0], list) or isinstance(n[0],set):
+        elif isinstance(n[0], list):
             """Creates a tree based on a list entered in intervals (List of lists)."""
             self.intervals = defaultdict(list)
             self.min=1
             maximum = 0
             for k, v in n[0]:
                 self.intervals[k].append(v)
-                if(v > max):
-                    max = v
+                if(v > maximum):
+                    maximum = v
             self.leaves = maximum
             self.max = maximum
 
@@ -95,6 +95,8 @@ class OrderedTree:
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
+
+    # change to in place
     def collapse(self, n):
         s = []
         for interval in dictToInt(self.intervals):
@@ -1053,6 +1055,8 @@ def shrink(tree, tree1):
     distance = 0
     common = [[tree,tree1]] # queue of common edges to shrink
     one = [] # queue of one offs to rotate
+    twos = []
+    threes = []
     result = [] # List of reduced subtrees and distance
 
     # Run until both queues are empty
@@ -1103,9 +1107,9 @@ def shrink(tree, tree1):
             # Send back to remove common edges
             common.append(val)
 
-            # No more
-            if 1 not in val[0].getSummedValences(val[1]) and val[0]!=val[1]:
-                result.append(val)
+            # # No more
+            # if 1 not in val[0].getSummedValences(val[1]) and val[0]!=val[1]:
+            #     result.append(val)
 
         # Both queues are empty
         if len(one)==0 and len(common)==0:
