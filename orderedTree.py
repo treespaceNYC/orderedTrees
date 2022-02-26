@@ -101,12 +101,16 @@ class OrderedTree:
         s = []
         for interval in dictToInt(self.intervals):
             newInterval = interval
-            if interval[0] > n and n != 0:
+            # print(interval)
+            if interval[0] > n and interval[0] != 1:
                 newInterval[0]-=1
             if interval[1] > n:
                 newInterval[1]-=1
-            if (newInterval not in s) and (newInterval[0] != newInterval[1]):
+
+            if (newInterval not in s) and (newInterval[0] != newInterval[1]) and (newInterval[0] != 0) and (newInterval[1] != 1):
                 s.append(newInterval)
+            # print(newInterval)
+            # print("--------------------------")
         return OrderedTree(s)
 
     def removeCommon(self,tree):
@@ -987,7 +991,7 @@ def isOrdered(newick):
 
 def bruteShrink(tree, tree1):
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
-        Parameters: 
+        Parameters:
             Two trees of the same size
         Returns:
             A list of pairs of subtrees and the distance
@@ -1012,12 +1016,12 @@ def bruteShrink(tree, tree1):
                 if first[0] != first[1]:
                     # Send tree to one offs queue to try to rotate
                     one.append([first[0],first[1]])
-            
+
             # Try to shrink the trees again
             else:
                 common.append([com[0][0],com[1][0]])
                 common.append([com[0][1],com[1][1]])
-        
+
         # Run until the one offs queue is empty
         while len(one)!=0:
 
@@ -1047,7 +1051,7 @@ def bruteShrink(tree, tree1):
 
 def shrink(tree, tree1):
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
-        Parameters: 
+        Parameters:
             Two trees of the same size
         Returns:
             A list of pairs of subtrees and the distance
@@ -1067,6 +1071,7 @@ def shrink(tree, tree1):
 
             # Get first pair of trees on the queue to compare and remove edges
             first = common.pop(0)
+            # print(first[0], first[1])
             com = first[0].removeCommon(first[1])
 
             # if there are no common edges and they are not the same tree
@@ -1074,12 +1079,12 @@ def shrink(tree, tree1):
                 if first[0] != first[1]:
                     # Send tree to one offs queue to try to rotate
                     one.append([first[0],first[1]])
-            
+
             # Try to shrink the trees again
             else:
                 common.append([com[0][0],com[1][0]])
                 common.append([com[0][1],com[1][1]])
-        
+
         # Run until the one offs queue is empty
         while len(one)!=0:
 
@@ -1093,17 +1098,19 @@ def shrink(tree, tree1):
                 if valence == 1:
                     pos = index
                     break
-            
+
             # No 1 summed valence
             if pos == -1:
-                result.append(val)
+                twos.append(val)
                 break
 
             # Collapse both trees and add 1 to distance
+            # print(" Before collapse", val[0], val[1])
             val[0] = val[0].collapse(pos)
             val[1] = val[1].collapse(pos)
             distance+=1
 
+            # print("After collapse", val[0], val[1])
             # Send back to remove common edges
             common.append(val)
 
@@ -1111,8 +1118,32 @@ def shrink(tree, tree1):
             # if 1 not in val[0].getSummedValences(val[1]) and val[0]!=val[1]:
             #     result.append(val)
 
+
+        while(len(twos) != 0):
+            val = twos.pop(0)
+            pos = -1
+            valences = val[0].getSummedValences(val[1])
+            for index, valence in enumerate(valences):
+                if valence == 2 and index != 0:#we dont know what to do when index = 0, YET - Dan the Elk
+                    pos = index
+                    break
+
+            if pos == -1:
+                result.append(val)
+                break
+
+            val[0] = val[0].collapse(pos)
+            val[0] = val[0].collapse(pos-1)
+
+            val[1] = val[1].collapse(pos)
+            val[1] = val[1].collapse(pos-1)
+
+            distance+=2
+            common.append(val)
+
+
         # Both queues are empty
-        if len(one)==0 and len(common)==0:
+        if (len(one)==0) and (len(common)==0) and (len(twos) == 0):
             break
 
     return [result,distance] # list of subtrees and the distance
