@@ -1,5 +1,4 @@
 from collections import OrderedDict, defaultdict
-from numpy import maximum
 from shapely.geometry import LineString, Polygon
 import copy
 import math
@@ -99,18 +98,27 @@ class OrderedTree:
     # change to in place
     def collapse(self, n):
         s = []
+
+        # edge case where need to remove max
+        if n == self.max:
+            n-=1
+        
+        # wrap around to the max
+        if n < 0:
+            n = self.max - (n+1)
+
         for interval in dictToInt(self.intervals):
             newInterval = interval
-            # print(interval)
             if interval[0] > n and interval[0] != 1:
                 newInterval[0]-=1
             if interval[1] > n:
                 newInterval[1]-=1
-
+            # if interval[1] == self.max:
+            #     pass
             if (newInterval not in s) and (newInterval[0] != newInterval[1]) and (newInterval[0] != 0) and (newInterval[1] != 1):
                 s.append(newInterval)
-            # print(newInterval)
-            # print("--------------------------")
+        # print(s, n)
+        # print("===============")
         return OrderedTree(s)
 
     def removeCommon(self,tree):
@@ -1105,12 +1113,10 @@ def shrink(tree, tree1):
                 break
 
             # Collapse both trees and add 1 to distance
-            # print(" Before collapse", val[0], val[1])
             val[0] = val[0].collapse(pos)
             val[1] = val[1].collapse(pos)
             distance+=1
 
-            # print("After collapse", val[0], val[1])
             # Send back to remove common edges
             common.append(val)
 
@@ -1119,17 +1125,17 @@ def shrink(tree, tree1):
             #     result.append(val)
 
 
-        while(len(twos) != 0):
+        while len(twos) != 0:
             val = twos.pop(0)
             pos = -1
             valences = val[0].getSummedValences(val[1])
             for index, valence in enumerate(valences):
-                if valence == 2 and index != 0:#we dont know what to do when index = 0, YET - Dan the Elk
+                if valence == 2: #we dont know what to do when index = 0, YET - Dan the Elk
                     pos = index
                     break
 
             if pos == -1:
-                result.append(val)
+                threes.append(val)
                 break
 
             val[0] = val[0].collapse(pos)
@@ -1141,9 +1147,33 @@ def shrink(tree, tree1):
             distance+=2
             common.append(val)
 
+        while len(threes) != 0:
+            val = threes.pop(0)
+            pos = -1
+            valences = val[0].getSummedValences(val[1])
+            for index, valence in enumerate(valences):
+                if valence == 3: #we dont know what to do when index = 0, YET - Dan the Elk
+                    pos = index
+                    break
+
+            if pos == -1:
+                result.append(val)
+                break
+
+            val[0] = val[0].collapse(pos)
+            val[0] = val[0].collapse(pos-1)
+            val[0] = val[0].collapse(pos-2)
+
+            val[1] = val[1].collapse(pos)
+            val[1] = val[1].collapse(pos-1)
+            val[1] = val[1].collapse(pos-2)
+
+            distance+=3
+            common.append(val)
+
 
         # Both queues are empty
-        if (len(one)==0) and (len(common)==0) and (len(twos) == 0):
+        if (len(one)==0) and (len(common)==0) and (len(twos) == 0) and (len(threes) == 0):
             break
 
     return [result,distance] # list of subtrees and the distance
