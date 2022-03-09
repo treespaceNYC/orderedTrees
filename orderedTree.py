@@ -109,7 +109,7 @@ class OrderedTree:
 
         for interval in dictToInt(self.intervals):
             newInterval = interval
-            if interval[0] > n and interval[0] != 1:
+            if interval[0] > n and interval[0] != 1 and interval[0]-1 != n:
                 newInterval[0]-=1
             if interval[1] > n:
                 newInterval[1]-=1
