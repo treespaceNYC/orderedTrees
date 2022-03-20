@@ -35,11 +35,15 @@ class OrderedTree:
             self.intervals = defaultdict(list)
             self.leaves = n[0]
             self.min=1
-            if(n[0] <= 1):
+            if n[0] <= 1:
                 self.min = n[0]
             self.max=n[0]
-            for i in range(2,n[0]+1):
-                self.intervals[1].append(i)
+            if len(n)==2 and n[1] == -1:
+                for i in range(1,self.max):
+                    self.intervals[i].append(self.max)
+            else:
+                for i in range(2,n[0]+1):
+                    self.intervals[1].append(i)
 
         elif isinstance(n[0], list):
             """Creates a tree based on a list entered in intervals (List of lists)."""
