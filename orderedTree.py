@@ -100,13 +100,13 @@ class OrderedTree:
 
 
     # change to in place
-    def collapse(self, n):
+    def collapse(self, n:int)->"OrderedTree":
         s = []
 
         # edge case where need to remove max
         if n == self.max:
             n-=1
-        
+
         # wrap around to the max
         if n < 0:
             n = self.max - (n+1)
@@ -125,7 +125,7 @@ class OrderedTree:
         # print("===============")
         return OrderedTree(s)
 
-    def removeCommon(self,tree):
+    def removeCommon(self,tree:"OrderedTree")->list:
         """Create two pairs of trees after separating common edges.
 
         Parameters:
@@ -209,7 +209,7 @@ class OrderedTree:
         # Return a list of pairs of trees resulting from separating common edges
         return [ [OrderedTree(sorted(selfIntervals)),OrderedTree(sorted(tree1))], [OrderedTree(sorted(treeIntervals)),OrderedTree(sorted(tree2))] ]
 
-    def getValences(self):
+    def getValences(self)->list:
         """Gets the valences of an OrderedTree object and returns it as a list.
 
         Parameters:
@@ -230,7 +230,7 @@ class OrderedTree:
         valences[self.max]-=1
         return valences
 
-    def getSummedValences(self, tree):
+    def getSummedValences(self, tree:"OrderedTree")->list:
         """Takes two trees and return the a list of the summed valences.
 
         Parameters:
@@ -247,7 +247,7 @@ class OrderedTree:
         # add the two lists
         return [ left[i]+right[i] for i in range(len(left)) ]
 
-    def oneOffs(self, tree):
+    def oneOffs(self, tree:"OrderedTree")->tuple:
         """Takes in two trees and finds the intervals that are one off and returns a dictionary. The key of the dictionary will be the type of rotation, and the value
         will be a list where the first element will be the interval that is added, while the second element will be the interval that is called when we rotate.
 
@@ -351,7 +351,7 @@ class OrderedTree:
 
         return unoffs, unoffs2
 
-    def rotate1(self, tree):
+    def rotate1(self, tree:"OrderedTree")->list:
         """ Executes the rotations provided by one off function and returns the two trees """
         if self == tree:##if the two trees are the same return none
             return None
@@ -386,7 +386,7 @@ class OrderedTree:
                             distance +=1
         return [new_self, new_tree, distance]##return the two trees
 
-    def deleteLeaf(tree, leaf):
+    def deleteLeaf(tree, leaf:int)->"OrderedTree":
         """Takes a tree and leaf. Deletes the leaf and shrinks.
 
         Parameters:
@@ -968,7 +968,7 @@ class OrderedTree:
             dottedLine = LineString([vertices[dottedLineA-1], vertices[dottedLineB]])
             plt.plot(*dottedLine.xy, linestyle=':',color=dottedLineColor)
 
-def isOrdered(newick):
+def isOrdered(newick:str)->str:
     """Checks if a tree is ordered.
 
     Parameters:
@@ -1001,7 +1001,7 @@ def isOrdered(newick):
     # return tree
     return newickTuple.replace(" ","")
 
-def bruteShrink(tree, tree1):
+def bruteShrink(tree:OrderedTree, tree1:OrderedTree)->list:
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
         Parameters:
             Two trees of the same size
@@ -1061,7 +1061,7 @@ def bruteShrink(tree, tree1):
 
     return [result,distance] # list of subtrees and the distance
 
-def shrink(tree, tree1):
+def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
         Parameters:
             Two trees of the same size
@@ -1182,7 +1182,7 @@ def shrink(tree, tree1):
 
     return [result,distance] # list of subtrees and the distance
 
-def orderNewick(newick):
+def orderNewick(newick:str)->int:
     """Helper Function for isOrdered that will try to order a tree."""
 
     # Base Case
@@ -1216,7 +1216,7 @@ def orderNewick(newick):
         newick[0] = tuple(newick[0])
     return max
 
-def dictToInt(my_dict):
+def dictToInt(my_dict:dict)->list:
     """Returns a list of intervals after converting from dictionary format.
 
     Parameters:
@@ -1226,7 +1226,7 @@ def dictToInt(my_dict):
     """
     return [[key,val] for key in my_dict.keys() for val in my_dict[key]]
 
-def removeSiblings(tree, tree1):#non member
+def removeSiblings(tree:OrderedTree, tree1:OrderedTree)->list:#non member
     """Compares two trees and returns a list of two trees with their common sibling pairs removed.
 
     Parameters:
@@ -1289,7 +1289,7 @@ def removeSiblings(tree, tree1):#non member
 
     return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
-def interval2newick(interval:list):
+def interval2newick(interval:list)->str:
     """Interval notation to newick notation.
 
     Parameters:
@@ -1325,7 +1325,7 @@ def interval2newick(interval:list):
             result+= str(key) + (val[0]*val[1]) + ","
     return result[:-1]
 
-def newick2interval(newick):
+def newick2interval(newick:str)->OrderedDict:
     """Newick format to interval format converter.
 
     Parameters:
@@ -1384,7 +1384,7 @@ def newick2interval(newick):
         d[k].append(v)
     return OrderedDict(sorted(d.items()))#sort and return
 
-def decompassingInterval(self, interval):
+def decompassingInterval(self, interval:list)->list:
     """Given an OrderedTree object and an interval, return the largest interval inside the input interval.
 
     Parameters:
@@ -1406,7 +1406,7 @@ def decompassingInterval(self, interval):
                 return [key,interval[1]]
     return None
 
-def encompassingInterval(ordTree, interval):
+def encompassingInterval(ordTree:OrderedTree, interval:list)->list:
   """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.
 
     Parameters:
@@ -1435,7 +1435,7 @@ def encompassingInterval(ordTree, interval):
 
   return [prevKey, inVal]
 
-def rotateRight(tree1, interval):
+def rotateRight(tree1:OrderedTree, interval:list)->tuple:
     """Given a tree and interval, rotate interval to a right subtree if possible.
 
     Parameters:
@@ -1501,7 +1501,7 @@ def rotateRight(tree1, interval):
 
     return None
 
-def rotateLeft(tree1, interval):
+def rotateLeft(tree1:OrderedTree, interval:list)->tuple:
     """Given a tree and interval, rotate interval to a left subtree if possible.
 
     Parameters:
@@ -1562,7 +1562,7 @@ def rotateLeft(tree1, interval):
             return tree, changed_intervals
     return None
 
-def randInterval(min, max=None):
+def randInterval(min:int, max:int=None):
     """Takes a min and max, returns intervals after splitting on random midpoint.
 
     Parameters:
@@ -1598,7 +1598,7 @@ def randInterval(min, max=None):
     interval2 = [mid+1,max]
     return [interval,interval2]
 
-def randOrdered(n):
+def randOrdered(n:int)->OrderedTree:
     """Given n leaves, returns a randomly generated OrderedTree object.
 
     Parameters:
@@ -1634,3 +1634,10 @@ def randOrdered(n):
     # Create new tree from random list
     oTree = OrderedTree(sorted(lst))
     return oTree
+
+    """
+    Heap:
+    [1,4], [1,3], [2,3]
+
+
+    """
