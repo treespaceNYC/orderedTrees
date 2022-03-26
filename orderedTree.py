@@ -1289,7 +1289,7 @@ def removeSiblings(tree, tree1):#non member
 
     return [OrderedTree(selfIntervals), OrderedTree(treeIntervals)]
 
-def interval2newick(interval):
+def interval2newick(interval:list):
     """Interval notation to newick notation.
 
     Parameters:
