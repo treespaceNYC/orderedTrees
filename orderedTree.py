@@ -66,6 +66,7 @@ class OrderedTree:
             self.leaves = self.max
 
         elif isinstance(n[0], dict):
+            """Creates a tree from a dictionary input."""
             self.intervals = n[0]
             self.min = 1
             lst = sorted(list(self.intervals.values()))
@@ -101,6 +102,17 @@ class OrderedTree:
 
     # change to in place
     def collapse(self, n:int)->"OrderedTree":
+        """
+        Takes a integer that represents a valence node and collapses that node and shifts everything down.
+
+        Parameters:
+            n: int valence to collapse
+        returns:
+            An OrderedTree that is collapsed
+
+        Example of Usage:
+            tree1.collapse(3) --> collapses the node 3 and returns the new tree with all leaves shifted down.
+        """
         s = []
 
         # edge case where need to remove max
@@ -117,12 +129,8 @@ class OrderedTree:
                 newInterval[0]-=1
             if interval[1] > n:
                 newInterval[1]-=1
-            # if interval[1] == self.max:
-            #     pass
             if (newInterval not in s) and (newInterval[0] != newInterval[1]) and (newInterval[0] != 0) and (newInterval[1] != 1):
                 s.append(newInterval)
-        # print(s, n)
-        # print("===============")
         return OrderedTree(s)
 
     def removeCommon(self,tree:"OrderedTree")->list:
@@ -1106,6 +1114,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             # Find first 1 summed valence
             pos = -1
             valences = val[0].getSummedValences(val[1])
+            print(valences)
             for index, valence in enumerate(valences):
                 if valence == 1:
                     pos = index
@@ -1120,6 +1129,13 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[0] = val[0].collapse(pos)
             val[1] = val[1].collapse(pos)
             distance+=1
+            print(distance, "1")
+
+
+            val[0].drawTree(placement = 0, vNums=1)
+            val[1].drawTree(placement = 1, vNums=1)
+
+            plt.show()
 
             # Send back to remove common edges
             common.append(val)
@@ -1133,6 +1149,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val = twos.pop(0)
             pos = -1
             valences = val[0].getSummedValences(val[1])
+            print(valences)
             for index, valence in enumerate(valences):
                 if valence == 2: #we dont know what to do when index = 0, YET - Dan the Elk
                     pos = index
@@ -1149,12 +1166,19 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[1] = val[1].collapse(pos-1)
 
             distance+=2
+            print(distance, "2")
+            val[0].drawTree(placement = 0, vNums=1)
+            val[1].drawTree(placement = 1, vNums=1)
+
+            plt.show()
+
             common.append(val)
 
         while len(threes) != 0:
             val = threes.pop(0)
             pos = -1
             valences = val[0].getSummedValences(val[1])
+            print(valences)
             for index, valence in enumerate(valences):
                 if valence == 3: #we dont know what to do when index = 0, YET - Dan the Elk
                     pos = index
@@ -1171,8 +1195,13 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[1] = val[1].collapse(pos)
             val[1] = val[1].collapse(pos-1)
             val[1] = val[1].collapse(pos-2)
-
             distance+=3
+            print(distance, "3")
+
+            val[0].drawTree(placement = 0, vNums=1)
+            val[1].drawTree(placement = 1, vNums=1)
+
+            plt.show()
             common.append(val)
 
 
