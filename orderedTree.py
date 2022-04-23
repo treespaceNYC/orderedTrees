@@ -1,4 +1,5 @@
 from collections import OrderedDict, defaultdict
+from aiohttp import WSCloseCode
 from shapely.geometry import LineString, Polygon
 import copy
 import math
@@ -48,9 +49,10 @@ class OrderedTree:
         elif isinstance(n[0], list):
             """Creates a tree based on a list entered in intervals (List of lists)."""
             self.intervals = defaultdict(list)
-            self.min=1
+            lst = sorted(n[0])
+            self.min = lst[0][0]
             maximum = 0
-            for k, v in n[0]:
+            for k, v in lst:
                 self.intervals[k].append(v)
                 if(v > maximum):
                     maximum = v
@@ -68,7 +70,7 @@ class OrderedTree:
         elif isinstance(n[0], dict):
             """Creates a tree from a dictionary input."""
             self.intervals = n[0]
-            self.min = 1
+            self.min = sorted(list(self.intervals.keys()))[0]
             lst = sorted(list(self.intervals.values()))
             self.max = lst[-1][-1]
             # self.max = dictToInt(n[0])[-1][-1]
@@ -99,8 +101,6 @@ class OrderedTree:
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
-
-    # change to in place
     def collapse(self, n:int)->"OrderedTree":
         """
         Takes a integer that represents a valence node and collapses that node and shifts everything down.
@@ -132,6 +132,66 @@ class OrderedTree:
             if (newInterval not in s) and (newInterval[0] != newInterval[1]) and (newInterval[0] != 0) and (newInterval[1] != 1):
                 s.append(newInterval)
         return OrderedTree(s)
+
+    def vCollapse(self, n):
+        s = []
+
+        treeIntervals = dictToInt(self.intervals)
+
+        count = 0
+        right = False
+
+        for interval in treeIntervals:
+            if n in interval:
+                count+=1
+                if n == interval[1]:
+                    right = True
+
+            if count == 2:
+                break
+
+        for interval in treeIntervals:
+            newInterval = interval
+            if count == 2:
+                if not right:
+                    if n+1 in interval:
+                        continue
+                    if n == interval[0]:
+                        newInterval[0]+=1
+                else:
+                    if n-1 in interval:
+                        continue
+                    if n == interval[1]:
+                        newInterval[1]-=1
+            else:
+                if n in interval:
+                    continue
+                
+            s.append(newInterval)
+        return OrderedTree(s)
+
+    def split(self):
+        left = []
+        right = []
+
+        print(self.intervals)
+        rightmost = list(self.intervals.values())[0][-2]
+        try:
+            # leftmost = self.intervals[rightmost+1]
+            print("W ", rightmost)
+            for interval in dictToInt(self.intervals):
+                if interval[1] <= rightmost:
+                    left.append(interval)
+                else:
+                    right.append(interval)
+            if len(right)==2:
+                right.pop(0)
+            # if len(right)==0:
+            #     right.append([1,2])
+            return OrderedTree(left),OrderedTree(right)
+        except:
+            print("Something went wrong")
+            return     
 
     def removeCommon(self,tree:"OrderedTree")->list:
         """Create two pairs of trees after separating common edges.
