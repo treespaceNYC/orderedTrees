@@ -1,5 +1,4 @@
 from collections import OrderedDict, defaultdict
-from aiohttp import WSCloseCode
 from shapely.geometry import LineString, Polygon
 import copy
 import math
@@ -154,8 +153,6 @@ class OrderedTree:
             newInterval = interval
             if count == 2:
                 if not right:
-                    if n+1 in interval:
-                        continue
                     if n == interval[0]:
                         newInterval[0]+=1
                 else:
@@ -167,7 +164,8 @@ class OrderedTree:
                 if n in interval:
                     continue
                 
-            s.append(newInterval)
+            if newInterval not in s:
+                s.append(newInterval)
         return OrderedTree(s)
 
     def split(self):
