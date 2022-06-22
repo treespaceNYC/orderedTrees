@@ -55,8 +55,9 @@ class OrderedTree:
                 self.intervals[k].append(v)
                 if(v > maximum):
                     maximum = v
-            self.leaves = maximum
             self.max = maximum
+            self.leaves = 1 if self.min == self.max else len(n[0]) + 1
+
 
         elif isinstance(n[0], str):
             """Creates a tree from newick string input."""
@@ -73,7 +74,7 @@ class OrderedTree:
             lst = sorted(list(self.intervals.values()))
             self.max = lst[-1][-1]
             # self.max = dictToInt(n[0])[-1][-1]
-            self.leaves = self.max
+            self.leaves = len(dictToInt(n[0])) + 1
 
     def __str__(self):
         """Allows for printing of dictionary and # of leaves."""
@@ -99,6 +100,28 @@ class OrderedTree:
         self_intervals = dictToInt(self.intervals)##change dictionaries to intervals
         tree1_intervals = dictToInt(tree1.intervals)
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
+
+    def commonLeaves(self, tree1)->int:
+        counter = 0
+        leaves1 = set()
+        leaves2 = set()
+
+        for k, v in self.intervals.items():
+            leaves1.add(k)
+            for i in v:
+                leaves1.add(i)
+
+        for k, v in self.intervals.items():
+            leaves2.add(k)
+            for i in v:
+                leaves2.add(i)
+
+        for i in leaves1:
+            if i in leaves2:
+                counter+=1
+
+        return counter
+
 
     def collapse(self, n:int)->"OrderedTree":
         """
@@ -163,33 +186,83 @@ class OrderedTree:
             else:
                 if n in interval:
                     continue
-                
+
             if newInterval not in s:
                 s.append(newInterval)
         return OrderedTree(s)
 
+    # def split(self):
+    #     left = []
+    #     right = []
+    #
+    #     print(self.intervals)
+    #     rightmost = list(self.intervals.values())[0][-2]
+    #     try:
+    #         # leftmost = self.intervals[rightmost+1]
+    #         print("W ", rightmost)
+    #         for interval in dictToInt(self.intervals):
+    #             if interval[1] <= rightmost:
+    #                 left.append(interval)
+    #             else:
+    #                 right.append(interval)
+    #         if len(right)==2:
+    #             right.pop(0)
+    #         # if len(right)==0:
+    #         #     right.append([1,2])
+    #         return OrderedTree(left),OrderedTree(right)
+    #     except:
+    #         print("Something went wrong")
+    #         return
     def split(self):
         left = []
         right = []
 
-        print(self.intervals)
-        rightmost = list(self.intervals.values())[0][-2]
+        if self.max == self.min:
+            return OrderedTree(1), OrderedTree(1)
+
+        if self.leaves == 2:
+            return OrderedTree([[self.min, self.min]]), OrderedTree([[self.max, self.max]])
+
         try:
-            # leftmost = self.intervals[rightmost+1]
-            print("W ", rightmost)
-            for interval in dictToInt(self.intervals):
-                if interval[1] <= rightmost:
-                    left.append(interval)
-                else:
-                    right.append(interval)
-            if len(right)==2:
-                right.pop(0)
-            # if len(right)==0:
-            #     right.append([1,2])
-            return OrderedTree(left),OrderedTree(right)
+            rightmost = list(self.intervals.values())[0][-2]
         except:
-            print("Something went wrong")
-            return     
+            rightmost = list(self.intervals.keys())[1]
+
+        # print(rightmost)
+        for interval in dictToInt(self.intervals):
+            if interval[1] <= rightmost:
+                left.append(interval)
+            elif interval[1] >= rightmost and interval[0] >= rightmost:
+                right.append(interval)
+        # if len(right)==2:
+        #     right.pop(0)
+        if(not right):
+            right = [[self.max, self.max]]
+        if(not left):
+            left = [[self.min, self.min]]
+        print(self.intervals, left, right)
+        return OrderedTree(left),OrderedTree(right)
+
+    def mast(self, tree:"OrderedTree")->int:
+
+        """
+        if size(self) <= 1 or size(tree1) <= 1:
+            return(1)
+        else:
+            split()
+            return (large formula)
+        """
+
+        if self.leaves <= 1 or tree.leaves <= 1:
+            return 1
+        # elif:
+
+        else:
+            selfLeft, selfRight = self.split()
+            treeLeft, treeRight = tree.split()
+            # return max(mast(selfLeft, treeLeft) + mast(selfRight, treeRight), mast(selfLeft, treeRight) + mast(selfRight, treeLeft), mast(self, treeLeft), mast(self, treeRight), mast(selfLeft, tree), mast(selfRight, tree))
+            return max(selfLeft.mast(treeLeft) + selfRight.mast(treeRight), selfLeft.mast(treeRight) + selfRight.mast(treeLeft), self.mast(treeLeft), self.mast(treeRight), selfLeft.mast(tree), selfRight.mast(tree))
+
 
     def removeCommon(self,tree:"OrderedTree")->list:
         """Create two pairs of trees after separating common edges.
@@ -1721,10 +1794,3 @@ def randOrdered(n:int)->OrderedTree:
     # Create new tree from random list
     oTree = OrderedTree(sorted(lst))
     return oTree
-
-    """
-    Heap:
-    [1,4], [1,3], [2,3]
-
-
-    """
