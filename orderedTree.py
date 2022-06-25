@@ -35,12 +35,17 @@ class OrderedTree:
             self.intervals = defaultdict(list)
             self.leaves = n[0]
             self.min=1
+
+            # OrderedTree(0)
             if n[0] <= 1:
                 self.min = n[0]
+
             self.max=n[0]
+
             if len(n)==2 and n[1] == -1:
                 for i in range(1,self.max):
                     self.intervals[i].append(self.max)
+
             else:
                 for i in range(2,n[0]+1):
                     self.intervals[1].append(i)
@@ -1553,18 +1558,24 @@ def decompassingInterval(self, interval:list)->list:
     Returns:
         Largest interval within the interval inputted.
     """
-    ##two cases, either decompassing will share a key or a value
-    ##if key:
-    for val in self.intervals.get(interval[0]):##loop through values in the key
-        if val < interval[1]:## if value is less than the input value, we return that as the decompassingInterval
-            return [interval[0], val]
-    ##if they share a value:
-    ##loop through keys and find which key greater than interval[0] has the value interval[1]
-    for key in self.intervals.keys():
-        if key > interval[0]:
-            if interval[1] in self.intervals[key]:
-                return [key,interval[1]]
-    return None
+
+    left = None
+    right = None
+
+    # sibling pair
+    if (interval[1] - interval[0] == 1) or (self.intervals[interval[0]][0] == interval[1]):
+        left = [interval[0], interval[0]]
+        right = [interval[0] + 1, interval[1]]
+        return left, right
+
+    
+    for i in range(len(self.intervals[interval[0]])-1,-1,-1):
+        if self.intervals[interval[0]][i] < interval[1]:
+            left = [interval[0], self.intervals[interval[0]][i]]
+            right = [self.intervals[interval[0]][i] + 1, interval[1]]
+            return left, right
+
+
 
 def encompassingInterval(ordTree:OrderedTree, interval:list)->list:
   """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.

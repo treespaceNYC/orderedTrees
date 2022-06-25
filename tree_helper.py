@@ -1,5 +1,5 @@
 from orderedTree import *
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 import numpy as np
 import heapq
 
@@ -44,18 +44,18 @@ class TreeHelper:
             count+=1
 
 
-# tree1 = OrderedTree(10)
-tree1 = randOrdered(10)
+# # tree1 = OrderedTree(10)
+# tree1 = randOrdered(10)
 
-meep = dictToHeap(tree1.intervals)
-# print(len(meep))
-# while(meep):
-#     print(heapq.heappop(meep))
-tree2 = OrderedTree(10,-1)
-#
-SOS = TreeHelper(tree1,tree2)
-#
-#
-print(SOS.table_)
-print(SOS.xHash_)
-print(SOS.yHash_)
+# meep = dictToHeap(tree1.intervals)
+# # print(len(meep))
+# # while(meep):
+# #     print(heapq.heappop(meep))
+# tree2 = OrderedTree(10,-1)
+# #
+# SOS = TreeHelper(tree1,tree2)
+# #
+# #
+# print(SOS.table_)
+# print(SOS.xHash_)
+# print(SOS.yHash_)
