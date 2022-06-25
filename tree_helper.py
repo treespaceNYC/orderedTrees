@@ -1,4 +1,4 @@
-from orderedTree import *
+from orderedTree import OrderedTree, decompassingInterval, dictToInt
 from collections import OrderedDict
 import numpy as np
 import heapq
@@ -22,40 +22,38 @@ class TreeHelper:
 
 
         #fills hashes up with leaves
-        count = 0
+        index = 0
         for i in range(tree1.min, tree1.max+1):
-            self.xHash_[(i,i)] = count
-            count+=1
+            self.xHash_[index] = (i,i)
+            index+=1
 
         h = dictToHeap(tree1.intervals)
         while(h):
-            self.xHash_[tuple(heapq.heappop(h)[1])] = count
-            count+=1
+            self.xHash_[index] = tuple(heapq.heappop(h)[1])
+            index+=1
 
 
-        count = 0
+        index = 0
         for i in range(tree2.min, tree2.max+1):
-            self.yHash_[(i,i)] = count
-            count+=1
+            self.yHash_[index] = (i,i)
+            index+=1
 
         h = dictToHeap(tree2.intervals)
         while(h):
-            self.yHash_[tuple(heapq.heappop(h)[1])] = count
-            count+=1
+            self.yHash_[index] = tuple(heapq.heappop(h)[1])
+            index+=1
+
+    def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+        
+        decomp = {}
+        for i in range(len(self.table)):
+            d = decompassingInterval(leftTree,self.yHash_[i])
+            for j in range(len(self.table[i])):
+
+                # if self.__collides__():
+                #     if (self.yHash_[i][0] == self.yHash_[i][1]) or (self.xHash_[i][0] == self.xHash_[i][1]):
+                #         self.table[i][j] = 1
 
 
-# # tree1 = OrderedTree(10)
-# tree1 = randOrdered(10)
 
-# meep = dictToHeap(tree1.intervals)
-# # print(len(meep))
-# # while(meep):
-# #     print(heapq.heappop(meep))
-# tree2 = OrderedTree(10,-1)
-# #
-# SOS = TreeHelper(tree1,tree2)
-# #
-# #
-# print(SOS.table_)
-# print(SOS.xHash_)
-# print(SOS.yHash_)
+                decomp[self.table[j]] = decompassingInterval(leftTree,self.xHash_[j])
