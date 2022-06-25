@@ -1562,13 +1562,16 @@ def decompassingInterval(self, interval:list)->list:
     left = None
     right = None
 
+    if (interval[0] == interval[1]):
+        return interval
+
     # sibling pair
     if (interval[1] - interval[0] == 1) or (self.intervals[interval[0]][0] == interval[1]):
         left = [interval[0], interval[0]]
         right = [interval[0] + 1, interval[1]]
         return left, right
 
-    
+
     for i in range(len(self.intervals[interval[0]])-1,-1,-1):
         if self.intervals[interval[0]][i] < interval[1]:
             left = [interval[0], self.intervals[interval[0]][i]]
