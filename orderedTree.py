@@ -248,25 +248,25 @@ class OrderedTree:
         print(self.intervals, left, right)
         return OrderedTree(left),OrderedTree(right)
 
-    def mast(self, tree:"OrderedTree")->int:
-
-        """
-        if size(self) <= 1 or size(tree1) <= 1:
-            return(1)
-        else:
-            split()
-            return (large formula)
-        """
-
-        if self.leaves <= 1 or tree.leaves <= 1:
-            return 1
-        # elif:
-
-        else:
-            selfLeft, selfRight = self.split()
-            treeLeft, treeRight = tree.split()
-            # return max(mast(selfLeft, treeLeft) + mast(selfRight, treeRight), mast(selfLeft, treeRight) + mast(selfRight, treeLeft), mast(self, treeLeft), mast(self, treeRight), mast(selfLeft, tree), mast(selfRight, tree))
-            return max(selfLeft.mast(treeLeft) + selfRight.mast(treeRight), selfLeft.mast(treeRight) + selfRight.mast(treeLeft), self.mast(treeLeft), self.mast(treeRight), selfLeft.mast(tree), selfRight.mast(tree))
+    # def mast(self, tree:"OrderedTree")->int:
+    #
+    #     """
+    #     if size(self) <= 1 or size(tree1) <= 1:
+    #         return(1)
+    #     else:
+    #         split()
+    #         return (large formula)
+    #     """
+    #
+    #     if self.leaves <= 1 or tree.leaves <= 1:
+    #         return 1
+    #     # elif:
+    #
+    #     else:
+    #         selfLeft, selfRight = self.split()
+    #         treeLeft, treeRight = tree.split()
+    #         # return max(mast(selfLeft, treeLeft) + mast(selfRight, treeRight), mast(selfLeft, treeRight) + mast(selfRight, treeLeft), mast(self, treeLeft), mast(self, treeRight), mast(selfLeft, tree), mast(selfRight, tree))
+    #         return max(selfLeft.mast(treeLeft) + selfRight.mast(treeRight), selfLeft.mast(treeRight) + selfRight.mast(treeLeft), self.mast(treeLeft), self.mast(treeRight), selfLeft.mast(tree), selfRight.mast(tree))
 
 
     def removeCommon(self,tree:"OrderedTree")->list:
