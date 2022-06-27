@@ -107,6 +107,18 @@ class OrderedTree:
         return [i for i in self_intervals if i in tree1_intervals]##find the commons
 
     def commonLeaves(self, tree1)->int:
+        """Finds the number of common leaves between two trees. ex: tree1.commonEdges(tree2).
+
+        Parameters:
+            self: OrderedTree
+            tree1: OrderedTree
+        Returns:
+            Returns an integer denoting the number of leaves that exist in both trees. 
+
+        Example of Usage:
+            tree1.commonLeaves(tree2) --> finds the common leaves between tree1 & tree2
+        """
+
         counter = 0
         leaves1 = set()
         leaves2 = set()
@@ -219,6 +231,17 @@ class OrderedTree:
     #         print("Something went wrong")
     #         return
     def split(self):
+        """
+        Takes a tree and returns the left subtree and right substree
+
+        Parameters:
+            self: an orderedTree
+        returns:
+            A tuple of two trees for the left and right subtree
+
+        Example of Usage:
+            tree1.split() --> splits tree1 into two its left subtree and right subtree
+        """
         left = []
         right = []
 

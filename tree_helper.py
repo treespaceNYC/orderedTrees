@@ -4,7 +4,15 @@ import numpy as np
 import heapq
 
 def dictToHeap(intervals):
-    intervals = dictToInt(intervals)
+    """Takes in intervals in the form of a dictionary and returns a min heap
+    where the priority is the distance between two intervals and the item is the interval itself
+
+    Parameters:
+        intervals: a dictionary of our intervals
+    Returns:
+        A heap where the priority is the distance between two intervals and the item is the interval itself
+    """
+    intervals = dictToInt(intervals) ## could be optimized
     h = []
     heapq.heapify(h)
 
@@ -53,6 +61,14 @@ class TreeHelper:
             index+=1
 
     def __collides__(self, left, right):
+        """Takes in two intervals and returns the number of overlap between the them
+
+        Parameters:
+            left: interval ex: [1,2]
+            right: interval ex: [3,4]
+        Returns:
+            returns an integer for the overlap
+        """
         # if left interval is a leaf and is in the right interval
         if(left[0] == left[1]) and ((left[0] >= right[0]) and (left[0] <= right[0])):
             return 1
@@ -67,6 +83,14 @@ class TreeHelper:
 
 
     def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+        """Takes in two trees and returns a table with the corresponding mast for each leaf and interval
+
+        Parameters:
+            leftTree: OrderedTree
+            rightTreeL OrderedTree
+        Returns:
+            returns a table with the corresponding mast for each leaf and interval
+        """
 
         decomp = {}
         for i in range(len(self.table_)):
