@@ -53,18 +53,21 @@ class TreeHelper:
             index+=1
 
     def __collides__(self, left, right):
+        # if left interval is a leaf and is in the right interval
         if(left[0] == left[1]) and ((left[0] >= right[0]) and (left[0] <= right[0])):
             return 1
 
+        # if right interval is a leaf and is in the left interval
         if(right[0] == right[1]) and ((right[0] >= left[0]) and (right[0] <= left[0])):
             return 1
 
+        #return the overlap
         return max(0, min(left[1], right[1]) - max(left[0], right[0])+1)
 
 
 
     def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
-        
+
         decomp = {}
         for i in range(len(self.table_)):
 
@@ -81,7 +84,7 @@ class TreeHelper:
                 c = self.__collides__(self.yHash_[i],self.xHash_[j])
                 if c <= 2: # edge case
                     self.table_[i][j] = c
-                
+
                 # larger case where lookup table is needed to compute mast
                 else:
                     l1 = d[0]                        # y - left child
