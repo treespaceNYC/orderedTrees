@@ -102,7 +102,8 @@ class TreeHelper:
             for j in range(len(self.table_[i])):
 
                 # store children for right tree in a lookup table to decrease compute time
-                decomp.setdefault(self.xHash_[j],decompassingInterval(rightTree,self.xHash_[j]))
+                if(self.xHash_[j] not in decomp.keys()):
+                    decomp[self.xHash_[j]] = decompassingInterval(rightTree,self.xHash_[j])
 
                 # check how many times two intervals collide
                 c = self.__collides__(self.yHash_[i],self.xHash_[j])

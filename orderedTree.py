@@ -113,7 +113,7 @@ class OrderedTree:
             self: OrderedTree
             tree1: OrderedTree
         Returns:
-            Returns an integer denoting the number of leaves that exist in both trees. 
+            Returns an integer denoting the number of leaves that exist in both trees.
 
         Example of Usage:
             tree1.commonLeaves(tree2) --> finds the common leaves between tree1 & tree2
