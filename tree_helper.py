@@ -112,19 +112,19 @@ class TreeHelper:
 
                 # larger case where lookup table is needed to compute mast
                 else:
-                    l1 = d[0]                        # y - left child
-                    l2 = decomp[self.xHash_[j]][0]   # x - left child
+                    l1 = tuple(d[0])                        # y - left child
+                    l2 = tuple(decomp[self.xHash_[j]][0])  # x - left child
 
-                    r1 = d[1]                        # y - right child
-                    r2 = decomp[self.xHash_[j]][1]   # x - right child
+                    r1 = tuple(d[1])                        # y - right child
+                    r2 = tuple(decomp[self.xHash_[j]][1])   # x - right child
 
                     # BIG FORMULA - ll + rr, lr + rl, al, la, ar, ra
                     self.table_[i][j] = max(
-                        self.table_[ self.yIndex_[tuple(l1)] ][ self.xIndex_[tuple(l2)] ] + self.table_[ self.yIndex_[tuple(r1)] ][ self.xIndex_[tuple(r2)] ],
-                        self.table_[ self.yIndex_[tuple(l1)] ][ self.xIndex_[tuple(r2)] ] + self.table_[ self.yIndex_[tuple(r1)] ][ self.xIndex_[tuple(l2)] ],
-                        self.table_[i][ self.xIndex_[tuple(l2)] ],
-                        self.table_[i][ self.xIndex_[tuple(r2)] ],
-                        self.table_[ self.yIndex_[tuple(l1)] ][j],
-                        self.table_[ self.yIndex_[tuple(r1)] ][j]
+                        self.table_[ self.yIndex_[l1] ][ self.xIndex_[l2] ] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[r2] ],
+                        self.table_[ self.yIndex_[l1] ][ self.xIndex_[r2] ] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[l2] ],
+                        self.table_[i][ self.xIndex_[l2] ],
+                        self.table_[i][ self.xIndex_[r2] ],
+                        self.table_[ self.yIndex_[l1] ][j],
+                        self.table_[ self.yIndex_[r1] ][j]
                     )
         return self.table_
