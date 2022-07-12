@@ -25,6 +25,11 @@ def dictToHeap(intervals):
 class TreeHelper:
     def __init__(self, tree1, tree2):
         self.table_ = np.ones((2*tree1.leaves - 1, 2*tree2.leaves - 1), dtype = int) *-1
+
+        # self.table_ = [([-1]*(2*tree1.leaves - 1))]
+        self.table_ = [[[-1,[]] for i in range(2*tree1.leaves - 1)] for i in range(2*tree1.leaves - 1)]
+
+
         self.xHash_ = OrderedDict()
         self.yHash_ = OrderedDict()
 
@@ -82,12 +87,12 @@ class TreeHelper:
 
 
 
-    def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+    def __build__(self, leftTree: OrderedTree, rightTree: OrderedTree):
         """Takes in two trees and returns a table with the corresponding mast for each leaf and interval
 
         Parameters:
             leftTree: OrderedTree
-            rightTreeL OrderedTree
+            rightTree: OrderedTree
         Returns:
             returns a table with the corresponding mast for each leaf and interval
         """
@@ -108,23 +113,38 @@ class TreeHelper:
                 # check how many times two intervals collide
                 c = self.__collides__(self.yHash_[i],self.xHash_[j])
                 if c <= 2: # edge case
-                    self.table_[i][j] = c
+                    self.table_[i][j][0] = c
+                    self.table_[i][j][1] = [self.yHash_[i],self.xHash_[j]]
 
                 # larger case where lookup table is needed to compute mast
                 else:
                     l1 = tuple(d[0])                        # y - left child
-                    l2 = tuple(decomp[self.xHash_[j]][0])  # x - left child
+                    l2 = tuple(decomp[self.xHash_[j]][0])   # x - left child
 
                     r1 = tuple(d[1])                        # y - right child
                     r2 = tuple(decomp[self.xHash_[j]][1])   # x - right child
 
                     # BIG FORMULA - ll + rr, lr + rl, al, la, ar, ra
-                    self.table_[i][j] = max(
-                        self.table_[ self.yIndex_[l1] ][ self.xIndex_[l2] ] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[r2] ],
-                        self.table_[ self.yIndex_[l1] ][ self.xIndex_[r2] ] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[l2] ],
-                        self.table_[i][ self.xIndex_[l2] ],
-                        self.table_[i][ self.xIndex_[r2] ],
-                        self.table_[ self.yIndex_[l1] ][j],
-                        self.table_[ self.yIndex_[r1] ][j]
+                    temp = (
+                        [self.table_[ self.yIndex_[l1] ][ self.xIndex_[l2] ][0] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[r2] ][0],[[l1,l2],[r1,r2]]],
+                        [self.table_[ self.yIndex_[l1] ][ self.xIndex_[r2] ][0] + self.table_[ self.yIndex_[r1] ][ self.xIndex_[l2] ][0],[[l1,r2],[r1,l2]]],
+                        [self.table_[i][ self.xIndex_[l2] ][0],[[self.yHash_[i],l2]]],
+                        [self.table_[i][ self.xIndex_[r2] ][0],[[self.yHash_[i],r2]]],
+                        [self.table_[ self.yIndex_[l1] ][j][0],[[l1,self.xHash_[j]]]],
+                        [self.table_[ self.yIndex_[r1] ][j][0],[[r1,self.xHash_[j]]]]
                     )
+                    
+                    m = max(temp)[0]
+                    for l in temp:
+                        if l[0] == m:
+                            # print(m,l)
+                            self.table_[i][j][0] = m
+                            self.table_[i][j][1].append(l[1])
+
+    def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+        self.__build__(leftTree, rightTree)
+
+
+
+
         return self.table_
