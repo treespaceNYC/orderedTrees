@@ -112,9 +112,9 @@ class TreeHelper:
 
                 # check how many times two intervals collide
                 c = self.__collides__(self.yHash_[i],self.xHash_[j])
-                if c <= 2: # edge case
+                if self.yHash_[i][0] == self.yHash_[i][1] or self.xHash_[j][0] == self.xHash_[j][1]: # edge case
                     self.table_[i][j][0] = c
-                    self.table_[i][j][1] = [self.yHash_[i],self.xHash_[j]]
+                    self.table_[i][j][1] = [[[self.yHash_[i],self.xHash_[j]]]]
 
                 # larger case where lookup table is needed to compute mast
                 else:
@@ -133,7 +133,7 @@ class TreeHelper:
                         [self.table_[ self.yIndex_[l1] ][j][0],[[l1,self.xHash_[j]]]],
                         [self.table_[ self.yIndex_[r1] ][j][0],[[r1,self.xHash_[j]]]]
                     )
-                    
+
                     m = max(temp)[0]
                     for l in temp:
                         if l[0] == m:
@@ -142,9 +142,22 @@ class TreeHelper:
                             self.table_[i][j][1].append(l[1])
 
     def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+        lMast = []
+        rMast = []
         self.__build__(leftTree, rightTree)
-
-
-
-
+        stack = []
+        stack.append([[self.yHash_[len(self.table_)-1], self.xHash_[len(self.table_)-1]]])
+        while(stack):
+            currIntervals = stack.pop()
+            for i in currIntervals:
+                print(i)
+                if( self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]][0] != 0):
+                    if(i[0][0] == i[0][1]):
+                        lMast.append(i[0][0])
+                    if(i[1][0] == i[1][1]):
+                        rMast.append(i[1][1])
+                    if(i[1][0] != i[1][1] and i[0][0] != i[0][1]):
+                        stack.append(self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]][1][0])
+            print(self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]])
+        print(lMast, rMast)
         return self.table_
