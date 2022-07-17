@@ -2,6 +2,7 @@ from orderedTree import OrderedTree, decompassingInterval, dictToInt
 from collections import OrderedDict
 import numpy as np
 import heapq
+import copy
 
 def dictToHeap(intervals):
     """Takes in intervals in the form of a dictionary and returns a min heap
@@ -150,7 +151,7 @@ class TreeHelper:
         while(stack):
             currIntervals = stack.pop()
             for i in currIntervals:
-                print(i)
+                # print(i)
                 if( self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]][0] != 0):
                     if(i[0][0] == i[0][1]):
                         lMast.append(i[0][0])
@@ -158,6 +159,16 @@ class TreeHelper:
                         rMast.append(i[1][1])
                     if(i[1][0] != i[1][1] and i[0][0] != i[0][1]):
                         stack.append(self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]][1][0])
-            print(self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]])
-        print(lMast, rMast)
-        return self.table_
+            # print(self.table_[self.yIndex_[i[0]]][self.xIndex_[i[1]]])
+        return set(lMast + rMast)
+
+
+    def getMastTree(self, leftTree: OrderedTree, rightTree: OrderedTree):
+        res = copy.deepcopy(leftTree)
+        leaves = self.mast(leftTree, rightTree)
+        max = leftTree.max+1
+        for i in range(1, max):
+            if i not in leaves:
+                res = res.deleteLeaf(i)
+
+        return res

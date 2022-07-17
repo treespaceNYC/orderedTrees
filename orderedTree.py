@@ -567,7 +567,9 @@ class OrderedTree:
         #if leaf is greater than tree.max or equal to 0
         if (leaf > tree.max) or (leaf == 0):
             return None
-        if leaf in self.intervals.keys():##if is a key
+
+        ##if is a key
+        if leaf in self.intervals.keys():
             if len(self.intervals[leaf]) > 1:## if key has more than one value
                 lst = self.intervals.get(leaf)##keep the values in the key
                 del self.intervals[leaf]##delete the key
@@ -588,8 +590,12 @@ class OrderedTree:
             if count > 1:##if value appears more than once
                 value = leaf-1##value is the leaf that will replace the deleted leaf
                 if value in self.intervals.keys():#if the previous leaf is a key:
+                    print(leaf)
                     del self.intervals[value]#delete the key that will turn into a value
-                    leaf = leaf-1##decrease shift down by one and let the shift later do the work
+                    for k in self.intervals.keys():##loop through all the values, and if any of them were equal to leaf
+                        for val in range(len(self.intervals[k])):
+                            if self.intervals[k][val] == leaf:
+                                self.intervals[k][val] = value
                 else:#if the previous leaf is a max
                     for k in self.intervals.keys():#remove the previous leaf
                         if value in self.intervals[k]:
@@ -603,14 +609,11 @@ class OrderedTree:
                 for k in self.intervals.keys():##if val only shows up in one key, delete that value from key
                     if leaf in self.intervals[k]:
                         self.intervals[k].remove(leaf)
+                        # self.intervals[k].append(leaf-1)
                         break
 
 
         intervals = dictToInt(self.intervals)
-        for pairs in range(len(intervals)):##shift
-            for leafs in range(len(intervals[pairs])):
-                if intervals[pairs][leafs] > leaf:
-                    intervals[pairs][leafs] -=1
         self = copy.deepcopy(OrderedTree(intervals))##make a new object with shifted values
         return self
 
