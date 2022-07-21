@@ -590,16 +590,18 @@ class OrderedTree:
             if count > 1:##if value appears more than once
                 value = leaf-1##value is the leaf that will replace the deleted leaf
                 if value in self.intervals.keys():#if the previous leaf is a key:
-                    print(leaf)
                     del self.intervals[value]#delete the key that will turn into a value
                     for k in self.intervals.keys():##loop through all the values, and if any of them were equal to leaf
                         for val in range(len(self.intervals[k])):
                             if self.intervals[k][val] == leaf:
                                 self.intervals[k][val] = value
                 else:#if the previous leaf is a max
-                    for k in self.intervals.keys():#remove the previous leaf
-                        if value in self.intervals[k]:
-                            self.intervals[k].remove(value)
+                    print(leaf)
+                    # lst = []
+                    # for k in self.intervals.keys():#remove the previous leaf
+                    #     if value in self.intervals[k]:
+                    #         lst.append(k)
+                    #         self.intervals[k].remove(value)
                     for k in self.intervals.keys():##loop through all the values, and if any of them were equal to leaf
                         for val in range(len(self.intervals[k])):
                             if self.intervals[k][val] == leaf:
