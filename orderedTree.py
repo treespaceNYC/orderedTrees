@@ -268,7 +268,7 @@ class OrderedTree:
             right = [[self.max, self.max]]
         if(not left):
             left = [[self.min, self.min]]
-        print(self.intervals, left, right)
+        # print(self.intervals, left, right)
         return OrderedTree(left),OrderedTree(right)
 
     # def mast(self, tree:"OrderedTree")->int:
@@ -562,7 +562,7 @@ class OrderedTree:
         Returns:
             self: a new OrderedTree object that has the tree with new shifted values after deleting a leaf.
         """
-        self = copy.deepcopy(tree)##make a copy
+        self = tree
 
         #if leaf is greater than tree.max or equal to 0
         if (leaf > tree.max) or (leaf == 0):
@@ -596,7 +596,7 @@ class OrderedTree:
                             if self.intervals[k][val] == leaf:
                                 self.intervals[k][val] = value
                 else:#if the previous leaf is a max
-                    print(leaf)
+                    # print(leaf)
                     # lst = []
                     # for k in self.intervals.keys():#remove the previous leaf
                     #     if value in self.intervals[k]:
@@ -616,7 +616,7 @@ class OrderedTree:
 
 
         intervals = dictToInt(self.intervals)
-        self = copy.deepcopy(OrderedTree(intervals))##make a new object with shifted values
+        self = OrderedTree(intervals)##make a new object with shifted values
         return self
 
     def drawPolygon(tree, **kwargs):
@@ -1278,7 +1278,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             # Find first 1 summed valence
             pos = -1
             valences = val[0].getSummedValences(val[1])
-            print(valences)
+            # print(valences)
             for index, valence in enumerate(valences):
                 if valence == 1:
                     pos = index
@@ -1293,7 +1293,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[0] = val[0].collapse(pos)
             val[1] = val[1].collapse(pos)
             distance+=1
-            print(distance, "1")
+            # print(distance, "1")
 
 
             val[0].drawTree(placement = 0, vNums=1)
@@ -1313,7 +1313,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val = twos.pop(0)
             pos = -1
             valences = val[0].getSummedValences(val[1])
-            print(valences)
+            # print(valences)
             for index, valence in enumerate(valences):
                 if valence == 2: #we dont know what to do when index = 0, YET - Dan the Elk
                     pos = index
@@ -1330,7 +1330,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[1] = val[1].collapse(pos-1)
 
             distance+=2
-            print(distance, "2")
+            # print(distance, "2")
             val[0].drawTree(placement = 0, vNums=1)
             val[1].drawTree(placement = 1, vNums=1)
 
@@ -1342,7 +1342,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val = threes.pop(0)
             pos = -1
             valences = val[0].getSummedValences(val[1])
-            print(valences)
+            # print(valences)
             for index, valence in enumerate(valences):
                 if valence == 3: #we dont know what to do when index = 0, YET - Dan the Elk
                     pos = index
@@ -1360,7 +1360,7 @@ def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
             val[1] = val[1].collapse(pos-1)
             val[1] = val[1].collapse(pos-2)
             distance+=3
-            print(distance, "3")
+            # print(distance, "3")
 
             val[0].drawTree(placement = 0, vNums=1)
             val[1].drawTree(placement = 1, vNums=1)
@@ -1605,8 +1605,6 @@ def decompassingInterval(self, interval:list)->list:
             left = [interval[0], self.intervals[interval[0]][i]]
             right = [self.intervals[interval[0]][i] + 1, interval[1]]
             return left, right
-
-
 
 def encompassingInterval(ordTree:OrderedTree, interval:list)->list:
   """Given an OrderedTree object and an interval, return the smallest interval encasing input interval.

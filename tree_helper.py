@@ -112,8 +112,8 @@ class TreeHelper:
                     decomp[self.xHash_[j]] = decompassingInterval(rightTree,self.xHash_[j])
 
                 # check how many times two intervals collide
-                c = self.__collides__(self.yHash_[i],self.xHash_[j])
                 if self.yHash_[i][0] == self.yHash_[i][1] or self.xHash_[j][0] == self.xHash_[j][1]: # edge case
+                    c = self.__collides__(self.yHash_[i],self.xHash_[j])
                     self.table_[i][j][0] = c
                     self.table_[i][j][1] = [[[self.yHash_[i],self.xHash_[j]]]]
 
