@@ -25,6 +25,8 @@ def dictToHeap(intervals):
 
 class TreeHelper:
     def __init__(self, tree1, tree2):
+        self.tree1 = tree1
+        self.tree2 = tree2
         self.table_ = np.ones((2*tree1.leaves - 1, 2*tree2.leaves - 1), dtype = int) *-1
 
         # self.table_ = [([-1]*(2*tree1.leaves - 1))]
@@ -88,12 +90,9 @@ class TreeHelper:
 
 
 
-    def __build__(self, leftTree: OrderedTree, rightTree: OrderedTree):
+    def __build__(self):
         """Takes in two trees and returns a table with the corresponding mast for each leaf and interval
 
-        Parameters:
-            leftTree: OrderedTree
-            rightTree: OrderedTree
         Returns:
             returns a table with the corresponding mast for each leaf and interval
         """
@@ -102,14 +101,14 @@ class TreeHelper:
         for i in range(len(self.table_)):
 
             # get children for left tree
-            d = decompassingInterval(leftTree,self.yHash_[i])
+            d = decompassingInterval(self.tree1,self.yHash_[i])
 
             # loop through nxn array
             for j in range(len(self.table_[i])):
 
                 # store children for right tree in a lookup table to decrease compute time
                 if(self.xHash_[j] not in decomp.keys()):
-                    decomp[self.xHash_[j]] = decompassingInterval(rightTree,self.xHash_[j])
+                    decomp[self.xHash_[j]] = decompassingInterval(self.tree2,self.xHash_[j])
 
                 # check how many times two intervals collide
                 if self.yHash_[i][0] == self.yHash_[i][1] or self.xHash_[j][0] == self.xHash_[j][1]: # edge case
@@ -142,10 +141,10 @@ class TreeHelper:
                             self.table_[i][j][0] = m
                             self.table_[i][j][1].append(l[1])
 
-    def mast(self, leftTree: OrderedTree, rightTree: OrderedTree):
+    def mast(self):
         lMast = []
         rMast = []
-        self.__build__(leftTree, rightTree)
+        self.__build__()
         stack = []
         stack.append([[self.yHash_[len(self.table_)-1], self.xHash_[len(self.table_)-1]]])
         while(stack):
@@ -163,10 +162,10 @@ class TreeHelper:
         return set(lMast + rMast)
 
 
-    def getMastTree(self, leftTree: OrderedTree, rightTree: OrderedTree):
-        res = copy.deepcopy(leftTree)
-        leaves = self.mast(leftTree, rightTree)
-        max = leftTree.max+1
+    def getMastTree(self):
+        res = copy.deepcopy(self.tree1)
+        leaves = self.mast()
+        max = self.tree1.max+1
         for i in range(1, max):
             if i not in leaves:
                 res = res.deleteLeaf(i)
