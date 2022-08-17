@@ -141,7 +141,12 @@ class TreeHelper:
                             self.table_[i][j][0] = m
                             self.table_[i][j][1].append(l[1])
 
-    def mast(self):
+    def mast(self)->set:
+        """Uses the trees from the treeHelper class and returns a set of leaves that are in both trees. 
+
+        Returns:
+            returns a set with the leaves in both trees. 
+        """
         lMast = []
         rMast = []
         self.__build__()
@@ -163,6 +168,11 @@ class TreeHelper:
 
 
     def getMastTree(self):
+        """Uses the trees from the treeHelper class and returns the MAST tree of the two. 
+
+        Returns:
+            returns a MAST tree.
+        """
         res = copy.deepcopy(self.tree1)
         leaves = self.mast()
         max = self.tree1.max+1
