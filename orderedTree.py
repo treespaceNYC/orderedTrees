@@ -52,16 +52,21 @@ class OrderedTree:
 
         elif isinstance(n[0], list):
             """Creates a tree based on a list entered in intervals (List of lists)."""
+            self.edges = set()
+
             self.intervals = defaultdict(list)
             lst = sorted(n[0])
             self.min = lst[0][0]
             maximum = 0
             for k, v in lst:
+                self.edges.add(v)
+                self.edges.add(k)
                 self.intervals[k].append(v)
                 if(v > maximum):
                     maximum = v
             self.max = maximum
-            self.leaves = 1 if self.min == self.max else len(n[0]) + 1
+            # self.leaves = 1 if self.min == self.max else len(n[0]) + 1
+            self.leaves = len(self.edges)
 
 
         elif isinstance(n[0], str):
@@ -1232,6 +1237,9 @@ def bruteShrink(tree:OrderedTree, tree1:OrderedTree)->list:
             break
 
     return [result,distance] # list of subtrees and the distance
+
+# def removeCommonPt2(tree1, tree2)->OrderedTree:
+
 
 def shrink(tree:OrderedTree, tree1:OrderedTree)->list:
     """ Shrinks two trees by removing common edges and rotating until there are no more one-offs or common edges.
