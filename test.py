@@ -8,10 +8,10 @@ tree2 = randOrdered(100)
 ### create treehelper object to calculate MAST
 helper = TreeHelper(tree1, tree2)
 
-### get mast number from trees used to initialize helper ->int
+### get mast number from trees used to initialize helper -> set
 MAST_NUM = helper.mast()
 
-### get MAST tree from trees used to initialize helper ->OrderedTree
+### get MAST tree from trees used to initialize helper -> OrderedTree
 
 MAST_TREE = helper.getMastTree()
 
@@ -26,6 +26,8 @@ plt.show()
 
 tree1.drawPolygon(placement = 1)
 tree2.drawPolygon(placement = 2)
+
+### won't work
 MAST_TREE.drawPolygon(placement = 3)
 
 plt.show()
