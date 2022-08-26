@@ -42,7 +42,7 @@ class TreeHelper:
 
         #fills hashes up with leaves
         index = 0
-        for i in range(tree2.min, tree2.max+1):
+        for i in tree2.edges:
             self.xHash_[index] = (i,i)
             self.xIndex_[(i,i)] = index
             index+=1
@@ -56,7 +56,7 @@ class TreeHelper:
 
 
         index = 0
-        for i in range(tree1.min, tree1.max+1):
+        for i in tree1.edges:
             self.yHash_[index] = (i,i)
             self.yIndex_[(i,i)] = index
             index+=1
