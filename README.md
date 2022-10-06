@@ -102,7 +102,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 - scaled=(0 or 1)
   - When comparing trees with differing number of leaves, use `scale = 1` for the drawings to have the same height
 
-<b>Example: Drawing Two Trees<b>
+<b>Example: Drawing Two Trees</b>
   ```
   tree = OrderedTree([[1,2], [1,5], [1,8], [3,4], [3,5], [6,7], [6,8]])
   test1 = OrderedTree([[1,8], [1,2], [3,8], [3,7], [3,6], [4,6], [5,6]])
@@ -114,7 +114,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
     <img src="https://i.imgur.com/O2EvuVa.png" height="300"
   </p>
     
-<b>Example: Overlapping Trees<b>
+<b>Example: Overlapping Trees</b>
   ```
   tree=randOrdered(8)
   tree.drawTree(color='#8ea164', vNums = 1)
@@ -156,7 +156,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
 - dottedLine=[interval1,interval2]
   - Draws a dotted line given an interval.
 
-<b>Example 1<b>
+<b>Example 1</b>
 
   ```
   tree = OrderedTree(dictToInt({1: [3, 5, 10], 2: [3], 4: [5], 6: [7, 10], 8: [9, 10]})) #brings in tree and turns into a list of lists through a helper function
@@ -173,7 +173,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   
   - This function can also be used to draw overlapping polygons by using different colors when calling the `drawPolygon(tree, **kwargs)` function.
   
-  <b>Example 2<b>
+  <b>Example 2</b>
   
   ```
   tree = OrderedTree([[1,7], [2,6], [2,7], [3,5], [3,6], [4,5]])
@@ -199,7 +199,7 @@ In order to rotate intervals in a tree, the user has the option of `rotateRight(
   - The linewidth of the tree lines inside polygon
   - If no number is specified, default is 1.5
     
-<b>Examples<b>
+<b>Examples</b>
   ```
   test1 = OrderedTree([[1,2],[1,4],[3,4]])
   test2 = OrderedTree([[1,2],[1,4],[1,5],[3,4]])
